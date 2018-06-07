@@ -23,6 +23,9 @@ void setup() {
   newGameButton = new TextButton("New game", centerX, centerY, 32);
   loadButton = new TextButton("Load", centerX, height*0.6, 32);
   quitButton = new TextButton("Quit", centerX, height*0.7, 32);
+
+  maleButton = new TextButton("Male", width*0.4, height*0.4, 28);
+  femaleButton = new TextButton("Female", width*0.6, height*0.4, 28);
 }
 
 class TextButton {
@@ -75,14 +78,16 @@ class TextButton {
   }
 }
 
+/* class Pet {
+  String name;
+
+  Pet(){
+
+  }
+} */
+
 void draw() {
   background(255);
-  pushStyle();
-  stroke(0);
-  strokeWeight(1);
-  line(0, centerY, width, centerY);
-  line(centerX, 0, centerX, height);
-  popStyle();
   switch(gameState) {
   case "mainMenu":
     newGameButton.mouseHover();

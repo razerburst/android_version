@@ -73,6 +73,12 @@ class TextButton {
 
 void draw() {
   background(255);
+  pushStyle();
+  stroke(0);
+  strokeWeight(1);
+  line(0, centerY, width, centerY);
+  line(centerX, 0, centerX, height);
+  popStyle();
   switch(gameState) {
   case "mainMenu":
     newGameButton.mouseHover();

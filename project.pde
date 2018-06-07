@@ -8,6 +8,10 @@ TextButton newGameButton;
 TextButton loadButton;
 TextButton quitButton;
 
+boolean entered;
+TextButton maleButton;
+TextButton femaleButton;
+
 void setup() {
   fullScreen();
   noStroke();
@@ -98,13 +102,17 @@ void draw() {
   case "newGame":
     pushStyle();
     textSize(28);
-    text(textBoxHeader, width/2, height*0.4);
+    text(textBoxHeader, width/2, height*0.2);
     rectMode(CENTER);
     stroke(1);
     noFill();
-    rect(width/2, (height/2)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
-    text(textBox, width/2, height/2);
+    rect(width/2, (height*0.25)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
+    text(textBox, width/2, height*0.25);
     popStyle();
+    if (entered) {
+      maleButton.mouseHover();
+      femaleButton.mouseHover();
+    }
     break;
   case "loadGame":
     break;
@@ -120,7 +128,7 @@ void keyTyped() {
         textBox = textBox.substring(0, textBox.length()-1);
       }
     } else if (key == ENTER) {
-      print("test");
+      entered = true;
     } else {
       if (textWidth(textBox) <= textWidth(textBoxHeader)) {
         textBox += key;

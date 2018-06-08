@@ -68,14 +68,6 @@ class TextButton {
     }
   }
 
-  boolean clicked () {
-    if (mouseCollide() && mousePressed && mouseButton == LEFT) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   void mouseHover() {
     if (mouseCollide()) {
       pushStyle();
@@ -107,12 +99,14 @@ void draw() {
     loadButton.mouseHover();
     quitButton.mouseHover();
 
-    if (newGameButton.clicked()) {
-      gameState = "newGame";
-    } else if (loadButton.clicked()) {
-      gameState = "loadGame";
-    } else if (quitButton.clicked()) {
-      gameState = "quit";
+    if (mousePressed && mouseButton == LEFT) {
+      if (newGameButton.mouseCollide()) {
+        gameState = "newGame";
+      } else if (loadButton.mouseCollide()) {
+        gameState = "loadGame";
+      } else if (quitButton.mouseCollide()) {
+        gameState = "quit";
+      }
     }
     break;
   case "newGame":
@@ -128,7 +122,6 @@ void draw() {
     if (entered) {
       maleButton.mouseHover();
       femaleButton.mouseHover();
-
     }
     break;
   case "loadGame":

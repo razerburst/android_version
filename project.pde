@@ -1,5 +1,8 @@
 float centerX;
 float centerY;
+color green = color(0, 255, 0);
+color red = color(255, 0, 0);
+
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBox = "";
@@ -20,12 +23,12 @@ void setup() {
   centerY = height/2;
   textAlign(CENTER, CENTER);
 
-  newGameButton = new TextButton("New game", centerX, centerY, 32);
-  loadButton = new TextButton("Load", centerX, height*0.6, 32);
-  quitButton = new TextButton("Quit", centerX, height*0.7, 32);
+  newGameButton = new TextButton("New game", centerX, centerY, 32, green);
+  loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
+  quitButton = new TextButton("Quit", centerX, height*0.7, 32, green);
 
-  maleButton = new TextButton("Male", width*0.4, height*0.4, 28);
-  femaleButton = new TextButton("Female", width*0.6, height*0.4, 28);
+  maleButton = new TextButton("Male", width*0.4, height*0.4, 28, red);
+  femaleButton = new TextButton("Female", width*0.6, height*0.4, 28, red);
 }
 
 class TextButton {
@@ -33,15 +36,17 @@ class TextButton {
   float x;
   float y;
   int size;
+  color colour;
   float asc;
   float desc;
   float w;
 
-  TextButton(String _string, float _x, float _y, int _size) {
+  TextButton(String _string, float _x, float _y, int _size, color _colour) {
     string = _string;
     x = _x;
     y = _y;
     size = _size;
+    colour = _colour;
     textSize(size);
     asc = textAscent();
     desc = textDescent();
@@ -63,10 +68,18 @@ class TextButton {
     }
   }
 
+  boolean clicked () {
+    if (mouseCollide() && mousePressed && mouseButton == LEFT) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void mouseHover() {
     if (mouseCollide()) {
       pushStyle();
-      fill(0, 255, 0);
+      fill(colour);
       display();
       popStyle();
     } else {
@@ -94,14 +107,12 @@ void draw() {
     loadButton.mouseHover();
     quitButton.mouseHover();
 
-    if (mousePressed && mouseButton == LEFT) {
-      if (newGameButton.mouseCollide()) {
-        gameState = "newGame";
-      } else if (loadButton.mouseCollide()) {
-        gameState = "loadGame";
-      } else if (quitButton.mouseCollide()) {
-        gameState = "quit";
-      }
+    if (newGameButton.clicked()) {
+      gameState = "newGame";
+    } else if (loadButton.clicked()) {
+      gameState = "loadGame";
+    } else if (quitButton.clicked()) {
+      gameState = "quit";
     }
     break;
   case "newGame":
@@ -117,6 +128,7 @@ void draw() {
     if (entered) {
       maleButton.mouseHover();
       femaleButton.mouseHover();
+
     }
     break;
   case "loadGame":

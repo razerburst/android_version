@@ -4,6 +4,7 @@ color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);
 
+Pet pet;
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
@@ -24,6 +25,7 @@ void setup() {
   centerX = width/2;
   centerY = height/2;
   textAlign(CENTER, CENTER);
+  pet = new Pet();
 
   newGameButton = new TextButton("New game", centerX, centerY, 32, green);
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
@@ -78,13 +80,14 @@ class TextButton {
   }
 }
 
-/* class Pet {
+class Pet {
   String name;
+  String gender;
 
   Pet(){
 
   }
-} */
+}
 
 void draw() {
   background(255);
@@ -123,10 +126,12 @@ void draw() {
         if (maleButton.mouseCollide()) {
           maleButton.defaultColour = red;
           femaleButton.defaultColour = black;
+          pet.gender = "male";
           genderPicked = true;
         } else if (femaleButton.mouseCollide()) {
           femaleButton.defaultColour = red;
           maleButton.defaultColour = black;
+          pet.gender = "female";
           genderPicked = true;
           // redundant
         }
@@ -154,6 +159,8 @@ void keyTyped() {
         textBoxString = textBoxString.substring(0, textBoxString.length()-1);
       }
     } else if (key == ENTER) {
+      pet.name = textBoxString;
+      textBoxString = "";
       entered = true;
     } else {
       if (textWidth(textBoxString) <= textWidth(textBoxHeader)) {

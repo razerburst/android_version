@@ -8,6 +8,7 @@ color lightBlue = color(94, 228, 255);
 color blue = color(11, 19, 240);
 color orange = color(255, 217, 0);
 color magenta = color(255, 68, 149);
+color purple = color(199, 55, 173);
 
 Pet pet;
 String gameState = "mainMenu";
@@ -22,7 +23,7 @@ boolean entered;
 boolean genderPicked;
 TextButton maleButton;
 TextButton femaleButton;
-TextButton[] traits = new TextButton[8];
+TextButton[][] traits = new TextButton[4][2];
 
 void setup() {
   fullScreen();
@@ -39,14 +40,14 @@ void setup() {
 
   maleButton = new TextButton("Male", width*0.4, height*0.4, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.4, 28, red);
-  traits[0] = new TextButton("Early Bird", width*0.35, height*0.69, 32, lightBlue);
-  traits[1] = new TextButton("Night Owl", width*0.48, height*0.69, 32, lightBlue);
-  traits[2] = new TextButton("Energetic", width*0.35, height*0.75, 32, green);
-  traits[3] = new TextButton("Lethargic", width*0.48, height*0.75, 32, green);
-  traits[4] = new TextButton("Impatient", width*0.35, height*0.81, 32, orange);
-  traits[5] = new TextButton("Composed", width*0.48, height*0.81, 32, orange);
-  traits[6] = new TextButton("Friendly", width*0.35, height*0.87, 32, magenta);
-  traits[7] = new TextButton("Hostile", width*0.48, height*0.87, 32, magenta);
+  traits[0][0] = new TextButton("Early Bird", width*0.35, height*0.69, 32, lightBlue);
+  traits[0][1] = new TextButton("Night Owl", width*0.48, height*0.69, 32, lightBlue);
+  traits[1][0] = new TextButton("Energetic", width*0.35, height*0.75, 32, green);
+  traits[1][1] = new TextButton("Lethargic", width*0.48, height*0.75, 32, green);
+  traits[2][0] = new TextButton("Impatient", width*0.35, height*0.81, 32, orange);
+  traits[2][1] = new TextButton("Composed", width*0.48, height*0.81, 32, orange);
+  traits[3][0] = new TextButton("Friendly", width*0.35, height*0.87, 32, magenta);
+  traits[3][1] = new TextButton("Hostile", width*0.48, height*0.87, 32, magenta);
 }
 
 class TextButton {
@@ -155,12 +156,21 @@ void draw() {
         textAlign(LEFT);
         fill(blue);
         text("Choose pet's nature:", width*0.05, height*0.7);
+        fill(purple);
+        text("Randomise pet's nature:", width*0.65, height*0.7);
         popStyle();
         for (int i = 0; i < traits.length; i = i+1) {
-          traits[i].display();
-          if (mousePressed && mouseButton == LEFT) {
-            if (traits[i].mouseCollide()) {
-              traits[i].defaultColour = traits[i].hoverColour;
+          for (int j = 0; j < traits[i].length; j = j+1) {
+            traits[i][j].display();
+            if (mousePressed && mouseButton == LEFT) {
+              if (traits[i][j].mouseCollide()) {
+                traits[i][j].defaultColour = traits[i][j].hoverColour;
+                if (j == 0) {
+                  traits[i][j+1].defaultColour = black;
+                } else {
+                  traits[i][j-1].defaultColour = black;
+                }
+              }
             }
           }
         }

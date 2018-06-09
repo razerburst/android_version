@@ -2,6 +2,7 @@ float centerX;
 float centerY;
 color green = color(0, 255, 0);
 color red = color(255, 0, 0);
+color black = color(0);
 
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
@@ -36,17 +37,19 @@ class TextButton {
   float x;
   float y;
   int size;
-  color colour;
+  color hoverColour;
+  color defaultColour;
   float asc;
   float desc;
   float w;
 
-  TextButton(String _string, float _x, float _y, int _size, color _colour) {
+  TextButton(String _string, float _x, float _y, int _size, color _hoverColour) {
     string = _string;
     x = _x;
     y = _y;
     size = _size;
-    colour = _colour;
+    hoverColour = _hoverColour;
+    defaultColour = black;
     textSize(size);
     asc = textAscent();
     desc = textDescent();
@@ -56,6 +59,11 @@ class TextButton {
   void display() {
     pushStyle();
     textSize(size);
+    if (mouseCollide()) {
+      fill(hoverColour);
+    } else {
+      fill(defaultColour);
+    }
     text(string, x, y-desc);
     popStyle();
   }
@@ -65,20 +73,6 @@ class TextButton {
       return true;
     } else {
       return false;
-    }
-  }
-
-  void mouseHover() {
-    if (mouseCollide()) {
-      pushStyle();
-      fill(colour);
-      display();
-      popStyle();
-    } else {
-      pushStyle();
-      fill(0);
-      display();
-      popStyle();
     }
   }
 }
@@ -95,9 +89,9 @@ void draw() {
   background(255);
   switch(gameState) {
   case "mainMenu":
-    newGameButton.mouseHover();
-    loadButton.mouseHover();
-    quitButton.mouseHover();
+    newGameButton.display();
+    loadButton.display();
+    quitButton.display();
 
     if (mousePressed && mouseButton == LEFT) {
       if (newGameButton.mouseCollide()) {
@@ -119,9 +113,20 @@ void draw() {
     rect(width/2, (height*0.25)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
     text(textBox, width/2, height*0.25);
     popStyle();
+
     if (entered) {
-      maleButton.mouseHover();
-      femaleButton.mouseHover();
+      maleButton.display();
+      femaleButton.display();
+
+      if (mousePressed && mouseButton == LEFT) {
+        if (maleButton.mouseCollide()) {
+          maleButton.defaultColour = red;
+          femaleButton.defaultColour = black;
+        } else if (femaleButton.mouseCollide()) {
+          femaleButton.defaultColour = red;
+          maleButton.defaultColour = black;
+        }
+      }
     }
     break;
   case "loadGame":

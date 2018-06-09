@@ -133,7 +133,6 @@ void draw() {
           maleButton.defaultColour = black;
           pet.gender = "female";
           genderPicked = true;
-          // redundant
         }
       }
 

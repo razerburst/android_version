@@ -156,16 +156,14 @@ void draw() {
         fill(blue);
         text("Choose pet's nature:", width*0.05, height*0.7);
         popStyle();
-        // make this a for loop
-        for (TextButton button: traits) {
-          button.display();
+        for (int i = 0; i < traits.length; i = i+1) {
+          traits[i].display();
+          if (mousePressed && mouseButton == LEFT) {
+            if (traits[i].mouseCollide()) {
+              traits[i].defaultColour = traits[i].hoverColour;
+            }
+          }
         }
-        // traits[0].display();
-        // traits[1].display();
-        // traits[2].display();
-        // traits[3].display();
-        // traits[4].display();
-        // traits[5].display();
       }
     }
     break;

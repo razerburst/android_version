@@ -6,13 +6,14 @@ color black = color(0);
 
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
-String textBox = "";
+String textBoxString = "";
 
 TextButton newGameButton;
 TextButton loadButton;
 TextButton quitButton;
 
 boolean entered;
+boolean genderPicked;
 TextButton maleButton;
 TextButton femaleButton;
 
@@ -111,7 +112,7 @@ void draw() {
     stroke(1);
     noFill();
     rect(width/2, (height*0.25)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
-    text(textBox, width/2, height*0.25);
+    text(textBoxString, width/2, height*0.25);
     popStyle();
 
     if (entered) {
@@ -122,10 +123,20 @@ void draw() {
         if (maleButton.mouseCollide()) {
           maleButton.defaultColour = red;
           femaleButton.defaultColour = black;
+          genderPicked = true;
         } else if (femaleButton.mouseCollide()) {
           femaleButton.defaultColour = red;
           maleButton.defaultColour = black;
+          genderPicked = true;
+          // redundant
         }
+      }
+
+      if (genderPicked) {
+        pushStyle();
+        textAlign(LEFT);
+        text("Choose pet's nature:", width*0.05, height*0.7);
+        popStyle();
       }
     }
     break;
@@ -139,14 +150,14 @@ void draw() {
 void keyTyped() {
   if (gameState == "newGame") {
     if (key == BACKSPACE) {
-      if (textBox.length() >0) {
-        textBox = textBox.substring(0, textBox.length()-1);
+      if (textBoxString.length() >0) {
+        textBoxString = textBoxString.substring(0, textBoxString.length()-1);
       }
     } else if (key == ENTER) {
       entered = true;
     } else {
-      if (textWidth(textBox) <= textWidth(textBoxHeader)) {
-        textBox += key;
+      if (textWidth(textBoxString) <= textWidth(textBoxHeader)) {
+        textBoxString += key;
       }
     }
   }

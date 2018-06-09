@@ -17,6 +17,7 @@ boolean entered;
 boolean genderPicked;
 TextButton maleButton;
 TextButton femaleButton;
+TextButton[] traits = new TextButton[8];
 
 void setup() {
   fullScreen();
@@ -33,6 +34,7 @@ void setup() {
 
   maleButton = new TextButton("Male", width*0.4, height*0.4, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.4, 28, red);
+  traits[0] = new Textbutton("test", centerX, centerY, 32, green);
 }
 
 class TextButton {
@@ -140,6 +142,7 @@ void draw() {
         pushStyle();
         textAlign(LEFT);
         text("Choose pet's nature:", width*0.05, height*0.7);
+        traits[0].display();
         popStyle();
       }
     }

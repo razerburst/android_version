@@ -24,6 +24,7 @@ boolean genderPicked;
 TextButton maleButton;
 TextButton femaleButton;
 TextButton[][] traits = new TextButton[4][2];
+TextButton startButton;
 
 void setup() {
   fullScreen();
@@ -48,6 +49,8 @@ void setup() {
   traits[2][1] = new TextButton("Composed", width*0.48, height*0.81, 32, orange);
   traits[3][0] = new TextButton("Friendly", width*0.35, height*0.87, 32, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.48, height*0.87, 32, magenta);
+
+  startButton = new TextButton("Start!", centerX, centerY, 34, red);
 }
 
 class TextButton {
@@ -93,6 +96,16 @@ class TextButton {
       return false;
     }
   }
+
+  boolean clicked() {
+    if (mousePressed && mouseButton == LEFT) {
+      if (mouseCollide()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 }
 
 class Pet {
@@ -124,6 +137,7 @@ void draw() {
     }
     break;
   case "newGame":
+    int traitsPicked = 0;
     pushStyle();
     textSize(28);
     text(textBoxHeader, width/2, height*0.2);
@@ -175,9 +189,22 @@ void draw() {
               }
             }
           }
+          if (pet.nature[i] != null) {
+            traitsPicked = traitsPicked+1;
+          }
+        }
+        if (traitsPicked == 4) {
+          startButton.display();
+          if (mousePressed && mouseButton == LEFT) {
+            if (startButton.mouseCollide) {
+              gameState = "playingGame";
+            }
+          }
         }
       }
     }
+    break;
+  case "playingGame":
     break;
   case "loadGame":
     break;

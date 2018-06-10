@@ -26,6 +26,8 @@ TextButton femaleButton;
 TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
 
+PImage dice;
+
 void setup() {
   fullScreen();
   noStroke();
@@ -33,6 +35,7 @@ void setup() {
   centerX = width/2;
   centerY = height/2;
   textAlign(CENTER, CENTER);
+  imageMode(CENTER);
   pet = new Pet();
 
   newGameButton = new TextButton("New game", centerX, centerY, 32, green);
@@ -52,6 +55,8 @@ void setup() {
 
   startButton = new TextButton("Start!", centerX, centerY, 34, green);
   startButton.defaultColour = red;
+
+  dice = loadImage("/assets/Dice.png");
 }
 
 class TextButton {
@@ -161,6 +166,7 @@ void draw() {
         fill(purple);
         text("Randomise pet's nature:", width*0.65, height*0.7);
         popStyle();
+        image(dice, width*0.8, height*0.8);
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             traits[i][j].display();

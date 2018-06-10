@@ -98,8 +98,9 @@ class TextButton {
 class Pet {
   String name;
   String gender;
+  String[] nature = new String[4];
 
-  Pet(){
+  Pet() {
 
   }
 }
@@ -165,6 +166,7 @@ void draw() {
             if (mousePressed && mouseButton == LEFT) {
               if (traits[i][j].mouseCollide()) {
                 traits[i][j].defaultColour = traits[i][j].hoverColour;
+                pet.nature[i] = traits[i][j].string;
                 if (j == 0) {
                   traits[i][j+1].defaultColour = black;
                 } else {

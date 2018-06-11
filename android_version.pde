@@ -1,3 +1,6 @@
+import android.util.DisplayMetrics;
+
+int density;
 float centerX;
 float centerY;
 
@@ -22,6 +25,7 @@ TextButton quitButton;
 boolean entered;
 boolean genderPicked;
 TextButton maleButton;
+
 TextButton femaleButton;
 TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
@@ -30,6 +34,12 @@ PImage dice;
 
 void setup() {
   fullScreen();
+  orientation(LANDSCAPE);
+
+  DisplayMetrics metrics = new DisplayMetrics();
+  getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+  density = int(metrics.density);
+
   noStroke();
   fill(0);
   centerX = width/2;
@@ -56,7 +66,7 @@ void setup() {
   startButton = new TextButton("Start!", centerX, centerY, 34, green);
   startButton.defaultColour = red;
 
-  dice = loadImage("/assets/Dice.png");
+  dice = loadImage("Dice.png");
 }
 
 class TextButton {
@@ -77,7 +87,7 @@ class TextButton {
     size = _size;
     hoverColour = _hoverColour;
     defaultColour = black;
-    textSize(size);
+    textSize(size*density);
     asc = textAscent();
     desc = textDescent();
     w = textWidth(string);
@@ -85,7 +95,7 @@ class TextButton {
 
   void display() {
     pushStyle();
-    textSize(size);
+    textSize(size*density);
     if (mouseCollide()) {
       fill(hoverColour);
     } else {
@@ -100,7 +110,7 @@ class TextButton {
   }
 
   boolean clicked() {
-    return mousePressed && mouseButton == LEFT && mouseCollide();
+    return mousePressed && mouseCollide();
   }
 }
 
@@ -110,7 +120,6 @@ class Pet {
   String[] nature = new String[4];
 
   Pet() {
-
   }
 }
 
@@ -127,13 +136,12 @@ void draw() {
     } else if (loadButton.clicked()) {
       gameState = "loadGame";
     } else if (quitButton.clicked()) {
-      exit();
     }
     break;
   case "newGame":
     int traitsPicked = 0;
     pushStyle();
-    textSize(28);
+    textSize(28*density);
     text(textBoxHeader, width/2, height*0.2);
     rectMode(CENTER);
     stroke(1);
@@ -141,6 +149,9 @@ void draw() {
     rect(width/2, (height*0.25)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
     text(textBoxString, width/2, height*0.25);
     popStyle();
+    if (mousePressed) {
+      openKeyboard();
+    }
 
     if (entered) {
       maleButton.display();
@@ -200,13 +211,15 @@ void draw() {
   }
 }
 
-void keyTyped() {
+void keyPressed() {
   if (gameState == "newGame") {
-    if (key == BACKSPACE) {
+    if (keyCode == BACKSPACE) {
       if (textBoxString.length() >0) {
         textBoxString = textBoxString.substring(0, textBoxString.length()-1);
       }
-    } else if (key == ENTER) {
+    } else if (keyCode == SHIFT) {
+      
+    } else if (keyCode == ENTER) {
       pet.name = textBoxString;
       textBoxString = "";
       entered = true;

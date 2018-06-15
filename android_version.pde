@@ -1,4 +1,6 @@
 import android.util.DisplayMetrics;
+import ketai.ui.*;
+KetaiGesture gesture;
 
 int density;
 float centerX;
@@ -24,6 +26,7 @@ TextButton quitButton;
 
 boolean entered;
 boolean genderPicked;
+boolean tap;
 TextButton maleButton;
 
 TextButton femaleButton;
@@ -35,6 +38,7 @@ PImage dice;
 void setup() {
   fullScreen();
   orientation(LANDSCAPE);
+  gesture = new KetaiGesture(this);
 
   DisplayMetrics metrics = new DisplayMetrics();
   getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -146,11 +150,15 @@ void draw() {
     rectMode(CENTER);
     stroke(1);
     noFill();
-    rect(width/2, (height*0.25)+textDescent(), textWidth(textBoxHeader)*1.05, textAscent()*1.2);
-    text(textBoxString, width/2, height*0.25);
+    float rectW = textWidth(textBoxHeader)*1.05;
+    float rectH = textAscent()*1.2;
+    float rectY = (height*0.25)+textDescent();
+    rect(centerX, rectY, rectW, rectH);
+    text(textBoxString, centerX, height*0.25);
     popStyle();
-    if (mousePressed) {
+    if (tap && mousePressed && mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
       openKeyboard();
+      tap = false;
     }
 
     if (entered) {
@@ -218,7 +226,6 @@ void keyPressed() {
         textBoxString = textBoxString.substring(0, textBoxString.length()-1);
       }
     } else if (keyCode == SHIFT) {
-      
     } else if (keyCode == ENTER) {
       pet.name = textBoxString;
       textBoxString = "";
@@ -229,4 +236,8 @@ void keyPressed() {
       }
     }
   }
+}
+
+void mouseReleased() {
+  tap = true;
 }

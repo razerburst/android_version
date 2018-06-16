@@ -78,6 +78,7 @@ void setup() {
   popStyle();
 
   dice = loadImage("Dice.png");
+  dice.resize(70*density, 70*density);
 }
 
 class TextButton {
@@ -186,8 +187,10 @@ void draw() {
         text("Choose pet's nature:", width*0.09, height*0.60);
         fill(purple);
         text("Randomise pet's nature:", width*0.55, height*0.60);
+        image(dice, width*0.75, height*0.76);
         popStyle();
-        image(dice, width*0.8, height*0.8);
+        
+        if (mousePressed && mouseX >= 
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             traits[i][j].display();

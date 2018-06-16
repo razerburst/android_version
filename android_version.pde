@@ -1,11 +1,6 @@
 import android.util.DisplayMetrics;
-import ketai.ui.*;
-KetaiGesture gesture;
 
 int density;
-float centerX;
-float centerY;
-
 color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);
@@ -26,7 +21,6 @@ TextButton quitButton;
 
 boolean entered;
 boolean genderPicked;
-boolean tap;
 TextButton maleButton;
 
 TextButton femaleButton;
@@ -34,15 +28,19 @@ TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
 
 PImage dice;
+float rectW;
+float rectH;
+float rectY;
 
 void setup() {
   fullScreen();
   orientation(LANDSCAPE);
-  gesture = new KetaiGesture(this);
 
   DisplayMetrics metrics = new DisplayMetrics();
   getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
   density = int(metrics.density);
+
+  gesture = new KetaiGesture(this);
 
   noStroke();
   fill(0);
@@ -156,9 +154,9 @@ void draw() {
     rect(centerX, rectY, rectW, rectH);
     text(textBoxString, centerX, height*0.25);
     popStyle();
-    if (tap && mousePressed && mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
+    
+    if (mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
       openKeyboard();
-      tap = false;
     }
 
     if (entered) {
@@ -236,8 +234,4 @@ void keyPressed() {
       }
     }
   }
-}
-
-void mouseReleased() {
-  tap = true;
 }

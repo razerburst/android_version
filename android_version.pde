@@ -51,9 +51,9 @@ void setup() {
   imageMode(CENTER);
   pet = new Pet();
 
-  newGameButton = new TextButton("New game", centerX, centerY, 32, green);
+  newGameButton = new TextButton("New game", centerX, height*0.4, 32, green);
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
-  quitButton = new TextButton("Quit", centerX, height*0.7, 32, green);
+  quitButton = new TextButton("Quit", centerX, height*0.8, 32, green);
 
   maleButton = new TextButton("Male", width*0.4, height*0.4, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.4, 28, red);
@@ -68,6 +68,8 @@ void setup() {
 
   startButton = new TextButton("Start!", centerX, centerY, 34, green);
   startButton.defaultColour = red;
+  
+  
 
   dice = loadImage("Dice.png");
 }
@@ -104,12 +106,15 @@ class TextButton {
     } else {
       fill(defaultColour);
     }
-    text(string, x, y-desc);
+    text(string, x, y);
     popStyle();
   }
 
   boolean mouseCollide() {
-    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+(asc/2);
+    rectMode(CORNERS);
+    fill(0, 10);
+    rect(x-(w/2), y-(asc/2), x+(w/2), y+((asc/2)+desc));
+    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-((asc/2)-desc) && mouseY <= y+((asc/2)+desc);
   }
 
   boolean clicked() {
@@ -150,10 +155,11 @@ void draw() {
     stroke(1);
     noFill();
     rectW = textWidth(textBoxHeader)*1.05;
-    rectH = textAscent()*1.2;
-    rectY = (height*0.25)+textDescent();
+    rectH = textAscent()+(textDescent()*2);
+    rectY = (height*0.3)+textDescent();
     rect(centerX, rectY, rectW, rectH);
-    text(textBoxString, centerX, height*0.25);
+    textSize(26*density);
+    text(textBoxString, centerX, rectY);
     popStyle();
 
     if (entered) {

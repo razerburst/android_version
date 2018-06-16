@@ -69,7 +69,12 @@ void setup() {
   startButton = new TextButton("Start!", centerX, centerY, 34, green);
   startButton.defaultColour = red;
   
-  
+  pushStyle();
+  textSize(28*density);
+  textBoxRectW = textWidth(textBoxHeader);
+  textBoxRectH = textAscent()+(textDescent()*2);
+  textBoxRectY = height*0.3;
+  popStyle();
 
   dice = loadImage("Dice.png");
 }
@@ -112,9 +117,7 @@ class TextButton {
 
   boolean mouseCollide() {
     rectMode(CORNERS);
-    fill(0, 10);
-    rect(x-(w/2), y-(asc/2), x+(w/2), y+((asc/2)+desc));
-    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-((asc/2)-desc) && mouseY <= y+((asc/2)+desc);
+    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
   }
 
   boolean clicked() {
@@ -154,9 +157,6 @@ void draw() {
     rectMode(CENTER);
     stroke(1);
     noFill();
-    rectW = textWidth(textBoxHeader)*1.05;
-    rectH = textAscent()+(textDescent()*2);
-    rectY = (height*0.3)+textDescent();
     rect(centerX, rectY, rectW, rectH);
     textSize(26*density);
     text(textBoxString, centerX, rectY);

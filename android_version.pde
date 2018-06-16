@@ -1,6 +1,9 @@
 import android.util.DisplayMetrics;
 
 int density;
+float centerX;
+float centerY;
+
 color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);
@@ -39,8 +42,6 @@ void setup() {
   DisplayMetrics metrics = new DisplayMetrics();
   getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
   density = int(metrics.density);
-
-  gesture = new KetaiGesture(this);
 
   noStroke();
   fill(0);
@@ -148,16 +149,12 @@ void draw() {
     rectMode(CENTER);
     stroke(1);
     noFill();
-    float rectW = textWidth(textBoxHeader)*1.05;
-    float rectH = textAscent()*1.2;
-    float rectY = (height*0.25)+textDescent();
+    rectW = textWidth(textBoxHeader)*1.05;
+    rectH = textAscent()*1.2;
+    rectY = (height*0.25)+textDescent();
     rect(centerX, rectY, rectW, rectH);
     text(textBoxString, centerX, height*0.25);
     popStyle();
-    
-    if (mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
-      openKeyboard();
-    }
 
     if (entered) {
       maleButton.display();
@@ -228,10 +225,22 @@ void keyPressed() {
       pet.name = textBoxString;
       textBoxString = "";
       entered = true;
+      closeKeyboard();
     } else {
       if (textWidth(textBoxString) <= textWidth(textBoxHeader)) {
         textBoxString += key;
       }
+    }
+  }
+}
+
+void mouseReleased() {
+  switch(gameState) {
+  case "newGame":
+    if (mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
+      openKeyboard();
+    } else {
+      closeKeyboard();
     }
   }
 }

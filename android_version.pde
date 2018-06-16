@@ -17,6 +17,9 @@ Pet pet;
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
+float textBoxRectW;
+float textBoxRectH;
+float textBoxRectY;
 
 TextButton newGameButton;
 TextButton loadButton;
@@ -31,9 +34,6 @@ TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
 
 PImage dice;
-float rectW;
-float rectH;
-float rectY;
 
 void setup() {
   fullScreen();
@@ -55,25 +55,26 @@ void setup() {
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
   quitButton = new TextButton("Quit", centerX, height*0.8, 32, green);
 
-  maleButton = new TextButton("Male", width*0.4, height*0.4, 28, red);
-  femaleButton = new TextButton("Female", width*0.6, height*0.4, 28, red);
-  traits[0][0] = new TextButton("Early Bird", width*0.36, height*0.69, 32, lightBlue);
-  traits[0][1] = new TextButton("Night Owl", width*0.49, height*0.69, 32, lightBlue);
-  traits[1][0] = new TextButton("Energetic", width*0.36, height*0.75, 32, green);
-  traits[1][1] = new TextButton("Lethargic", width*0.49, height*0.75, 32, green);
-  traits[2][0] = new TextButton("Impatient", width*0.36, height*0.81, 32, orange);
-  traits[2][1] = new TextButton("Composed", width*0.49, height*0.81, 32, orange);
-  traits[3][0] = new TextButton("Friendly", width*0.36, height*0.87, 32, magenta);
-  traits[3][1] = new TextButton("Hostile", width*0.49, height*0.87, 32, magenta);
+  maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
+  femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
+  
+  traits[0][0] = new TextButton("Early Bird", width*0.16, height*0.67, 24, lightBlue);
+  traits[0][1] = new TextButton("Night Owl", width*0.36, height*0.67, 24, lightBlue);
+  traits[1][0] = new TextButton("Energetic", width*0.16, height*0.75, 24, green);
+  traits[1][1] = new TextButton("Lethargic", width*0.36, height*0.75, 24, green);
+  traits[2][0] = new TextButton("Impatient", width*0.16, height*0.83, 24, orange);
+  traits[2][1] = new TextButton("Composed", width*0.36, height*0.83, 24, orange);
+  traits[3][0] = new TextButton("Friendly", width*0.16, height*0.91, 24, magenta);
+  traits[3][1] = new TextButton("Hostile", width*0.36, height*0.91, 24, magenta);
 
-  startButton = new TextButton("Start!", centerX, centerY, 34, green);
+  startButton = new TextButton("Start!", centerX, height*0.46, 34, green);
   startButton.defaultColour = red;
   
   pushStyle();
   textSize(28*density);
   textBoxRectW = textWidth(textBoxHeader);
   textBoxRectH = textAscent()+(textDescent()*2);
-  textBoxRectY = height*0.3;
+  textBoxRectY = height*0.2;
   popStyle();
 
   dice = loadImage("Dice.png");
@@ -116,7 +117,6 @@ class TextButton {
   }
 
   boolean mouseCollide() {
-    rectMode(CORNERS);
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
   }
 
@@ -153,13 +153,13 @@ void draw() {
     int traitsPicked = 0;
     pushStyle();
     textSize(28*density);
-    text(textBoxHeader, width/2, height*0.2);
+    text(textBoxHeader, width/2, height*0.1);
     rectMode(CENTER);
     stroke(1);
     noFill();
-    rect(centerX, rectY, rectW, rectH);
+    rect(centerX, textBoxRectY, textBoxRectW, textBoxRectH);
     textSize(26*density);
-    text(textBoxString, centerX, rectY);
+    text(textBoxString, centerX, textBoxRectY);
     popStyle();
 
     if (entered) {
@@ -182,9 +182,10 @@ void draw() {
         pushStyle();
         textAlign(LEFT);
         fill(blue);
-        text("Choose pet's nature:", width*0.05, height*0.7);
+        textSize(24*density);
+        text("Choose pet's nature:", width*0.09, height*0.60);
         fill(purple);
-        text("Randomise pet's nature:", width*0.65, height*0.7);
+        text("Randomise pet's nature:", width*0.55, height*0.60);
         popStyle();
         image(dice, width*0.8, height*0.8);
         for (int i = 0; i < traits.length; i = i+1) {
@@ -243,7 +244,7 @@ void keyPressed() {
 void mouseReleased() {
   switch(gameState) {
   case "newGame":
-    if (mouseX >= centerX-(rectW/2) && mouseX <= centerX+(rectW/2) && mouseY >= rectY-(rectH/2) && mouseY <= rectY+(rectH/2)) {
+    if (mouseX >= centerX-(textBoxRectW/2) && mouseX <= centerX+(textBoxRectW/2) && mouseY >= textBoxRectY-(textBoxRectH/2) && mouseY <= textBoxRectY+(textBoxRectH/2)) {
       openKeyboard();
     } else {
       closeKeyboard();

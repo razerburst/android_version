@@ -34,6 +34,8 @@ TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
 
 PImage dice;
+float diceX;
+float diceY;
 
 void setup() {
   fullScreen();
@@ -79,6 +81,8 @@ void setup() {
 
   dice = loadImage("Dice.png");
   dice.resize(70*density, 70*density);
+  diceX = width*0.75;
+  diceY = height*0.76;
 }
 
 class TextButton {
@@ -187,10 +191,18 @@ void draw() {
         text("Choose pet's nature:", width*0.09, height*0.60);
         fill(purple);
         text("Randomise pet's nature:", width*0.55, height*0.60);
-        image(dice, width*0.75, height*0.76);
+        image(dice, diceX, diceY);
         popStyle();
         
-        if (mousePressed && mouseX >= 
+        if (mousePressed && mouseX >= diceX-(dice.width/2) && mouseX <= diceX+(dice.width/2) && mouseY >= diceY-(dice.height/2) && mouseY <= diceY+(dice.height/2)) {
+          for (int i = 0; i < traits.length; i = i+1) {
+            int randi = int(random(traits[i].length));
+            pet.nature[i] = traits[i][randi].string;
+          }
+          printArray(pet.nature);
+          gameState = "playing";
+        }
+        
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             traits[i][j].display();

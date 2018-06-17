@@ -24,6 +24,10 @@ float textBoxRectY;
 TextButton newGameButton;
 TextButton loadButton;
 TextButton quitButton;
+TextButton sleepButton;
+TextButton statsButton;
+TextButton feedButton;
+TextButton shopButton;
 
 boolean entered;
 boolean genderPicked;
@@ -56,10 +60,20 @@ void setup() {
   newGameButton = new TextButton("New game", centerX, height*0.4, 32, green);
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
   quitButton = new TextButton("Quit", centerX, height*0.8, 32, green);
+  sleepButton = new TextButton("Sleep", width*0.085, height*0.9, 32, purple);
+  statsButton = new TextButton("Stats", width*0.36, height*0.9, 32, purple);
+  feedButton = new TextButton("Feed", width*0.685, height*0.9, 32, purple);
+  shopButton = new TextButton("Shop", width*0.91, height*0.9, 32, purple);
+  
+  println("sleepW:", sleepButton.w);
+  println("statsW:", statsButton.w);
+  println("feedW:", feedButton.w);
+  println("shopW:", shopButton.w);
+  
 
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
-  
+
   traits[0][0] = new TextButton("Early Bird", width*0.16, height*0.67, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.36, height*0.67, 24, lightBlue);
   traits[1][0] = new TextButton("Energetic", width*0.16, height*0.75, 24, green);
@@ -69,9 +83,9 @@ void setup() {
   traits[3][0] = new TextButton("Friendly", width*0.16, height*0.91, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.36, height*0.91, 24, magenta);
 
-  startButton = new TextButton("Start!", centerX, height*0.46, 34, green);
+  startButton = new TextButton("Start!", centerX, height*0.46, 34, purple);
   startButton.defaultColour = red;
-  
+
   pushStyle();
   textSize(28*density);
   textBoxRectW = textWidth(textBoxHeader);
@@ -193,16 +207,15 @@ void draw() {
         text("Randomise pet's nature:", width*0.55, height*0.60);
         image(dice, diceX, diceY);
         popStyle();
-        
+
         if (mousePressed && mouseX >= diceX-(dice.width/2) && mouseX <= diceX+(dice.width/2) && mouseY >= diceY-(dice.height/2) && mouseY <= diceY+(dice.height/2)) {
           for (int i = 0; i < traits.length; i = i+1) {
             int randi = int(random(traits[i].length));
             pet.nature[i] = traits[i][randi].string;
           }
-          printArray(pet.nature);
-          gameState = "playing";
+          gameState = "playingGame";
         }
-        
+
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             traits[i][j].display();
@@ -230,6 +243,10 @@ void draw() {
     }
     break;
   case "playingGame":
+    sleepButton.display();
+    statsButton.display();
+    feedButton.display();
+    shopButton.display();
     break;
   case "loadGame":
     break;

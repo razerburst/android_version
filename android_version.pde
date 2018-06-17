@@ -60,17 +60,17 @@ void setup() {
   newGameButton = new TextButton("New game", centerX, height*0.4, 32, green);
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
   quitButton = new TextButton("Quit", centerX, height*0.8, 32, green);
-  sleepButton = new TextButton("Sleep", width*0.085, height*0.9, 32, purple);
+  
+  sleepButton = new TextButton("Sleep", width*0.086, height*0.9, 32, purple);
   statsButton = new TextButton("Stats", width*0.36, height*0.9, 32, purple);
-  feedButton = new TextButton("Feed", width*0.685, height*0.9, 32, purple);
-  shopButton = new TextButton("Shop", width*0.91, height*0.9, 32, purple);
+  feedButton = new TextButton("Feed", width*0.654, height*0.9, 32, purple);
+  shopButton = new TextButton("Shop", width*0.92, height*0.9, 32, purple);
   
-  println("sleepW:", sleepButton.w);
-  println("statsW:", statsButton.w);
-  println("feedW:", feedButton.w);
-  println("shopW:", shopButton.w);
+  println(sleepButton.w);
+  println(statsButton.w);
+  println(feedButton.w);
+  println(shopButton.w);
   
-
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
 

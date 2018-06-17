@@ -241,8 +241,28 @@ void draw() {
     statsButton.display();
     feedButton.display();
     shopButton.display();
+    
+    if (sleepButton.clicked()) {
+      
+    } else if (statsButton.clicked()) {
+      gameState = "stats";
+    } else if (feedButton.clicked()) {
+      
+    } else if (shopButton.clicked()) {
+      
+    }
     break;
   case "loadGame":
+    break;
+  case "stats":
+    pushStyle();
+    textAlign(LEFT);
+    textSize(24*density);
+    text("Name: " + pet.name, width*0.1, height*0.1);
+    text("Gender: " + pet.gender, width*0.1, height*0.2);
+    text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.3);
+    popStyle();
+    //back button
     break;
   }
 }

@@ -36,6 +36,7 @@ TextButton maleButton;
 TextButton femaleButton;
 TextButton[][] traits = new TextButton[4][2];
 TextButton startButton;
+TextButton backButton;
 
 PImage dice;
 float diceX;
@@ -66,8 +67,8 @@ void setup() {
   feedButton = new TextButton("Feed", width*0.654, height*0.9, 32, purple);
   shopButton = new TextButton("Shop", width*0.92, height*0.9, 32, purple);
 
-  maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
-  femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
+  maleButton = new TextButton("Male", width*0.45, height*0.34, 28, red);
+  femaleButton = new TextButton("Female", width*0.55, height*0.34, 28, red);
 
   traits[0][0] = new TextButton("Early Bird", width*0.16, height*0.67, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.36, height*0.67, 24, lightBlue);
@@ -80,6 +81,7 @@ void setup() {
 
   startButton = new TextButton("Start!", centerX, height*0.46, 34, purple);
   startButton.defaultColour = red;
+  backButton = new TextButton("Back", width*0.95, height*0.05, 34, green);
 
   pushStyle();
   textSize(28*density);
@@ -177,8 +179,12 @@ void draw() {
     popStyle();
 
     if (entered) {
+      pushStyle();
+      textAlign(RIGHT);
       maleButton.display();
+      textAlign(LEFT);
       femaleButton.display();
+      popStyle();
 
       if (maleButton.clicked()) {
         maleButton.defaultColour = red;
@@ -194,10 +200,11 @@ void draw() {
 
       if (genderPicked) {
         pushStyle();
-        textAlign(LEFT);
+        textAlign(RIGHT);
         fill(blue);
         textSize(24*density);
-        text("Choose pet's nature:", width*0.09, height*0.60);
+        text("Choose pet's nature:", width*0.45, height*0.60);
+        textAlign(LEFT);
         fill(purple);
         text("Randomise pet's nature:", width*0.55, height*0.60);
         image(dice, diceX, diceY);

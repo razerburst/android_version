@@ -70,16 +70,16 @@ void setup() {
   maleButton = new TextButton("Male", width*0.45, height*0.34, 28, red);
   femaleButton = new TextButton("Female", width*0.55, height*0.34, 28, red);
 
-  traits[0][0] = new TextButton("Early Bird", width*0.16, height*0.67, 24, lightBlue);
-  traits[0][1] = new TextButton("Night Owl", width*0.36, height*0.67, 24, lightBlue);
-  traits[1][0] = new TextButton("Energetic", width*0.16, height*0.75, 24, green);
-  traits[1][1] = new TextButton("Lethargic", width*0.36, height*0.75, 24, green);
-  traits[2][0] = new TextButton("Impatient", width*0.16, height*0.83, 24, orange);
-  traits[2][1] = new TextButton("Composed", width*0.36, height*0.83, 24, orange);
-  traits[3][0] = new TextButton("Friendly", width*0.16, height*0.91, 24, magenta);
-  traits[3][1] = new TextButton("Hostile", width*0.36, height*0.91, 24, magenta);
+  traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.67, 24, lightBlue);
+  traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.67, 24, lightBlue);
+  traits[1][0] = new TextButton("Energetic", width*0.18, height*0.75, 24, green);
+  traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.75, 24, green);
+  traits[2][0] = new TextButton("Impatient", width*0.18, height*0.83, 24, orange);
+  traits[2][1] = new TextButton("Composed", width*0.38, height*0.83, 24, orange);
+  traits[3][0] = new TextButton("Friendly", width*0.18, height*0.91, 24, magenta);
+  traits[3][1] = new TextButton("Hostile", width*0.38, height*0.91, 24, magenta);
 
-  startButton = new TextButton("Start!", centerX, height*0.46, 34, purple);
+  startButton = new TextButton("Start!", centerX, height*0.45, 34, purple);
   startButton.defaultColour = red;
   backButton = new TextButton("Back", width*0.95, height*0.05, 34, green);
 

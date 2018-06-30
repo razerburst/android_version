@@ -152,6 +152,12 @@ class Pet {
 
 void draw() {
   background(255);
+  if ((gameState != "mainMenu") && (gameState != "newGame")) {
+    pushStyle();
+    textAlign(RIGHT, TOP);
+    backButton.display();
+    popStyle();
+  }
   switch(gameState) {
   case "mainMenu":
     newGameButton.display();

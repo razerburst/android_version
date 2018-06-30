@@ -81,7 +81,7 @@ void setup() {
 
   startButton = new TextButton("Start!", centerX, height*0.45, 34, purple);
   startButton.defaultColour = red;
-  backButton = new TextButton("Back", width*0.95, height*0.05, 34, green);
+  backButton = new TextButton("Back", width*0.97, height*0.05, 34, red);
 
   pushStyle();
   textSize(28*density);
@@ -157,6 +157,13 @@ void draw() {
     textAlign(RIGHT, TOP);
     backButton.display();
     popStyle();
+    if (backButton.clicked()) {
+      if (gameState == "playingGame") {
+        gameState = "mainMenu";
+      } else {
+        gameState = "playingGame";
+      }
+    }
   }
   switch(gameState) {
   case "mainMenu":
@@ -254,15 +261,12 @@ void draw() {
     statsButton.display();
     feedButton.display();
     shopButton.display();
-    
+
     if (sleepButton.clicked()) {
-      
     } else if (statsButton.clicked()) {
       gameState = "stats";
     } else if (feedButton.clicked()) {
-      
     } else if (shopButton.clicked()) {
-      
     }
     break;
   case "loadGame":

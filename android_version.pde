@@ -67,8 +67,8 @@ void setup() {
   feedButton = new TextButton("Feed", width*0.654, height*0.9, 32, purple);
   shopButton = new TextButton("Shop", width*0.92, height*0.9, 32, purple);
 
-  maleButton = new TextButton("Male", width*0.45, height*0.34, 28, red);
-  femaleButton = new TextButton("Female", width*0.55, height*0.34, 28, red);
+  maleButton = new TextButton("Male", width*0.45, height*0.34, 28, red, RIGHT, CENTER);
+  femaleButton = new TextButton("Female", width*0.55, height*0.34, 28, red, LEFT, CENTER);
 
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.67, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.67, 24, lightBlue);
@@ -100,12 +100,29 @@ class TextButton {
   String string;
   float x;
   float y;
+  int h;
+  int v;
   int size;
   color hoverColour;
   color defaultColour;
   float asc;
   float desc;
   float w;
+
+  TextButton(String _string, float _x, float _y, int _size, color _hoverColour, int _h, int _v) {
+    string = _string;
+    x = _x;
+    y = _y;
+    h = _h;
+    v = _v;
+    size = _size;
+    hoverColour = _hoverColour;
+    defaultColour = black;
+    textSize(size*density);
+    asc = textAscent();
+    desc = textDescent();
+    w = textWidth(string);
+  }
 
   TextButton(String _string, float _x, float _y, int _size, color _hoverColour) {
     string = _string;
@@ -128,11 +145,13 @@ class TextButton {
     } else {
       fill(defaultColour);
     }
+    textAlign(h, v);
     text(string, x, y);
     popStyle();
   }
 
   boolean mouseCollide() {
+    rect((x-h)-(w/2), (y-v)-(asc/2), w, asc+desc);
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
   }
 }
@@ -174,12 +193,8 @@ void draw() {
     popStyle();
 
     if (entered) {
-      pushStyle();
-      textAlign(RIGHT);
       maleButton.display();
-      textAlign(LEFT);
       femaleButton.display();
-      popStyle();
 
       if (genderPicked) {
         pushStyle();

@@ -31,6 +31,7 @@ TextButton shopButton;
 
 boolean entered;
 boolean genderPicked;
+int traitsPicked;
 TextButton maleButton;
 
 TextButton femaleButton;
@@ -67,8 +68,8 @@ void setup() {
   feedButton = new TextButton("Feed", width*0.654, height*0.9, 32, purple);
   shopButton = new TextButton("Shop", width*0.92, height*0.9, 32, purple);
 
-  maleButton = new TextButton("Male", width*0.45, height*0.34, 28, red, RIGHT, CENTER);
-  femaleButton = new TextButton("Female", width*0.55, height*0.34, 28, red, LEFT, CENTER);
+  maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
+  femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
 
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.67, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.67, 24, lightBlue);
@@ -79,9 +80,8 @@ void setup() {
   traits[3][0] = new TextButton("Friendly", width*0.18, height*0.91, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.91, 24, magenta);
 
-  startButton = new TextButton("Start!", centerX, height*0.45, 34, purple);
-  startButton.defaultColour = red;
-  backButton = new TextButton("Back", width*0.97, height*0.05, 34, red);
+  startButton = new TextButton("Start!", centerX, height*0.45, 34, green);
+  backButton = new TextButton("Back", width*0.93, height*0.05, 34, red);
 
   pushStyle();
   textSize(28*density);
@@ -109,21 +109,6 @@ class TextButton {
   float desc;
   float w;
 
-  TextButton(String _string, float _x, float _y, int _size, color _hoverColour, int _h, int _v) {
-    string = _string;
-    x = _x;
-    y = _y;
-    h = _h;
-    v = _v;
-    size = _size;
-    hoverColour = _hoverColour;
-    defaultColour = black;
-    textSize(size*density);
-    asc = textAscent();
-    desc = textDescent();
-    w = textWidth(string);
-  }
-
   TextButton(String _string, float _x, float _y, int _size, color _hoverColour) {
     string = _string;
     x = _x;
@@ -145,13 +130,15 @@ class TextButton {
     } else {
       fill(defaultColour);
     }
-    textAlign(h, v);
     text(string, x, y);
     popStyle();
   }
 
   boolean mouseCollide() {
-    rect((x-h)-(w/2), (y-v)-(asc/2), w, asc+desc);
+    pushStyle();
+    fill(0, 200);
+    rect(x-(w/2), y-(asc/2), w, asc+desc);
+    popStyle();
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
   }
 }
@@ -168,10 +155,7 @@ class Pet {
 void draw() {
   background(255);
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
-    pushStyle();
-    textAlign(RIGHT, TOP);
     backButton.display();
-    popStyle();
   }
   switch(gameState) {
   case "mainMenu":
@@ -180,7 +164,7 @@ void draw() {
     quitButton.display();
     break;
   case "newGame":
-    int traitsPicked = 0;
+    traitsPicked = 0;
     pushStyle();
     textSize(28*density);
     text(textBoxHeader, width/2, height*0.1);
@@ -198,13 +182,11 @@ void draw() {
 
       if (genderPicked) {
         pushStyle();
-        textAlign(RIGHT);
         fill(blue);
         textSize(24*density);
-        text("Choose pet's nature:", width*0.45, height*0.60);
-        textAlign(LEFT);
+        text("Choose pet's nature:", width*0.28, height*0.60);
         fill(purple);
-        text("Randomise pet's nature:", width*0.55, height*0.60);
+        text("Randomise pet's nature:", width*0.75, height*0.60);
         image(dice, diceX, diceY);
         popStyle();
 
@@ -220,7 +202,7 @@ void draw() {
         if (traitsPicked == 4) {
           startButton.display();
         }
-
+        //fix
         if (mousePressed && mouseX >= diceX-(dice.width/2) && mouseX <= diceX+(dice.width/2) && mouseY >= diceY-(dice.height/2) && mouseY <= diceY+(dice.height/2)) {
           for (int i = 0; i < traits.length; i = i+1) {
             int randi = int(random(traits[i].length));
@@ -272,11 +254,13 @@ void keyPressed() {
 }
 
 void mouseReleased() {
-  if (backButton.mouseCollide()) {
-    if (gameState == "playingGame") {
-      gameState = "mainMenu";
-    } else {
-      gameState = "playingGame";
+  if ((gameState != "mainMenu") && (gameState != "newGame")) {
+    if (backButton.mouseCollide()) {
+      if (gameState == "playingGame" || gameState == "loadGame") {
+        gameState = "mainMenu";
+      } else {
+        gameState = "playingGame";
+      }
     }
   }
   switch(gameState) {
@@ -294,32 +278,38 @@ void mouseReleased() {
     } else {
       closeKeyboard();
     }
-    if (maleButton.mouseCollide()) {
-      maleButton.defaultColour = red;
-      femaleButton.defaultColour = black;
-      pet.gender = "male";
-      genderPicked = true;
-    } else if (femaleButton.mouseCollide()) {
-      femaleButton.defaultColour = red;
-      maleButton.defaultColour = black;
-      pet.gender = "female";
-      genderPicked = true;
-    }
-    for (int i = 0; i < traits.length; i = i+1) {
-      for (int j = 0; j < traits[i].length; j = j+1) {
-        if (traits[i][j].mouseCollide()) {
-          traits[i][j].defaultColour = traits[i][j].hoverColour;
-          pet.nature[i] = traits[i][j].string;
-          if (j == 0) {
-            traits[i][j+1].defaultColour = black;
-          } else {
-            traits[i][j-1].defaultColour = black;
+    if (entered) {
+      if (maleButton.mouseCollide()) {
+        maleButton.defaultColour = red;
+        femaleButton.defaultColour = black;
+        pet.gender = "male";
+        genderPicked = true;
+      } else if (femaleButton.mouseCollide()) {
+        femaleButton.defaultColour = red;
+        maleButton.defaultColour = black;
+        pet.gender = "female";
+        genderPicked = true;
+      }
+      if (genderPicked) {
+        for (int i = 0; i < traits.length; i = i+1) {
+          for (int j = 0; j < traits[i].length; j = j+1) {
+            if (traits[i][j].mouseCollide()) {
+              traits[i][j].defaultColour = traits[i][j].hoverColour;
+              pet.nature[i] = traits[i][j].string;
+              if (j == 0) {
+                traits[i][j+1].defaultColour = black;
+              } else {
+                traits[i][j-1].defaultColour = black;
+              }
+            }
+          }
+        }
+        if (traitsPicked == 4) {
+          if (startButton.mouseCollide()) {
+            gameState = "playingGame";
           }
         }
       }
-    }
-    if (startButton.mouseCollide()) {
-      gameState = "playingGame";
     }
     break;
   case "playingGame":

@@ -1,3 +1,4 @@
+//todo: save states screen (load menu), fix back button staying red
 import android.util.DisplayMetrics;
 
 int density;
@@ -71,14 +72,14 @@ void setup() {
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
 
-  traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.67, 24, lightBlue);
-  traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.67, 24, lightBlue);
-  traits[1][0] = new TextButton("Energetic", width*0.18, height*0.75, 24, green);
-  traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.75, 24, green);
-  traits[2][0] = new TextButton("Impatient", width*0.18, height*0.83, 24, orange);
-  traits[2][1] = new TextButton("Composed", width*0.38, height*0.83, 24, orange);
-  traits[3][0] = new TextButton("Friendly", width*0.18, height*0.91, 24, magenta);
-  traits[3][1] = new TextButton("Hostile", width*0.38, height*0.91, 24, magenta);
+  traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
+  traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
+  traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
+  traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
+  traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
+  traits[2][1] = new TextButton("Composed", width*0.38, height*0.84, 24, orange);
+  traits[3][0] = new TextButton("Friendly", width*0.18, height*0.92, 24, magenta);
+  traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
   startButton = new TextButton("Start!", centerX, height*0.45, 34, green);
   backButton = new TextButton("Back", width*0.93, height*0.05, 34, red);
@@ -135,10 +136,6 @@ class TextButton {
   }
 
   boolean mouseCollide() {
-    pushStyle();
-    fill(0, 200);
-    rect(x-(w/2), y-(asc/2), w, asc+desc);
-    popStyle();
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
   }
 }

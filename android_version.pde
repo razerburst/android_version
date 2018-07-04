@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), fix back button staying red
+//todo: save states screen (load menu), fix back button staying red, maybe change to mousePressed
 import android.util.DisplayMetrics;
 
 int density;
@@ -127,6 +127,7 @@ class TextButton {
     pushStyle();
     textSize(size*density);
     if (mouseCollide()) {
+    if (mouseCollide() && mousePressed) {
       fill(hoverColour);
     } else {
       fill(defaultColour);
@@ -150,6 +151,7 @@ class Pet {
 }
 
 void draw() {
+  print(mouseX + " " + mouseY);
   background(255);
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     backButton.display();

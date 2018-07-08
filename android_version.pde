@@ -152,27 +152,30 @@ class Pet {
 }
 
 class Time {
-  float seconds;
-  float minutes = 59;
-  float hours = 23;
-  
+  int millis;
+  int seconds;
+  int minutes;
+  int hours;
+  int multiplier;
+
   Time() {
-    
+    multiplier = (24*60)/5;
   }
-  
+
   String AM_or_PM() {
-    seconds = millis()/1000;
+    millis = millis()*multiplier;
+    seconds = millis/1000;
     minutes = seconds/60;
-    hours = (minutes/60)%24;
-    if ((hours > 0) && (hours < 12)) {
+    hours = minutes/60;
+    if ((hours >= 0) && (hours < 12)) {
       return "AM";
     } else {
       return "PM";
     }
   }
-  
+
   void display() {
-    String clock = str(int(hours)) + ":" + str(int(minutes)) + ":" + str(int(seconds));
+    String clock = str(hours%24) + ":" + str(minutes%60);
     pushStyle();
     textAlign(LEFT, TOP);
     text(clock, width*0.01, height*0.01);

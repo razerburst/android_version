@@ -15,6 +15,7 @@ color magenta = color(255, 68, 149);
 color purple = color(199, 55, 173);
 
 Pet pet;
+Time time;
 String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
@@ -59,6 +60,7 @@ void setup() {
   textAlign(CENTER, CENTER);
   imageMode(CENTER);
   pet = new Pet();
+  time = new Time();
 
   newGameButton = new TextButton("New game", centerX, height*0.4, 32, green);
   loadButton = new TextButton("Load", centerX, height*0.6, 32, green);
@@ -149,15 +151,40 @@ class Pet {
   }
 }
 
-static class Time {
+class Time {
+  float seconds;
+  float minutes = 59;
+  float hours = 23;
   
-  void AM_or_PM() {
-    int millis = millis();
+  Time() {
+    
+  }
+  
+  String AM_or_PM() {
+    seconds = millis()/1000;
+    minutes = seconds/60;
+    hours = (minutes/60)%24;
+    if ((hours > 0) && (hours < 12)) {
+      return "AM";
+    } else {
+      return "PM";
+    }
+  }
+  
+  void display() {
+    String clock = str(int(hours)) + ":" + str(int(minutes)) + ":" + str(int(seconds));
+    pushStyle();
+    textAlign(LEFT, TOP);
+    text(clock, width*0.01, height*0.01);
+    text(AM_or_PM(), width*0.01 + textWidth(clock), height*0.01);
+    popStyle();
   }
 }
 
 void draw() {
   background(255);
+  time.AM_or_PM();
+  time.display();
 
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     backButton.display();

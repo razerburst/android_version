@@ -167,7 +167,7 @@ class Time {
     seconds = millis/1000;
     minutes = seconds/60;
     hours = minutes/60;
-    if ((hours >= 0) && (hours < 12)) {
+    if ((hours%24 >= 0) && (hours%24 < 12)) {
       return "AM";
     } else {
       return "PM";

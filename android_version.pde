@@ -126,7 +126,6 @@ class TextButton {
   void display() {
     pushStyle();
     textSize(size*density);
-    if (mouseCollide()) {
     if (mouseCollide() && mousePressed) {
       fill(hoverColour);
     } else {
@@ -150,18 +149,27 @@ class Pet {
   }
 }
 
+static class Time {
+  
+  void AM_or_PM() {
+    int millis = millis();
+  }
+}
+
 void draw() {
-  print(mouseX + " " + mouseY);
   background(255);
+
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     backButton.display();
   }
+
   switch(gameState) {
   case "mainMenu":
     newGameButton.display();
     loadButton.display();
     quitButton.display();
     break;
+
   case "newGame":
     traitsPicked = 0;
     pushStyle();
@@ -201,7 +209,7 @@ void draw() {
         if (traitsPicked == 4) {
           startButton.display();
         }
-        //fix
+
         if (mousePressed && mouseX >= diceX-(dice.width/2) && mouseX <= diceX+(dice.width/2) && mouseY >= diceY-(dice.height/2) && mouseY <= diceY+(dice.height/2)) {
           for (int i = 0; i < traits.length; i = i+1) {
             int randi = int(random(traits[i].length));
@@ -212,12 +220,14 @@ void draw() {
       }
     }
     break;
+
   case "playingGame":
     sleepButton.display();
     statsButton.display();
     feedButton.display();
     shopButton.display();
     break;
+
   case "stats":
     pushStyle();
     textAlign(LEFT);
@@ -227,6 +237,7 @@ void draw() {
     text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.3);
     popStyle();
     break;
+
   case "loadGame":
     break;
   }
@@ -262,6 +273,7 @@ void mouseReleased() {
       }
     }
   }
+
   switch(gameState) {
   case "mainMenu":
     if (newGameButton.mouseCollide()) {
@@ -271,24 +283,27 @@ void mouseReleased() {
     } else if (quitButton.mouseCollide()) {
     }
     break;
+
   case "newGame":
     if (mouseX >= centerX-(textBoxRectW/2) && mouseX <= centerX+(textBoxRectW/2) && mouseY >= textBoxRectY-(textBoxRectH/2) && mouseY <= textBoxRectY+(textBoxRectH/2)) {
       openKeyboard();
     } else {
       closeKeyboard();
     }
+
     if (entered) {
       if (maleButton.mouseCollide()) {
         maleButton.defaultColour = red;
         femaleButton.defaultColour = black;
-        pet.gender = "male";
+        pet.gender = "Male";
         genderPicked = true;
       } else if (femaleButton.mouseCollide()) {
         femaleButton.defaultColour = red;
         maleButton.defaultColour = black;
-        pet.gender = "female";
+        pet.gender = "Female";
         genderPicked = true;
       }
+
       if (genderPicked) {
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
@@ -303,6 +318,7 @@ void mouseReleased() {
             }
           }
         }
+
         if (traitsPicked == 4) {
           if (startButton.mouseCollide()) {
             gameState = "playingGame";
@@ -311,6 +327,7 @@ void mouseReleased() {
       }
     }
     break;
+
   case "playingGame":
     if (sleepButton.mouseCollide()) {
     } else if (statsButton.mouseCollide()) {

@@ -163,7 +163,7 @@ class Time {
   }
 
   String AM_or_PM() {
-    millis = millis()*multiplier;
+    millis = millis()*multiplier*8;
     seconds = millis/1000;
     minutes = seconds/60;
     hours = minutes/60;
@@ -175,7 +175,7 @@ class Time {
   }
 
   void display() {
-    String clock = str(hours%24) + ":" + str(minutes%60);
+    String clock = nf(hours%24, 2) + ":" + nf(minutes%60, 2);
     pushStyle();
     textAlign(LEFT, TOP);
     text(clock, width*0.01, height*0.01);

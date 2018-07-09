@@ -163,7 +163,7 @@ class Time {
   }
 
   String AM_or_PM() {
-    millis = millis()*multiplier*8;
+    millis = millis()*multiplier*16;
     seconds = millis/1000;
     minutes = seconds/60;
     hours = minutes/60;

@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), fix back button staying red, maybe change to mousePressed
+//todo: save states screen (load menu), clock starts when new game created - kept at 0 until this happens, or minus time from beginning up until this point
 import android.util.DisplayMetrics;
 
 int density;
@@ -163,7 +163,7 @@ class Time {
   }
 
   String AM_or_PM() {
-    millis = millis()*multiplier*16;
+    millis = millis()*multiplier;
     seconds = millis/1000;
     minutes = seconds/60;
     hours = minutes/60;
@@ -178,6 +178,7 @@ class Time {
     String clock = nf(hours%24, 2) + ":" + nf(minutes%60, 2);
     pushStyle();
     textAlign(LEFT, TOP);
+    textSize(32*density);
     text(clock, width*0.01, height*0.01);
     text(AM_or_PM(), width*0.01 + textWidth(clock), height*0.01);
     popStyle();
@@ -186,11 +187,12 @@ class Time {
 
 void draw() {
   background(255);
-  time.AM_or_PM();
-  time.display();
 
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     backButton.display();
+    if (gameState != "loadGame") {
+      time.display();
+    }
   }
 
   switch(gameState) {

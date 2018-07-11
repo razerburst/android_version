@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), clock starts when new game created - kept at 0 until this happens, or minus time from beginning up until this point
+//todo: save states screen (load menu), clock starts when new game created - kept at 0 until this happens, or minus time from beginning up until this point -- "expressed as a percentage of"
 import android.util.DisplayMetrics;
 
 int density;
@@ -44,6 +44,8 @@ TextButton backButton;
 PImage dice;
 float diceX;
 float diceY;
+
+int startTime = 0;
 
 void setup() {
   fullScreen();
@@ -161,12 +163,15 @@ class Time {
   Time() {
     multiplier = (24*60)/5;
   }
-
-  String AM_or_PM() {
-    millis = millis()*multiplier;
+  
+  void update() {
+    millis = (millis()-startTime)*multiplier;
     seconds = millis/1000;
     minutes = seconds/60;
     hours = minutes/60;
+  }
+
+  String AM_or_PM() {
     if ((hours%24 >= 0) && (hours%24 < 12)) {
       return "AM";
     } else {
@@ -191,6 +196,7 @@ void draw() {
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     backButton.display();
     if (gameState != "loadGame") {
+      time.update();
       time.display();
     }
   }
@@ -354,6 +360,7 @@ void mouseReleased() {
         if (traitsPicked == 4) {
           if (startButton.mouseCollide()) {
             gameState = "playingGame";
+            startTime = millis();
           }
         }
       }

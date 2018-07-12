@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), clock starts when new game created - kept at 0 until this happens, or minus time from beginning up until this point -- "expressed as a percentage of"
+//todo: save states screen (load menu), change size of texts, fix positioning of bars
 import android.util.DisplayMetrics;
 
 int density;
@@ -13,6 +13,8 @@ color blue = color(11, 19, 240);
 color orange = color(255, 217, 0);
 color magenta = color(255, 68, 149);
 color purple = color(199, 55, 173);
+color brown = color(158, 55, 0);
+color yellow = color(247, 228, 23);
 
 Pet pet;
 Time time;
@@ -46,6 +48,11 @@ float diceX;
 float diceY;
 
 int startTime = 0;
+
+Bar healthBar;
+Bar hungerBar;
+Bar fatigueBar;
+Bar happinessBar;
 
 void setup() {
   fullScreen();
@@ -99,6 +106,11 @@ void setup() {
   dice.resize(70*density, 70*density);
   diceX = width*0.75;
   diceY = height*0.76;
+  
+  healthBar = new Bar(width*0.05, height*0.2, red, "Health");
+  hungerBar = new Bar(width*0.05, height*0.35, brown, "Hunger");
+  fatigueBar = new Bar(width*0.05, height*0.5, blue, "Fatigue");
+  happinessBar = new Bar(width*0.05, height*0.65, yellow, "Happiness");
 }
 
 class TextButton {
@@ -190,6 +202,33 @@ class Time {
   }
 }
 
+class Bar {
+  float x;
+  float y;
+  float w = 550;
+  float h = 75;
+  color colour;
+  String name;
+  
+  Bar(float _x, float _y, color _colour, String _name) {
+    x = _x;
+    y = _y;
+    colour = _colour;
+    name = _name;
+  }
+  
+  void display() {
+    pushStyle();
+    stroke(0);
+    strokeWeight(8);
+    textAlign(CENTER, BOTTOM);
+    text(name, x+(w/2), y);
+    fill(colour);
+    rect(x, y, w, h);
+    popStyle();
+  }
+}
+
 void draw() {
   background(255);
 
@@ -254,6 +293,7 @@ void draw() {
             pet.nature[i] = traits[i][randi].string;
           }
           gameState = "playingGame";
+          startTime = millis();
         }
       }
     }
@@ -264,6 +304,11 @@ void draw() {
     statsButton.display();
     feedButton.display();
     shopButton.display();
+    
+    healthBar.display();
+    hungerBar.display();
+    fatigueBar.display();
+    happinessBar.display();
     break;
 
   case "stats":

@@ -164,12 +164,16 @@ class Pet {
   int hunger = 0;
   int fatigue = 0;
   int happiness = 100;
+  float baseRate = 100/(24*60);
 
   Pet() {
+    print(baseRate);
   }
   
   void updateStats() {
-    
+    hunger += baseRate;
+    fatigue += baseRate;
+    happiness -= baseRate;
   }
 }
 
@@ -336,6 +340,8 @@ void draw() {
     statsButton.display();
     feedButton.display();
     shopButton.display();
+    
+    pet.updateStats();
     
     healthBar.display();
     hungerBar.display();

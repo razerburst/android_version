@@ -18,7 +18,7 @@ color yellow = color(247, 228, 23);
 
 Pet pet;
 Time time;
-String gameState = "mainMenu";
+String gameState = "playingGame";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -221,11 +221,11 @@ class Bar {
     pushStyle();
     fill(0);
     stroke(0);
-    strokeWeight(8);
+    strokeWeight(64);
     rect(x, y, w, h);
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
-    text(name, x+(w/2), y-4);
+    text(name, x+(w/2), y-32);
     fill(colour);
     rect(x, y, w, h);
     popStyle();

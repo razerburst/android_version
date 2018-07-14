@@ -160,8 +160,16 @@ class Pet {
   String name;
   String gender;
   String[] nature = new String[4];
+  int health = 100;
+  int hunger = 0;
+  int fatigue = 0;
+  int happiness = 100;
 
   Pet() {
+  }
+  
+  void updateStats() {
+    
   }
 }
 
@@ -209,6 +217,7 @@ class Bar {
   float h = 65;
   color colour;
   String name;
+  int value;
   
   Bar(float _x, float _y, color _colour, String _name) {
     x = _x;
@@ -217,17 +226,37 @@ class Bar {
     name = _name;
   }
   
+  void updateValue() {
+    if (name == "Health") {
+      value = pet.health;
+    } else if (name == "Hunger") {
+      value = pet.hunger;
+    } else if (name == "Fatigue") {
+      value = pet.fatigue;
+    } else if (name == "Happiness") {
+      value = pet.happiness;
+    }
+  }
+  
   void display() {
     pushStyle();
     fill(0);
     stroke(0);
-    strokeWeight(64);
+    strokeWeight(8);
     rect(x, y, w, h);
+    
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
-    text(name, x+(w/2), y-32);
+    text(name, x+(w/2), y-4);
+    
     fill(colour);
     rect(x, y, w, h);
+    
+    textAlign(CENTER, CENTER);
+    textSize(20*density);
+    fill(0);
+    updateValue();
+    text(value + "%", x+(w/2), y+(h/2));
     popStyle();
   }
 }

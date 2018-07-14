@@ -107,10 +107,10 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
   
-  healthBar = new Bar(width*0.05, height*0.2, red, "Health");
-  hungerBar = new Bar(width*0.05, height*0.35, brown, "Hunger");
-  fatigueBar = new Bar(width*0.05, height*0.5, blue, "Fatigue");
-  happinessBar = new Bar(width*0.05, height*0.65, yellow, "Happiness");
+  healthBar = new Bar(width*0.03, height*0.15, red, "Health");
+  hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
+  fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
+  happinessBar = new Bar(width*0.03, height*0.6, yellow, "Happiness");
 }
 
 class TextButton {
@@ -195,7 +195,7 @@ class Time {
     String clock = nf(hours%24, 2) + ":" + nf(minutes%60, 2);
     pushStyle();
     textAlign(LEFT, TOP);
-    textSize(32*density);
+    textSize(26*density);
     text(clock, width*0.01, height*0.01);
     text(AM_or_PM(), width*0.01 + textWidth(clock), height*0.01);
     popStyle();
@@ -205,8 +205,8 @@ class Time {
 class Bar {
   float x;
   float y;
-  float w = 550;
-  float h = 75;
+  float w = 500;
+  float h = 65;
   color colour;
   String name;
   
@@ -219,10 +219,13 @@ class Bar {
   
   void display() {
     pushStyle();
+    fill(0);
     stroke(0);
     strokeWeight(8);
+    rect(x, y, w, h);
     textAlign(CENTER, BOTTOM);
-    text(name, x+(w/2), y);
+    textSize(24*density);
+    text(name, x+(w/2), y-4);
     fill(colour);
     rect(x, y, w, h);
     popStyle();

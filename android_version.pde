@@ -106,7 +106,7 @@ void setup() {
   dice.resize(70*density, 70*density);
   diceX = width*0.75;
   diceY = height*0.76;
-  
+
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
   fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
@@ -160,16 +160,15 @@ class Pet {
   String name;
   String gender;
   String[] nature = new String[4];
-  int health = 100;
-  int hunger = 0;
-  int fatigue = 0;
-  int happiness = 100;
-  float baseRate = 100/(24*60);
+  float health = 100.0;
+  float hunger = 0.0;
+  float fatigue = 0.0;
+  float happiness = 100;
+  float baseRate = 100.0/(5*60*60);
 
   Pet() {
-    print(baseRate);
   }
-  
+
   void updateStats() {
     hunger += baseRate;
     fatigue += baseRate;
@@ -178,21 +177,23 @@ class Pet {
 }
 
 class Time {
-  int millis;
-  int seconds;
-  int minutes;
-  int hours;
+  int frames;
   int multiplier;
+  float seconds;
+  float minutes;
+  float hours;
 
   Time() {
     multiplier = (24*60)/5;
+    //5 minutes in real life = 1440 minutes in gamesta
+    //1 minute in real life = 288 minutes in game
   }
-  
+
   void update() {
-    millis = (millis()-startTime)*multiplier;
-    seconds = millis/1000;
-    minutes = seconds/60;
-    hours = minutes/60;
+    frames = (frameCount-startTime)*multiplier;
+    seconds = frames/60.0;
+    minutes = seconds/60.0;
+    hours = minutes/60.0;
   }
 
   String AM_or_PM() {
@@ -204,7 +205,7 @@ class Time {
   }
 
   void display() {
-    String clock = nf(hours%24, 2) + ":" + nf(minutes%60, 2);
+    String clock = nf(int(hours)%24, 2) + ":" + nf(int(minutes)%60, 2);
     pushStyle();
     textAlign(LEFT, TOP);
     textSize(26*density);
@@ -221,15 +222,15 @@ class Bar {
   float h = 65;
   color colour;
   String name;
-  int value;
-  
+  float value;
+
   Bar(float _x, float _y, color _colour, String _name) {
     x = _x;
     y = _y;
     colour = _colour;
     name = _name;
   }
-  
+
   void updateValue() {
     if (name == "Health") {
       value = pet.health;
@@ -241,21 +242,21 @@ class Bar {
       value = pet.happiness;
     }
   }
-  
+
   void display() {
     pushStyle();
     fill(0);
     stroke(0);
     strokeWeight(8);
     rect(x, y, w, h);
-    
+
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
     text(name, x+(w/2), y-4);
-    
+
     fill(colour);
     rect(x, y, w, h);
-    
+
     textAlign(CENTER, CENTER);
     textSize(20*density);
     fill(0);
@@ -329,7 +330,7 @@ void draw() {
             pet.nature[i] = traits[i][randi].string;
           }
           gameState = "playingGame";
-          startTime = millis();
+          startTime = frameCount;
         }
       }
     }
@@ -340,9 +341,9 @@ void draw() {
     statsButton.display();
     feedButton.display();
     shopButton.display();
-    
+
     pet.updateStats();
-    
+
     healthBar.display();
     hungerBar.display();
     fatigueBar.display();
@@ -443,7 +444,7 @@ void mouseReleased() {
         if (traitsPicked == 4) {
           if (startButton.mouseCollide()) {
             gameState = "playingGame";
-            startTime = millis();
+            startTime = frameCount;
           }
         }
       }

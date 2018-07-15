@@ -164,20 +164,23 @@ class Pet {
   float hunger = 0.0;
   float fatigue = 0.0;
   float happiness = 100;
-  float baseRate = 100.0/(5*60*60);
+  float baseRate = baseRate = 100.0/(5*60);
 
   Pet() {
   }
 
   void updateStats() {
-    hunger += baseRate;
-    fatigue += baseRate;
-    happiness -= baseRate;
+    print((time.millis/time.multiplier) % 1000);
+    if ((time.millis/time.multiplier) % 1000 == 0) {
+      hunger += baseRate;
+      fatigue += baseRate;
+      happiness -= baseRate;
+    }
   }
 }
 
 class Time {
-  int frames;
+  int millis;
   int multiplier;
   float seconds;
   float minutes;
@@ -190,8 +193,8 @@ class Time {
   }
 
   void update() {
-    frames = (frameCount-startTime)*multiplier;
-    seconds = frames/60.0;
+    millis = (millis()-startTime)*multiplier;
+    seconds = millis/1000.0;
     minutes = seconds/60.0;
     hours = minutes/60.0;
   }
@@ -330,7 +333,7 @@ void draw() {
             pet.nature[i] = traits[i][randi].string;
           }
           gameState = "playingGame";
-          startTime = frameCount;
+          startTime = millis();
         }
       }
     }
@@ -444,7 +447,7 @@ void mouseReleased() {
         if (traitsPicked == 4) {
           if (startButton.mouseCollide()) {
             gameState = "playingGame";
-            startTime = frameCount;
+            startTime = millis();
           }
         }
       }

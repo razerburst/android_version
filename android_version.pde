@@ -48,6 +48,7 @@ float diceX;
 float diceY;
 
 int startTime = 0;
+int barTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -170,11 +171,11 @@ class Pet {
   }
 
   void updateStats() {
-    print((time.millis/time.multiplier) % 1000);
-    if ((time.millis/time.multiplier) % 1000 == 0) {
+    if (millis() - barTimer >= 1000) {
       hunger += baseRate;
       fatigue += baseRate;
       happiness -= baseRate;
+      barTimer = millis();
     }
   }
 }

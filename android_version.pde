@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), change size of texts, fix positioning of bars
+//todo: save states screen (load menu)
 import android.util.DisplayMetrics;
 
 int density;
@@ -9,7 +9,7 @@ color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);
 color lightBlue = color(94, 228, 255);
-color blue = color(11, 19, 240);
+color blue = color(11, 5, 201);
 color orange = color(255, 217, 0);
 color magenta = color(255, 68, 149);
 color purple = color(199, 55, 173);
@@ -23,6 +23,7 @@ String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
 float textBoxRectH;
+float textBoxRectX;
 float textBoxRectY;
 
 TextButton newGameButton;
@@ -46,6 +47,9 @@ TextButton backButton;
 PImage dice;
 float diceX;
 float diceY;
+PImage cookie;
+float cookieX;
+float cookieY;
 
 int startTime = 0;
 int barTimer;
@@ -100,6 +104,7 @@ void setup() {
   textSize(28*density);
   textBoxRectW = textWidth(textBoxHeader);
   textBoxRectH = textAscent()+(textDescent()*2);
+  textBoxRectX = centerX;
   textBoxRectY = height*0.2;
   popStyle();
 
@@ -108,10 +113,23 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
+  cookie = loadImage("Cookie.png");
+  cookie.resize(67*density, 61*density);
+  cookieX = width*0.1;
+  cookieY = height*0.3;
+
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
-  fatigueBar = new Bar(width*0.03, height*0.45, lightBlue, "Fatigue");
+  fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
   happinessBar = new Bar(width*0.03, height*0.6, yellow, "Happiness");
+}
+
+boolean rectMouseCollide(float x, float y, float w, float h) {
+  return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(h/2) && mouseY <= y+(h/2);
+}
+
+boolean circleMouseCollide(float x, float y, float d) {
+  return (dist(x, y, mouseX, mouseY) <= d/2);
 }
 
 class TextButton {
@@ -174,9 +192,9 @@ class Pet {
   void updateStats() {
     //stats update every second
     if (millis() - barTimer >= 1000) {
-      hunger += baseRate;
-      fatigue += baseRate;
-      happiness -= baseRate;
+      hunger = constrain(hunger + baseRate, 0, 100);
+      fatigue = constrain(fatigue + baseRate, 0, 100);
+      happiness = constrain(happiness - baseRate, 0, 100);
       barTimer = millis();
     }
   }
@@ -254,11 +272,11 @@ class Bar {
     stroke(0);
     strokeWeight(8);
     rect(x-4, y-4, w+8, h+8);
-    
+
     textAlign(CENTER, BOTTOM);
     textSize(20*density);
     text(name, x+(w/2), y-8);
-    
+
     updateValue();
     fill(colour);
     noStroke();
@@ -280,6 +298,7 @@ void draw() {
     if (gameState != "loadGame") {
       time.update();
       time.display();
+      pet.updateStats();
     }
   }
 
@@ -298,9 +317,9 @@ void draw() {
     rectMode(CENTER);
     stroke(1);
     noFill();
-    rect(centerX, textBoxRectY, textBoxRectW, textBoxRectH);
+    rect(textBoxRectX, textBoxRectY, textBoxRectW, textBoxRectH);
     textSize(26*density);
-    text(textBoxString, centerX, textBoxRectY);
+    text(textBoxString, textBoxRectX, textBoxRectY);
     popStyle();
 
     if (entered) {
@@ -330,7 +349,7 @@ void draw() {
           startButton.display();
         }
 
-        if (mousePressed && mouseX >= diceX-(dice.width/2) && mouseX <= diceX+(dice.width/2) && mouseY >= diceY-(dice.height/2) && mouseY <= diceY+(dice.height/2)) {
+        if (mousePressed && rectMouseCollide(diceX, diceY, dice.width, dice.height)) {
           for (int i = 0; i < traits.length; i = i+1) {
             int randi = int(random(traits[i].length));
             pet.nature[i] = traits[i][randi].string;
@@ -348,8 +367,6 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    pet.updateStats();
-
     healthBar.display();
     hungerBar.display();
     fatigueBar.display();
@@ -360,10 +377,22 @@ void draw() {
     pushStyle();
     textAlign(LEFT);
     textSize(24*density);
-    text("Name: " + pet.name, width*0.1, height*0.1);
-    text("Gender: " + pet.gender, width*0.1, height*0.2);
-    text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.3);
+    text("Name: " + pet.name, width*0.1, height*0.2);
+    text("Gender: " + pet.gender, width*0.1, height*0.3);
+    text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.4);
     popStyle();
+    break;
+
+  case "feed":
+    pushStyle();
+    textAlign(LEFT, TOP);
+    textSize(34*density);
+    text("Food", width*0.04, height*0.13);
+    popStyle();
+    image(cookie, cookieX, cookieY);
+    break;
+
+  case "shop":
     break;
 
   case "loadGame":
@@ -413,7 +442,7 @@ void mouseReleased() {
     break;
 
   case "newGame":
-    if (mouseX >= centerX-(textBoxRectW/2) && mouseX <= centerX+(textBoxRectW/2) && mouseY >= textBoxRectY-(textBoxRectH/2) && mouseY <= textBoxRectY+(textBoxRectH/2)) {
+    if (rectMouseCollide(textBoxRectX, textBoxRectY, textBoxRectW, textBoxRectH)) {
       openKeyboard();
     } else {
       closeKeyboard();
@@ -462,7 +491,9 @@ void mouseReleased() {
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";
     } else if (feedButton.mouseCollide()) {
+      gameState = "feed";
     } else if (shopButton.mouseCollide()) {
+      gameState = "shop";
     }
   }
 }

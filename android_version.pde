@@ -110,7 +110,7 @@ void setup() {
 
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
-  fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
+  fatigueBar = new Bar(width*0.03, height*0.45, lightBlue, "Fatigue");
   happinessBar = new Bar(width*0.03, height*0.6, yellow, "Happiness");
 }
 
@@ -161,16 +161,18 @@ class Pet {
   String name;
   String gender;
   String[] nature = new String[4];
-  float health = 100.0;
-  float hunger = 0.0;
-  float fatigue = 0.0;
+  float health = 100;
+  float hunger = 0;
+  float fatigue = 0;
   float happiness = 100;
-  float baseRate = baseRate = 100.0/(5*60);
+  float baseRate = 100.0/(5*60);
+  //bar reaches 100% after 300 seconds (5 minutes)
 
   Pet() {
   }
 
   void updateStats() {
+    //stats update every second
     if (millis() - barTimer >= 1000) {
       hunger += baseRate;
       fatigue += baseRate;
@@ -189,7 +191,6 @@ class Time {
 
   Time() {
     multiplier = (24*60)/5;
-    //5 minutes in real life = 1440 minutes in gamesta
     //1 minute in real life = 288 minutes in game
   }
 
@@ -249,23 +250,24 @@ class Bar {
 
   void display() {
     pushStyle();
-    fill(0);
+    noFill();
     stroke(0);
     strokeWeight(8);
-    rect(x, y, w, h);
-
+    rect(x-4, y-4, w+8, h+8);
+    
     textAlign(CENTER, BOTTOM);
-    textSize(24*density);
-    text(name, x+(w/2), y-4);
-
+    textSize(20*density);
+    text(name, x+(w/2), y-8);
+    
+    updateValue();
     fill(colour);
-    rect(x, y, w, h);
+    noStroke();
+    rect(x, y, value*5, h);
 
     textAlign(CENTER, CENTER);
     textSize(20*density);
     fill(0);
-    updateValue();
-    text(value + "%", x+(w/2), y+(h/2));
+    text(round(value) + "%", x+(w/2), y+(h/2));
     popStyle();
   }
 }

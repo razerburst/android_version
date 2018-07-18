@@ -49,6 +49,7 @@ float diceX;
 float diceY;
 
 Item cookie;
+Item petFood;
 
 int startTime = 0;
 int barTimer;
@@ -112,7 +113,8 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
   
-  cookie = new Item("Cookie", "Cookie.png", width*0.1, height*0.32, 67, 61, 3, "test");
+  cookie = new Item("Cookie", "Cookie.png", width*0.27, height*0.4, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.27, height*0.7, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
 
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
@@ -302,16 +304,25 @@ class Item {
     filename = _filename;
     x = _x;
     y = _y;
-    w = _w;
-    h = _h;
+    w = _w*density;
+    h = _h*density;
     price = _price;
     description = _description;
     img = loadImage(filename);
-    img.resize(w*density, h*density);
+    img.resize(w, h);
   }
   
   void display() {
+    pushStyle();
+    textAlign(CENTER, BOTTOM);
+    textSize(30*density);
+    text(name, x, y-(h/2));
+    textAlign(RIGHT, CENTER);
+    textSize(18*density);
+    text(description, (x-(w/2))-10, y);
+    popStyle();
     image(img, x, y);
+    
   }
   
   boolean mouseCollide() {
@@ -414,11 +425,12 @@ void draw() {
 
   case "feed":
     pushStyle();
-    textAlign(LEFT, TOP);
+    textAlign(CENTER, CENTER);
     textSize(34*density);
-    text("Food", width*0.04, height*0.13);
+    text("Food", width*0.27, height*0.15);
     popStyle();
     cookie.display();
+    petFood.display();
     break;
 
   case "shop":
@@ -529,6 +541,8 @@ void mouseReleased() {
   case "feed":
     if (cookie.mouseCollide()) {
       print("test");
+    } else if (petFood.mouseCollide()) {
+      print("test2");
     }
     break;
   }

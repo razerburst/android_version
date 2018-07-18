@@ -1,4 +1,4 @@
-//todo: save states screen (load menu)
+//todo: save states screen (load menu), food class/item class
 import android.util.DisplayMetrics;
 
 int density;
@@ -47,9 +47,8 @@ TextButton backButton;
 PImage dice;
 float diceX;
 float diceY;
-PImage cookie;
-float cookieX;
-float cookieY;
+
+Item cookie;
 
 int startTime = 0;
 int barTimer;
@@ -112,11 +111,8 @@ void setup() {
   dice.resize(70*density, 70*density);
   diceX = width*0.75;
   diceY = height*0.76;
-
-  cookie = loadImage("Cookie.png");
-  cookie.resize(67*density, 61*density);
-  cookieX = width*0.1;
-  cookieY = height*0.3;
+  
+  cookie = new Item("Cookie", "Cookie.png", width*0.1, height*0.32, 67, 61, 3, "test");
 
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
@@ -290,6 +286,39 @@ class Bar {
   }
 }
 
+class Item {
+  String name;
+  String filename;
+  float x;
+  float y;
+  int w;
+  int h;
+  int price;
+  String description;
+  PImage img;
+  
+  Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
+    name = _name;
+    filename = _filename;
+    x = _x;
+    y = _y;
+    w = _w;
+    h = _h;
+    price = _price;
+    description = _description;
+    img = loadImage(filename);
+    img.resize(w*density, h*density);
+  }
+  
+  void display() {
+    image(img, x, y);
+  }
+  
+  boolean mouseCollide() {
+    return circleMouseCollide(x, y, img.width);
+  }
+}
+
 void draw() {
   background(255);
 
@@ -389,7 +418,7 @@ void draw() {
     textSize(34*density);
     text("Food", width*0.04, height*0.13);
     popStyle();
-    image(cookie, cookieX, cookieY);
+    cookie.display();
     break;
 
   case "shop":
@@ -495,5 +524,12 @@ void mouseReleased() {
     } else if (shopButton.mouseCollide()) {
       gameState = "shop";
     }
+    break;
+    
+  case "feed":
+    if (cookie.mouseCollide()) {
+      print("test");
+    }
+    break;
   }
 }

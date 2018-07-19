@@ -50,6 +50,7 @@ float diceY;
 
 Item cookie;
 Item petFood;
+Item snacks;
 
 int startTime = 0;
 int barTimer;
@@ -112,9 +113,10 @@ void setup() {
   dice.resize(70*density, 70*density);
   diceX = width*0.75;
   diceY = height*0.76;
-  
-  cookie = new Item("Cookie", "Cookie.png", width*0.27, height*0.4, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.27, height*0.7, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
+
+  cookie = new Item("Cookie", "Cookie.png", width*0.27, height*0.31, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.27, height*0.59, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
+  snacks = new Item("Snacks", "Snacks.png", width*0.27, height*0.87, 70, 70, 4, "Happiness: +x\nWeight: +x\nHunger: -x");
 
   healthBar = new Bar(width*0.03, height*0.15, red, "Health");
   hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
@@ -182,17 +184,31 @@ class Pet {
   float fatigue = 0;
   float happiness = 100;
   float baseRate = 100.0/(5*60);
+  float healthRate;
+  float hungerRate;
+  float fatigueRate;
+  float happinessRate;
   //bar reaches 100% after 300 seconds (5 minutes)
 
   Pet() {
   }
 
   void updateStats() {
+    //Rates increase by 1% for every 1% of other stats missing/gained, up to triple the rate for each stat
+    healthRate = baseRate + baseRate*((hunger/100)+(fatigue/100)+((100-happiness)/100));
+    hungerRate = baseRate + baseRate*(((100-health)/100)+(fatigue/100)+((100-happiness)/100));
+    fatigueRate = baseRate + baseRate*(((100-health)/100)+(hunger/100)+((100-happiness)/100));
+    happinessRate = baseRate + baseRate*(((100-health)/100)+(fatigue/100)+(hunger/100));
+    
+    //healthRate temporary testing
+    println(healthRate, hungerRate, fatigueRate, happinessRate);
+
     //stats update every second
     if (millis() - barTimer >= 1000) {
-      hunger = constrain(hunger + baseRate, 0, 100);
-      fatigue = constrain(fatigue + baseRate, 0, 100);
-      happiness = constrain(happiness - baseRate, 0, 100);
+      health = constrain(hunger - healthRate, 0, 100);
+      hunger = constrain(hunger + hungerRate, 0, 100);
+      fatigue = constrain(fatigue + fatigueRate, 0, 100);
+      happiness = constrain(happiness - happinessRate, 0, 100);
       barTimer = millis();
     }
   }
@@ -298,7 +314,7 @@ class Item {
   int price;
   String description;
   PImage img;
-  
+
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
     name = _name;
     filename = _filename;
@@ -311,20 +327,19 @@ class Item {
     img = loadImage(filename);
     img.resize(w, h);
   }
-  
+
   void display() {
     pushStyle();
     textAlign(CENTER, BOTTOM);
-    textSize(30*density);
+    textSize(24*density);
     text(name, x, y-(h/2));
     textAlign(RIGHT, CENTER);
     textSize(18*density);
     text(description, (x-(w/2))-10, y);
     popStyle();
     image(img, x, y);
-    
   }
-  
+
   boolean mouseCollide() {
     return circleMouseCollide(x, y, img.width);
   }
@@ -426,11 +441,12 @@ void draw() {
   case "feed":
     pushStyle();
     textAlign(CENTER, CENTER);
-    textSize(34*density);
-    text("Food", width*0.27, height*0.15);
+    textSize(32*density);
+    text("Food", width*0.27, height*0.09);
     popStyle();
     cookie.display();
     petFood.display();
+    snacks.display();
     break;
 
   case "shop":
@@ -537,12 +553,14 @@ void mouseReleased() {
       gameState = "shop";
     }
     break;
-    
+
   case "feed":
     if (cookie.mouseCollide()) {
       print("test");
     } else if (petFood.mouseCollide()) {
       print("test2");
+    } else if (snacks.mouseCollide()) {
+      print("test3");
     }
     break;
   }

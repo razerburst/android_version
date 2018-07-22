@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night
+//todo: save states screen (load menu), sleep faster at night, add weight and age
 import android.util.DisplayMetrics;
 
 int density;
@@ -114,9 +114,9 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.27, height*0.31, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.27, height*0.59, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
-  snacks = new Item("Snacks", "Snacks.png", width*0.27, height*0.87, 70, 70, 4, "Happiness: +x\nWeight: +x\nHunger: -x");
+  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
+  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +x\nWeight: +x\nHunger: -x");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -199,9 +199,6 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-
-    //healthRate temporary testing
-    println(healthRate, hungerRate, fatigueRate, happinessRate);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {
@@ -440,16 +437,11 @@ void draw() {
     break;
 
   case "feed":
-    healthBar.display(width*0.4, height*0.15);
-    hungerBar.display(width*0.4, height*0.3);
-    fatigueBar.display(width*0.4, height*0.45);
-    happinessBar.display(width*0.4, height*0.6);
+    healthBar.display(width*0.35, height*0.15);
+    hungerBar.display(width*0.35, height*0.3);
+    fatigueBar.display(width*0.35, height*0.45);
+    happinessBar.display(width*0.35, height*0.6);
     
-    pushStyle();
-    textAlign(CENTER, CENTER);
-    textSize(32*density);
-    text("Food", width*0.27, height*0.09);
-    popStyle();
     cookie.display();
     petFood.display();
     snacks.display();

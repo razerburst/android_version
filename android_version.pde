@@ -180,7 +180,7 @@ class Pet {
   String gender;
   String[] nature = new String[4];
   float health = 100;
-  float hunger = 0;
+  float hunger = 100;
   float fatigue = 0;
   float happiness = 100;
   float baseRate = 100.0/(5*60);
@@ -205,6 +205,7 @@ class Pet {
 
     //stats update every second
     if (millis() - barTimer >= 1000) {
+      //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
       if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
         health = constrain(health - healthRate, 0, 100);
       } else {

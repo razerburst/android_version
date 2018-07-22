@@ -184,28 +184,30 @@ class Pet {
   float fatigue = 0;
   float happiness = 100;
   float baseRate = 100.0/(5*60);
+  //bar reaches 100% after 300 seconds (5 minutes)
   float healthRate;
   float hungerRate;
   float fatigueRate;
   float happinessRate;
-  //bar reaches 100% after 300 seconds (5 minutes)
 
   Pet() {
   }
 
   void updateStats() {
-    //Rates increase by 1% for every 1% of other stats missing/gained, up to triple the rate for each stat
-    healthRate = baseRate + baseRate*((hunger/100)+(fatigue/100)+((100-happiness)/100));
-    hungerRate = baseRate + baseRate*(((100-health)/100)+(fatigue/100)+((100-happiness)/100));
-    fatigueRate = baseRate + baseRate*(((100-health)/100)+(hunger/100)+((100-happiness)/100));
-    happinessRate = baseRate + baseRate*(((100-health)/100)+(fatigue/100)+(hunger/100));
-    
+    //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
+    healthRate = baseRate * (1+((hunger/100)+(fatigue/100)+((100-happiness)/100)));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)));
+    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+
     //healthRate temporary testing
-    println(healthRate, hungerRate, fatigueRate, happinessRate);
+    println(health, hunger, fatigue, happiness);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {
-      health = constrain(hunger - healthRate, 0, 100);
+      if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
+        health = constrain(health - healthRate, 0, 100);
+      }
       hunger = constrain(hunger + hungerRate, 0, 100);
       fatigue = constrain(fatigue + fatigueRate, 0, 100);
       happiness = constrain(happiness - happinessRate, 0, 100);

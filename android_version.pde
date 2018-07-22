@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), food class/item class
+//todo: save states screen (load menu), sleep faster at night
 import android.util.DisplayMetrics;
 
 int density;
@@ -118,10 +118,10 @@ void setup() {
   petFood = new Item("Pet Food", "Pet_Food.png", width*0.27, height*0.59, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
   snacks = new Item("Snacks", "Snacks.png", width*0.27, height*0.87, 70, 70, 4, "Happiness: +x\nWeight: +x\nHunger: -x");
 
-  healthBar = new Bar(width*0.03, height*0.15, red, "Health");
-  hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
-  fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
-  happinessBar = new Bar(width*0.03, height*0.6, yellow, "Happiness");
+  healthBar = new Bar(red, "Health");
+  hungerBar = new Bar(brown, "Hunger");
+  fatigueBar = new Bar(blue, "Fatigue");
+  happinessBar = new Bar(yellow, "Happiness");
 }
 
 boolean rectMouseCollide(float x, float y, float w, float h) {
@@ -180,7 +180,7 @@ class Pet {
   String gender;
   String[] nature = new String[4];
   float health = 100;
-  float hunger = 100;
+  float hunger = 0;
   float fatigue = 0;
   float happiness = 100;
   float baseRate = 100.0/(5*60);
@@ -258,17 +258,13 @@ class Time {
 }
 
 class Bar {
-  float x;
-  float y;
   float w = 500;
   float h = 65;
   color colour;
   String name;
   float value;
 
-  Bar(float _x, float _y, color _colour, String _name) {
-    x = _x;
-    y = _y;
+  Bar(color _colour, String _name) {
     colour = _colour;
     name = _name;
   }
@@ -285,7 +281,7 @@ class Bar {
     }
   }
 
-  void display() {
+  void display(float x, float y) {
     pushStyle();
     noFill();
     stroke(0);
@@ -427,10 +423,10 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    healthBar.display();
-    hungerBar.display();
-    fatigueBar.display();
-    happinessBar.display();
+    healthBar.display(width*0.03, height*0.15);
+    hungerBar.display(width*0.03, height*0.3);
+    fatigueBar.display(width*0.03, height*0.45);
+    happinessBar.display(width*0.03, height*0.6);
     break;
 
   case "stats":
@@ -444,6 +440,11 @@ void draw() {
     break;
 
   case "feed":
+    healthBar.display(width*0.4, height*0.15);
+    hungerBar.display(width*0.4, height*0.3);
+    fatigueBar.display(width*0.4, height*0.45);
+    happinessBar.display(width*0.4, height*0.6);
+    
     pushStyle();
     textAlign(CENTER, CENTER);
     textSize(32*density);

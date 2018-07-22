@@ -195,13 +195,13 @@ class Pet {
 
   void updateStats() {
     //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
-    healthRate = baseRate * (1+((hunger/100)+(fatigue/100)+((100-happiness)/100)));
+    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 
     //healthRate temporary testing
-    println(health, hunger, fatigue, happiness);
+    println(healthRate, hungerRate, fatigueRate, happinessRate);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {

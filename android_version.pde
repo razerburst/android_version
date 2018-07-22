@@ -207,6 +207,8 @@ class Pet {
     if (millis() - barTimer >= 1000) {
       if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
         health = constrain(health - healthRate, 0, 100);
+      } else {
+        health = constrain(health + healthRate, 0, 100);
       }
       hunger = constrain(hunger + hungerRate, 0, 100);
       fatigue = constrain(fatigue + fatigueRate, 0, 100);

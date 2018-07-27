@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, add weight and age
+//todo: save states screen (load menu), sleep faster at night, add weight and age, animation
 import android.util.DisplayMetrics;
 
 int density;
@@ -88,9 +88,11 @@ void setup() {
 
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
-
+  
+  //something to do with sleep
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
+  //if energetic, hungrier faster but loses weight faster/easier, if lethargic, does not get as hungry, but gains weight much faster
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
   traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
@@ -183,6 +185,8 @@ class Pet {
   float hunger = 0;
   float fatigue = 0;
   float happiness = 100;
+  float weight = 4000;
+  //weight is in grams, displayed in KG
   float baseRate = 100.0/(5*60);
   //bar reaches 100% after 300 seconds (5 minutes)
   float healthRate;

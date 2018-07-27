@@ -92,7 +92,8 @@ void setup() {
   //something to do with sleep
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
-  //if energetic, hungrier faster but loses weight faster/easier, if lethargic, does not get as hungry, but gains weight much faster
+  //if energetic, hungrier faster, but rate of weight gain lower, if lethargic, hungrier slower, but gains weight much faster
+  //if energetic, lose more weight when active, if lethargic, lose less weight when active
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
   traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
@@ -199,8 +200,13 @@ class Pet {
 
   void updateStats() {
     //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
+    if (pet.nature[1] == "Energetic") {
+      weightRate = (weight-4000)/1000;
+    } else if (pet.nature[1] == "Lethargic") {
+      weightRate = (weight-4000)/500;
+    }
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 

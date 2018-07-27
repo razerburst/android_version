@@ -196,9 +196,6 @@ class Pet {
   float happinessRate;
   float weightRate;
 
-  Pet() {
-  }
-
   void updateStats() {
     //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
     if (pet.nature[1] == "Lethargic") {
@@ -212,8 +209,6 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    
-    println(weightRate, hungerRate);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {

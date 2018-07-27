@@ -18,7 +18,7 @@ color yellow = color(247, 228, 23);
 
 Pet pet;
 Time time;
-String gameState = "playingGame";
+String gameState = "mainMenu";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -186,7 +186,7 @@ class Pet {
   float hunger = 0;
   float fatigue = 0;
   float happiness = 100;
-  float weight = 4000;
+  float weight = 5000;
   //weight is in grams, displayed in KG
   float baseRate = 100.0/(5*60);
   //bar reaches 100% after 300 seconds (5 minutes)
@@ -212,8 +212,8 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-
-    println(hungerRate, fatigueRate);
+    
+    println(weightRate, hungerRate);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {

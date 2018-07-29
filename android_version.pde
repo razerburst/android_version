@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, add weight and age, animation
+//todo: save states screen (load menu), sleep faster at night, add weight and age, animation, constrain
 import android.util.DisplayMetrics;
 
 int density;
@@ -117,9 +117,9 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +7\nWeight: +10g\nHunger: -6");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +3\nWeight: +30g\nHunger: -12");
-  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +5\nWeight: +20g\nHunger: -9");
+  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +7\nWeight: +10\nHunger: -6");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +3\nWeight: +30\nHunger: -12");
+  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +5\nWeight: +20\nHunger: -9");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -214,15 +214,19 @@ class Pet {
     if (millis() - barTimer >= 1000) {
       //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
       if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
-        health = constrain(health - healthRate, 0, 100);
+        health -= healthRate;
       } else {
-        health = constrain(health + healthRate, 0, 100);
+        health += healthRate;
       }
-      hunger = constrain(hunger + hungerRate, 0, 100);
-      fatigue = constrain(fatigue + fatigueRate, 0, 100);
-      happiness = constrain(happiness - happinessRate, 0, 100);
+      hunger += hungerRate;
+      fatigue += fatigueRate;
+      happiness -= happinessRate;
       barTimer = millis();
     }
+    health = constrain(health, 0, 100);
+    hunger = constrain(hunger, 0, 100);
+    fatigue = constrain(fatigue, 0, 100);
+    happiness = constrain(happiness, 0, 100);
   }
 }
 
@@ -565,11 +569,17 @@ void mouseReleased() {
 
   case "feed":
     if (cookie.mouseCollide()) {
-      print("test");
+      pet.happiness += 7;
+      pet.weight += 10;
+      pet.hunger -= 6;
     } else if (petFood.mouseCollide()) {
-      print("test2");
+      pet.happiness += 3;
+      pet.weight += 30;
+      pet.hunger -= 12;
     } else if (snacks.mouseCollide()) {
-      print("test3");
+      pet.happiness += 5;
+      pet.weight += 20;
+      pet.hunger -= 9;
     }
     break;
   }

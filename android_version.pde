@@ -117,9 +117,9 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +x\nWeight: +x\nHunger: -x");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +x\nWeight: +x\nHunger: -x");
-  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +x\nWeight: +x\nHunger: -x");
+  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +7\nWeight: +10g\nHunger: -6");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +3\nWeight: +30g\nHunger: -12");
+  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +5\nWeight: +20g\nHunger: -9");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -186,7 +186,7 @@ class Pet {
   float hunger = 0;
   float fatigue = 0;
   float happiness = 100;
-  float weight = 5000;
+  float weight = 4000;
   //weight is in grams, displayed in KG
   float baseRate = 100.0/(5*60);
   //bar reaches 100% after 300 seconds (5 minutes)
@@ -443,6 +443,7 @@ void draw() {
     text("Name: " + pet.name, width*0.1, height*0.2);
     text("Gender: " + pet.gender, width*0.1, height*0.3);
     text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.4);
+    text("Weight: " + pet.weight/1000 + "KG", width*0.1, height*0.5);
     popStyle();
     break;
 

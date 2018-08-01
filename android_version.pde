@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, add weight and age, animation, constrain
+//todo: save states screen (load menu), sleep faster at night, animation, age has effect
 import android.util.DisplayMetrics;
 
 int density;
@@ -52,13 +52,15 @@ Item cookie;
 Item petFood;
 Item snacks;
 
-int startTime = 0;
+int startTime;
 int barTimer;
 
 Bar healthBar;
 Bar hungerBar;
 Bar fatigueBar;
 Bar happinessBar;
+
+int startDayTimer;
 
 void setup() {
   fullScreen();
@@ -181,6 +183,7 @@ class TextButton {
 class Pet {
   String name;
   String gender;
+  int age;
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
@@ -227,6 +230,14 @@ class Pet {
     hunger = constrain(hunger, 0, 100);
     fatigue = constrain(fatigue, 0, 100);
     happiness = constrain(happiness, 0, 100);
+  }
+
+  void updateAge() {
+    if (millis()-startDayTimer >= (5*60*1000)) {
+      println(time.hours, time.minutes);
+      pet.age += 1;
+      startDayTimer = millis();
+    }
   }
 }
 
@@ -366,6 +377,7 @@ void draw() {
       time.update();
       time.display();
       pet.updateStats();
+      pet.updateAge();
     }
   }
 
@@ -423,6 +435,7 @@ void draw() {
           }
           gameState = "playingGame";
           startTime = millis();
+          startDayTimer = millis();
         }
       }
     }
@@ -448,6 +461,7 @@ void draw() {
     text("Gender: " + pet.gender, width*0.1, height*0.3);
     text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.4);
     text("Weight: " + pet.weight/1000 + "KG", width*0.1, height*0.5);
+    text("Age: " + pet.age, width*0.1, height*0.6);
     popStyle();
     break;
 
@@ -550,6 +564,7 @@ void mouseReleased() {
           if (startButton.mouseCollide()) {
             gameState = "playingGame";
             startTime = millis();
+            startDayTimer = millis();
           }
         }
       }

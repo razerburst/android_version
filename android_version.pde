@@ -198,6 +198,11 @@ class Pet {
   float fatigueRate;
   float happinessRate;
   float weightRate;
+  Animation sprite;
+  
+  Pet() {
+    sprite = new Animation("Pet.png");
+  }
 
   void updateStats() {
     //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
@@ -234,7 +239,6 @@ class Pet {
 
   void updateAge() {
     if (millis()-startDayTimer >= (5*60*1000)) {
-      println(time.hours, time.minutes);
       pet.age += 1;
       startDayTimer = millis();
     }
@@ -368,6 +372,20 @@ class Item {
   }
 }
 
+class Animation {
+  String filename;
+  PImage spritesheet;
+  
+  Animation(String filename) {
+    spritesheet = loadImage(filename);
+    resize(spritesheet
+  }
+  
+  void display() {
+    image(spritesheet, centerX, centerY);
+  }
+}
+
 void draw() {
   background(255);
 
@@ -378,6 +396,7 @@ void draw() {
       time.display();
       pet.updateStats();
       pet.updateAge();
+      pet.sprite.display();
     }
   }
 

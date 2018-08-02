@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, animation, age has effect
+//todo: save states screen (load menu), sleep faster at night, age has effect, fix animation
 import android.util.DisplayMetrics;
 
 int density;
@@ -199,9 +199,9 @@ class Pet {
   float happinessRate;
   float weightRate;
   Animation sprite;
-  
+
   Pet() {
-    sprite = new Animation("Pet.png");
+    sprite = new Animation("Pet.png", 450, 180, 2, 5);
   }
 
   void updateStats() {
@@ -374,15 +374,37 @@ class Item {
 
 class Animation {
   String filename;
+  int w;
+  int h;
+  int rows;
+  int columns;
   PImage spritesheet;
-  
-  Animation(String filename) {
+  PImage[] frames;
+
+  Animation(String _filename, int _w, int _h, int _rows, int _columns) {
+    filename = _filename;
+    w = _w*density;
+    h = _h*density;
+    rows = _rows;
+    columns = _columns;
     spritesheet = loadImage(filename);
-    resize(spritesheet
+    spritesheet.resize(w, h);
+    frames = new PImage[rows*columns];
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < columns; j++) {
+        int imgW = w/columns;
+        int imgH = h/rows;
+        int imgX = imgW*j;
+        int imgY = imgH*i;
+        PImage img = spritesheet.get(imgX, imgY, imgW, imgH);
+        frames[j] = img;
+      }
+    }
+    printArray(frames);
   }
-  
+
   void display() {
-    image(spritesheet, centerX, centerY);
+    //image(frames[frameCount%frames.length], centerX, centerY);
   }
 }
 

@@ -390,21 +390,24 @@ class Animation {
     spritesheet = loadImage(filename);
     spritesheet.resize(w, h);
     frames = new PImage[rows*columns];
+    println(frames.length);
+    int imgW = w/columns;
+    int imgH = h/rows;
+    int index = 0;
+    
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
-        int imgW = w/columns;
-        int imgH = h/rows;
         int imgX = imgW*j;
         int imgY = imgH*i;
         PImage img = spritesheet.get(imgX, imgY, imgW, imgH);
-        frames[j] = img;
+        frames[index] = img;
+        index += 1;
       }
     }
-    printArray(frames);
   }
 
   void display() {
-    //image(frames[frameCount%frames.length], centerX, centerY);
+    image(frames[frameCount%frames.length], centerX, centerY);
   }
 }
 

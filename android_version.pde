@@ -201,7 +201,7 @@ class Pet {
   Animation sprite;
 
   Pet() {
-    sprite = new Animation("Pet.png", 450, 180, 2, 5);
+    sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
   }
 
   void updateStats() {
@@ -374,18 +374,23 @@ class Item {
 
 class Animation {
   String filename;
+  float x;
+  float y;
   int w;
   int h;
   int rows;
   int columns;
+  int imgW;
+  int imgH;
   int currentFrame = 0;
   int frameSpeed = 1000;
-  int frameTimer = 0;
   PImage spritesheet;
   PImage[] frames;
 
-  Animation(String _filename, int _w, int _h, int _rows, int _columns) {
+  Animation(String _filename, float _x, float _y, int _w, int _h, int _rows, int _columns) {
     filename = _filename;
+    x = _x;
+    y = _y;
     w = _w*density;
     h = _h*density;
     rows = _rows;
@@ -393,10 +398,9 @@ class Animation {
     spritesheet = loadImage(filename);
     spritesheet.resize(w, h);
     frames = new PImage[rows*columns];
-    int imgW = w/columns;
-    int imgH = h/rows;
+    imgW = w/columns;
+    imgH = h/rows;
     int index = 0;
-    
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
         int imgX = imgW*j;
@@ -409,7 +413,7 @@ class Animation {
   }
 
   void display() {
-    image(frames[currentFrame%frames.length], centerX, centerY);
+    image(frames[currentFrame%frames.length], x, y);
     if (frameCount % 60 == 0) {
       currentFrame += 1;
     }

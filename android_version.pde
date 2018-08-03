@@ -378,6 +378,9 @@ class Animation {
   int h;
   int rows;
   int columns;
+  int currentFrame = 0;
+  int frameSpeed = 1000;
+  int frameTimer = 0;
   PImage spritesheet;
   PImage[] frames;
 
@@ -390,7 +393,6 @@ class Animation {
     spritesheet = loadImage(filename);
     spritesheet.resize(w, h);
     frames = new PImage[rows*columns];
-    println(frames.length);
     int imgW = w/columns;
     int imgH = h/rows;
     int index = 0;
@@ -407,7 +409,10 @@ class Animation {
   }
 
   void display() {
-    image(frames[frameCount%frames.length], centerX, centerY);
+    image(frames[currentFrame%frames.length], centerX, centerY);
+    if (frameCount % 60 == 0) {
+      currentFrame += 1;
+    }
   }
 }
 

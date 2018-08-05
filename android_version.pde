@@ -412,8 +412,8 @@ class Animation {
     }
   }
 
-  void display(int start, int end) {
-    PImage[] displayFrames = (PImage[]) subset(frames, start, end);
+  void display(int start, int numFrames) {
+    PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
     image(displayFrames[currentFrame%displayFrames.length], x, y);
     if (frameCount % 60 == 0) {
       currentFrame += 1;
@@ -431,7 +431,7 @@ void draw() {
       time.display();
       pet.updateStats();
       pet.updateAge();
-      pet.sprite.display(0, 1);
+      pet.sprite.display(0, 2);
     }
   }
 

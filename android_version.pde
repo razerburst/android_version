@@ -413,7 +413,7 @@ class Animation {
   }
 
   void display(int start, int end) {
-    PImage[] displayFrames = subset(frames, start, end);
+    PImage[] displayFrames = (PImage[]) subset(frames, start, end);
     image(displayFrames[currentFrame%displayFrames.length], x, y);
     if (frameCount % 60 == 0) {
       currentFrame += 1;

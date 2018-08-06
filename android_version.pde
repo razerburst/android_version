@@ -243,6 +243,18 @@ class Pet {
       startDayTimer = millis();
     }
   }
+  
+  void displaySprite() {
+    if (happiness >= 75) {
+      sprite.display(0, 2);
+    } else if (happiness >= 50) {
+      sprite.display(2, 2);
+    } else if (happiness >= 25) {
+      sprite.display(4, 2);
+    } else {
+      sprite.display(6, 2);
+    }
+  }
 }
 
 class Time {
@@ -431,7 +443,7 @@ void draw() {
       time.display();
       pet.updateStats();
       pet.updateAge();
-      pet.sprite.display(0, 2);
+      pet.displaySprite();
     }
   }
 

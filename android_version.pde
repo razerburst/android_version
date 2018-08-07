@@ -366,7 +366,7 @@ class Item {
     description = _description;
     img = loadImage(filename);
     img.resize(w, h);
-    amount = 0;
+    amount = 10;
   }
 
   void display() {

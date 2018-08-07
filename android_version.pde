@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, fix animation
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, no shop (buy and sell underneath items)
 import android.util.DisplayMetrics;
 
 int density;
@@ -243,7 +243,7 @@ class Pet {
       startDayTimer = millis();
     }
   }
-  
+
   void displaySprite() {
     if (happiness >= 75) {
       sprite.display(0, 2);
@@ -521,7 +521,7 @@ void draw() {
     hungerBar.display(width*0.03, height*0.3);
     fatigueBar.display(width*0.03, height*0.45);
     happinessBar.display(width*0.03, height*0.6);
-    
+
     pet.displaySprite();
     break;
 
@@ -549,6 +549,9 @@ void draw() {
     break;
 
   case "shop":
+    cookie.display();
+    petFood.display();
+    snacks.display();
     break;
 
   case "loadGame":
@@ -660,15 +663,21 @@ void mouseReleased() {
       pet.happiness += 7;
       pet.weight += 10;
       pet.hunger -= 6;
+      cookie.amount -= 1;
     } else if (petFood.mouseCollide() && petFood.amount > 0) {
       pet.happiness += 3;
       pet.weight += 30;
       pet.hunger -= 12;
+      petFood.amount -= 1;
     } else if (snacks.mouseCollide() && snacks.amount > 0) {
       pet.happiness += 5;
       pet.weight += 20;
       pet.hunger -= 9;
+      snacks.amount -= 1;
     }
+    break;
+
+  case "shop":
     break;
   }
 }

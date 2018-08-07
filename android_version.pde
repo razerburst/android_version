@@ -353,6 +353,7 @@ class Item {
   int price;
   String description;
   PImage img;
+  int amount;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
     name = _name;
@@ -365,6 +366,7 @@ class Item {
     description = _description;
     img = loadImage(filename);
     img.resize(w, h);
+    amount = 0;
   }
 
   void display() {
@@ -375,6 +377,9 @@ class Item {
     textAlign(RIGHT, CENTER);
     textSize(18*density);
     text(description, (x-(w/2))-10, y);
+    textAlign(LEFT, CENTER);
+    textSize(20*density);
+    text(" " + "X" + amount, x+(w/2), y);
     popStyle();
     image(img, x, y);
   }
@@ -443,7 +448,6 @@ void draw() {
       time.display();
       pet.updateStats();
       pet.updateAge();
-      pet.displaySprite();
     }
   }
 
@@ -517,6 +521,8 @@ void draw() {
     hungerBar.display(width*0.03, height*0.3);
     fatigueBar.display(width*0.03, height*0.45);
     happinessBar.display(width*0.03, height*0.6);
+    
+    pet.displaySprite();
     break;
 
   case "stats":
@@ -570,6 +576,7 @@ void keyPressed() {
   }
 }
 
+//detect taps
 void mouseReleased() {
   if ((gameState != "mainMenu") && (gameState != "newGame")) {
     if (backButton.mouseCollide()) {
@@ -649,15 +656,15 @@ void mouseReleased() {
     break;
 
   case "feed":
-    if (cookie.mouseCollide()) {
+    if (cookie.mouseCollide() && cookie.amount > 0) {
       pet.happiness += 7;
       pet.weight += 10;
       pet.hunger -= 6;
-    } else if (petFood.mouseCollide()) {
+    } else if (petFood.mouseCollide() && petFood.amount > 0) {
       pet.happiness += 3;
       pet.weight += 30;
       pet.hunger -= 12;
-    } else if (snacks.mouseCollide()) {
+    } else if (snacks.mouseCollide() && snacks.amount > 0) {
       pet.happiness += 5;
       pet.weight += 20;
       pet.hunger -= 9;

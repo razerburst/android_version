@@ -353,7 +353,9 @@ class Item {
   int price;
   String description;
   PImage img;
-  int amount;
+  int amount = 0;
+  int buttonW = 100;
+  int buttonH = 50;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
     name = _name;
@@ -366,7 +368,6 @@ class Item {
     description = _description;
     img = loadImage(filename);
     img.resize(w, h);
-    amount = 10;
   }
 
   void display() {
@@ -382,11 +383,25 @@ class Item {
     text(" " + "X" + amount, x+(w/2), y);
     popStyle();
     image(img, x, y);
+    
+    pushStyle();
+    rectMode(CENTER);
+    stroke(0);
+    strokeWeight(8);
+    fill(lightBlue);
+    rect(x-(buttonW/2)-4, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    rect(x+(buttonW/2)+4, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    popStyle();
+    
   }
 
   boolean mouseCollide() {
     return circleMouseCollide(x, y, img.width);
   }
+  
+  //boolean onBuy() {
+  //  return rectMouseCollide(x, y+(h/2);
+  //}
 }
 
 class Animation {

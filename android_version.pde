@@ -284,10 +284,10 @@ class Time {
     }
   }
 
-  void display(float x, float y) {
+  void display(float x, float y, int alignX, int alignY) {
     String clock = nf(int(hours)%24, 2) + ":" + nf(int(minutes)%60, 2);
     pushStyle();
-    textAlign(LEFT, TOP);
+    textAlign(alignX, alignY);
     textSize(26*density);
     text(clock, x, y);
     text(AM_or_PM(), x + textWidth(clock), y);
@@ -465,7 +465,7 @@ void draw() {
     time.update();
     pet.updateStats();
     pet.updateAge();
-    time.display(width*0.01, height*0.01);
+    time.display(width*0.01, height*0.01, LEFT, TOP);
   }
 
   switch(gameState) {
@@ -555,7 +555,7 @@ void draw() {
     break;
 
   case "feed":
-    time.display(width*0.5, height*0.01);
+    time.display(width*0.5, height*0.01, CENTER, TOP);
     healthBar.display(width*0.35, height*0.15);
     hungerBar.display(width*0.35, height*0.3);
     fatigueBar.display(width*0.35, height*0.45);

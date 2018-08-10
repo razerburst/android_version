@@ -119,8 +119,8 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.28, 67, 61, 3, "Happiness: +7\nWeight: +10\nHunger: -6");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.56, 70, 70, 6, "Happiness: +3\nWeight: +30\nHunger: -12");
+  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.16, 67, 61, 3, "Happiness: +7\nWeight: +10\nHunger: -6");
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.50, 70, 70, 6, "Happiness: +3\nWeight: +30\nHunger: -12");
   snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +5\nWeight: +20\nHunger: -9");
 
   healthBar = new Bar(red, "Health");
@@ -284,13 +284,13 @@ class Time {
     }
   }
 
-  void display() {
+  void display(float x, float y) {
     String clock = nf(int(hours)%24, 2) + ":" + nf(int(minutes)%60, 2);
     pushStyle();
     textAlign(LEFT, TOP);
     textSize(26*density);
-    text(clock, width*0.01, height*0.01);
-    text(AM_or_PM(), width*0.01 + textWidth(clock), height*0.01);
+    text(clock, x, y);
+    text(AM_or_PM(), x + textWidth(clock), y);
     popStyle();
   }
 }
@@ -459,15 +459,13 @@ class Animation {
 
 void draw() {
   background(255);
-
-  if ((gameState != "mainMenu") && (gameState != "newGame")) {
+  
+  if ((gameState == "playingGame") || (gameState == "Stats")) {
     backButton.display();
-    if (gameState != "loadGame") {
-      time.update();
-      time.display();
-      pet.updateStats();
-      pet.updateAge();
-    }
+    time.update();
+    pet.updateStats();
+    pet.updateAge();
+    time.display(width*0.01, height*0.01);
   }
 
   switch(gameState) {
@@ -557,6 +555,7 @@ void draw() {
     break;
 
   case "feed":
+    time.display(width*0.5, height*0.01);
     healthBar.display(width*0.35, height*0.15);
     hungerBar.display(width*0.35, height*0.3);
     fatigueBar.display(width*0.35, height*0.45);

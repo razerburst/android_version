@@ -389,8 +389,12 @@ class Item {
     stroke(0);
     strokeWeight(8);
     fill(lightBlue);
-    rect(x-(buttonW/2)-4, y+(h/2)+(buttonH/2), buttonW, buttonH);
-    rect(x+(buttonW/2)+4, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    rect(x-(buttonW/2)-14, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    rect(x+(buttonW/2)+14, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    fill(0);
+    textSize(18*density);
+    text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
+    text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
     popStyle();
     
   }

@@ -353,8 +353,10 @@ class Item {
   String description;
   PImage img;
   int amount = 0;
-  int buttonW = 100;
-  int buttonH = 50;
+  float buyButtonW;
+  float buyButtonH;
+  float sellButtonW;
+  float sellButtonH;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
     name = _name;
@@ -367,6 +369,13 @@ class Item {
     description = _description;
     img = loadImage(filename);
     img.resize(w, h);
+    pushStyle();
+    textSize(18*density);
+    buyButtonW = textWidth("Buy");
+    buyButtonH = textAscent() + (textDescent()*3);
+    sellButtonW = textWidth("Sell");
+    sellButtonH = textAscent() + (textDescent()*3);
+    popStyle();
   }
 
   void display() {
@@ -388,12 +397,12 @@ class Item {
     stroke(0);
     strokeWeight(8);
     fill(lightBlue);
-    rect(x-(buttonW/2)-14, y+(h/2)+(buttonH/2), buttonW, buttonH);
-    rect(x+(buttonW/2)+14, y+(h/2)+(buttonH/2), buttonW, buttonH);
+    rect(x-(buyButtonW/2)-14, y+(h/2)+(buyButtonH/2), buyButtonW, buyButtonH);
+    rect(x+(sellButtonW/2)+14, y+(h/2)+(sellButtonH/2), sellButtonW, sellButtonH);
     fill(0);
     textSize(18*density);
-    text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
-    text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
+    text("Buy", x-(buyButtonW/2)-14, y+(h/2)+(buyButtonH/2));
+    text("Sell", x+(sellButtonW/2)+14, y+(h/2)+(sellButtonH/2));
     popStyle();
   }
 

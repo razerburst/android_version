@@ -289,8 +289,7 @@ class Time {
     pushStyle();
     textAlign(alignX, alignY);
     textSize(26*density);
-    text(clock, x, y);
-    text(AM_or_PM(), x + textWidth(clock), y);
+    text(clock + AM_or_PM(), x, y);
     popStyle();
   }
 }
@@ -557,7 +556,7 @@ void draw() {
     break;
 
   case "feed":
-    time.display(width*0.35, height*0.01, LEFT, TOP);
+    time.display(centerX, height*0.01, CENTER, TOP);
     
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);

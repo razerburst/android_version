@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, make changes with align as paramters
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, make changes with align as paramters, make bars rect mode center
 import android.util.DisplayMetrics;
 
 int density;
@@ -464,7 +464,9 @@ void draw() {
       time.update();
       pet.updateStats();
       pet.updateAge();
-      time.display(width*0.01, height*0.01, LEFT, TOP);
+      if (gameState != "feed") {
+        time.display(width*0.01, height*0.01, LEFT, TOP);
+      }
     }
   }
 
@@ -555,11 +557,12 @@ void draw() {
     break;
 
   case "feed":
-    time.display(width*0.5, height*0.01, CENTER, TOP);
-    healthBar.display(width*0.35, height*0.15);
-    hungerBar.display(width*0.35, height*0.3);
-    fatigueBar.display(width*0.35, height*0.45);
-    happinessBar.display(width*0.35, height*0.6);
+    time.display(width*0.35, height*0.01, LEFT, TOP);
+    
+    healthBar.display(centerX-250, height*0.15);
+    hungerBar.display(centerX-250, height*0.3);
+    fatigueBar.display(centerX-250, height*0.45);
+    happinessBar.display(centerX-250, height*0.6);
 
     cookie.display();
     petFood.display();

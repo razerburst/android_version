@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, no shop (buy and sell underneath items)
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, make changes with align as paramters
 import android.util.DisplayMetrics;
 
 int density;
@@ -383,7 +383,7 @@ class Item {
     text(" " + "X" + amount, x+(w/2), y);
     popStyle();
     image(img, x, y);
-    
+
     pushStyle();
     rectMode(CENTER);
     stroke(0);
@@ -396,13 +396,12 @@ class Item {
     text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
     text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
     popStyle();
-    
   }
 
   boolean mouseCollide() {
     return circleMouseCollide(x, y, img.width);
   }
-  
+
   //boolean onBuy() {
   //  return rectMouseCollide(x, y+(h/2);
   //}
@@ -459,13 +458,14 @@ class Animation {
 
 void draw() {
   background(255);
-  
-  if ((gameState == "playingGame") || (gameState == "Stats")) {
+  if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {
     backButton.display();
-    time.update();
-    pet.updateStats();
-    pet.updateAge();
-    time.display(width*0.01, height*0.01, LEFT, TOP);
+    if (gameState != "loadGame") {
+      time.update();
+      pet.updateStats();
+      pet.updateAge();
+      time.display(width*0.01, height*0.01, LEFT, TOP);
+    }
   }
 
   switch(gameState) {
@@ -599,13 +599,11 @@ void keyPressed() {
 
 //detect taps
 void mouseReleased() {
-  if ((gameState != "mainMenu") && (gameState != "newGame")) {
-    if (backButton.mouseCollide()) {
-      if (gameState == "playingGame" || gameState == "loadGame") {
-        gameState = "mainMenu";
-      } else {
-        gameState = "playingGame";
-      }
+  if (backButton.mouseCollide()) {
+    if (gameState == "playingGame" || gameState == "loadGame") {
+      gameState = "mainMenu";
+    } else if (gameState == "stats" || gameState == "feed") {
+      gameState = "playingGame";
     }
   }
 

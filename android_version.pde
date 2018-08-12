@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, make changes with align as paramters, make bars rect mode center
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, change item tap detection
 import android.util.DisplayMetrics;
 
 int density;
@@ -61,6 +61,8 @@ Bar fatigueBar;
 Bar happinessBar;
 
 int startDayTimer;
+
+int money = 0;
 
 void setup() {
   fullScreen();
@@ -129,8 +131,14 @@ void setup() {
   happinessBar = new Bar(yellow, "Happiness");
 }
 
-boolean rectMouseCollide(float x, float y, float w, float h) {
-  return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(h/2) && mouseY <= y+(h/2);
+boolean rectMouseCollide(float x, float y, float w, float h, int mode) {
+  if (mode == CENTER) {
+    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(h/2) && mouseY <= y+(h/2);
+  } else if (mode == CORNER) {
+    return mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= mouseY+h;
+  } else {
+    return false;
+  }
 }
 
 boolean circleMouseCollide(float x, float y, float d) {
@@ -353,10 +361,8 @@ class Item {
   String description;
   PImage img;
   int amount = 0;
-  float buyButtonW;
-  float buyButtonH;
-  float sellButtonW;
-  float sellButtonH;
+  int buttonW = 100;
+  int buttonH = 50;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
     name = _name;
@@ -369,13 +375,6 @@ class Item {
     description = _description;
     img = loadImage(filename);
     img.resize(w, h);
-    pushStyle();
-    textSize(18*density);
-    buyButtonW = textWidth("Buy");
-    buyButtonH = textAscent() + (textDescent()*3);
-    sellButtonW = textWidth("Sell");
-    sellButtonH = textAscent() + (textDescent()*3);
-    popStyle();
   }
 
   void display() {
@@ -393,16 +392,16 @@ class Item {
     image(img, x, y);
 
     pushStyle();
-    rectMode(CENTER);
+    rectMode(CORNER);
     stroke(0);
     strokeWeight(8);
     fill(lightBlue);
-    rect(x-(buyButtonW/2)-14, y+(h/2)+(buyButtonH/2), buyButtonW, buyButtonH);
-    rect(x+(sellButtonW/2)+14, y+(h/2)+(sellButtonH/2), sellButtonW, sellButtonH);
+    textSize(16*density);
+    rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+textDescent());
+    rect(x+14, y+(h/2), buttonW, buttonH+textDescent());
     fill(0);
-    textSize(18*density);
-    text("Buy", x-(buyButtonW/2)-14, y+(h/2)+(buyButtonH/2));
-    text("Sell", x+(sellButtonW/2)+14, y+(h/2)+(sellButtonH/2));
+    text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
+    text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
     popStyle();
   }
 
@@ -410,9 +409,9 @@ class Item {
     return circleMouseCollide(x, y, img.width);
   }
 
-  //boolean onBuy() {
-  //  return rectMouseCollide(x, y+(h/2);
-  //}
+  boolean onBuy() {
+    return rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH, CORNER);
+  }
 }
 
 class Animation {
@@ -525,7 +524,7 @@ void draw() {
           startButton.display();
         }
 
-        if (mousePressed && rectMouseCollide(diceX, diceY, dice.width, dice.height)) {
+        if (mousePressed && rectMouseCollide(diceX, diceY, dice.width, dice.height, CENTER)) {
           for (int i = 0; i < traits.length; i = i+1) {
             int randi = int(random(traits[i].length));
             pet.nature[i] = traits[i][randi].string;
@@ -566,7 +565,7 @@ void draw() {
 
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
-    
+
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);
     fatigueBar.display(centerX-250, height*0.45);
@@ -629,7 +628,7 @@ void mouseReleased() {
     break;
 
   case "newGame":
-    if (rectMouseCollide(textBoxRectX, textBoxRectY, textBoxRectW, textBoxRectH)) {
+    if (rectMouseCollide(textBoxRectX, textBoxRectY, textBoxRectW, textBoxRectH, CENTER)) {
       openKeyboard();
     } else {
       closeKeyboard();

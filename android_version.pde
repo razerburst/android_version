@@ -363,7 +363,7 @@ class Item {
   int hunger;
   String description;
   PImage img;
-  int amount;
+  int amount = 0;
   int buttonW = 100;
   int buttonH = 50;
 
@@ -381,7 +381,6 @@ class Item {
     description = "Happiness: +" + happiness + "\nWeight: +" + weight + "\nHunger: -" + hunger;
     img = loadImage(filename);
     img.resize(w, h);
-    amount = 0;
   }
 
   void display() {
@@ -404,13 +403,13 @@ class Item {
     strokeWeight(8);
     fill(lightBlue);
     textSize(16*density);
-    //make click with textdescent as well
     rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+textDescent());
     rect(x+14, y+(h/2), buttonW, buttonH+textDescent());
     fill(0);
     text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
     text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
     popStyle();
+    rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+10);
   }
 
   void onUse() {
@@ -423,7 +422,8 @@ class Item {
   }
 
   void onBuy() {
-    if (rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH, CORNER) && money >= price) {
+    //textDescent() at 16*density is 10.0
+    if (rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH+10, CORNER) && money >= price) {
       money -= price;
       amount += 1;
     }

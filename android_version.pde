@@ -62,7 +62,7 @@ Bar happinessBar;
 
 int startDayTimer;
 
-int money = 0;
+int money = 1000;
 
 void setup() {
   fullScreen();
@@ -121,9 +121,9 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.25, height*0.16, 67, 61, 3, "Happiness: +7\nWeight: +10\nHunger: -6");
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.25, height*0.50, 70, 70, 6, "Happiness: +3\nWeight: +30\nHunger: -12");
-  snacks = new Item("Snacks", "Snacks.png", width*0.25, height*0.84, 70, 70, 4, "Happiness: +5\nWeight: +20\nHunger: -9");
+  cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 67, 61, 3, 7, 10, 6);
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.50, 70, 70, 6, 3, 30, 12);
+  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.84, 70, 70, 4, 5, 20, 9);
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -135,7 +135,7 @@ boolean rectMouseCollide(float x, float y, float w, float h, int mode) {
   if (mode == CENTER) {
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(h/2) && mouseY <= y+(h/2);
   } else if (mode == CORNER) {
-    return mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= mouseY+h;
+    return mouseX >= x && mouseX <= x+w && mouseY >= y && mouseY <= y+h;
   } else {
     return false;
   }
@@ -358,13 +358,16 @@ class Item {
   int w;
   int h;
   int price;
+  int happiness;
+  int weight;
+  int hunger;
   String description;
   PImage img;
-  int amount = 0;
+  int amount;
   int buttonW = 100;
   int buttonH = 50;
 
-  Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, String _description) {
+  Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
     filename = _filename;
     x = _x;
@@ -372,16 +375,20 @@ class Item {
     w = _w*density;
     h = _h*density;
     price = _price;
-    description = _description;
+    happiness = _happiness;
+    weight = _weight;
+    hunger = _hunger;
+    description = "Happiness: +" + happiness + "\nWeight: +" + weight + "\nHunger: -" + hunger;
     img = loadImage(filename);
     img.resize(w, h);
+    amount = 0;
   }
 
   void display() {
     pushStyle();
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
-    text(name, x, y-(h/2));
+    text(name + "($" + price + ")", x, y-(h/2));
     textAlign(RIGHT, CENTER);
     textSize(18*density);
     text(description, (x-(w/2))-10, y);
@@ -397,6 +404,7 @@ class Item {
     strokeWeight(8);
     fill(lightBlue);
     textSize(16*density);
+    //make click with textdescent as well
     rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+textDescent());
     rect(x+14, y+(h/2), buttonW, buttonH+textDescent());
     fill(0);
@@ -405,12 +413,20 @@ class Item {
     popStyle();
   }
 
-  boolean mouseCollide() {
-    return circleMouseCollide(x, y, img.width);
+  void onUse() {
+    if (circleMouseCollide(x, y, img.width) && amount > 0) {
+      pet.happiness += happiness;;
+      pet.weight += weight;
+      pet.hunger -= hunger;
+      amount -= 1;
+    }
   }
 
-  boolean onBuy() {
-    return rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH, CORNER);
+  void onBuy() {
+    if (rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH, CORNER) && money >= price) {
+      money -= price;
+      amount += 1;
+    }
   }
 }
 
@@ -685,22 +701,13 @@ void mouseReleased() {
     break;
 
   case "feed":
-    if (cookie.mouseCollide() && cookie.amount > 0) {
-      pet.happiness += 7;
-      pet.weight += 10;
-      pet.hunger -= 6;
-      cookie.amount -= 1;
-    } else if (petFood.mouseCollide() && petFood.amount > 0) {
-      pet.happiness += 3;
-      pet.weight += 30;
-      pet.hunger -= 12;
-      petFood.amount -= 1;
-    } else if (snacks.mouseCollide() && snacks.amount > 0) {
-      pet.happiness += 5;
-      pet.weight += 20;
-      pet.hunger -= 9;
-      snacks.amount -= 1;
-    }
+    cookie.onUse();
+    petFood.onUse();
+    snacks.onUse();
+
+    cookie.onBuy();
+    petFood.onBuy();
+    snacks.onBuy();
     break;
 
   case "shop":

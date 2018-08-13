@@ -63,6 +63,7 @@ Bar happinessBar;
 int startDayTimer;
 
 int money = 1000;
+PImage moneyImg;
 
 void setup() {
   fullScreen();
@@ -129,6 +130,9 @@ void setup() {
   hungerBar = new Bar(brown, "Hunger");
   fatigueBar = new Bar(blue, "Fatigue");
   happinessBar = new Bar(yellow, "Happiness");
+  
+  moneyImg = loadImage("Money.png");
+  moneyImg.resize(60*density, 60*density);
 }
 
 boolean rectMouseCollide(float x, float y, float w, float h, int mode) {
@@ -336,6 +340,7 @@ class Bar {
     textAlign(CENTER, BOTTOM);
     textSize(20*density);
     text(name, x+(w/2), y-8);
+    println(x+(w/2));
 
     updateValue();
     fill(colour);
@@ -409,12 +414,12 @@ class Item {
     text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
     text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
     popStyle();
-    rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+10);
   }
 
   void onUse() {
     if (circleMouseCollide(x, y, img.width) && amount > 0) {
-      pet.happiness += happiness;;
+      pet.happiness += happiness;
+      ;
       pet.weight += weight;
       pet.hunger -= hunger;
       amount -= 1;
@@ -426,6 +431,13 @@ class Item {
     if (rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH+10, CORNER) && money >= price) {
       money -= price;
       amount += 1;
+    }
+  }
+
+  void onSell() {
+    if (rectMouseCollide(x+14, y+(h/2), buttonW, buttonH+10, CORNER) && amount > 0) {
+      amount -= 1;
+      money += price;
     }
   }
 }
@@ -565,6 +577,12 @@ void draw() {
     happinessBar.display(width*0.03, height*0.6);
 
     pet.displaySprite();
+    
+    pushStyle();
+    textSize(20*density);
+    text("Money:", width*0.16, height*0.7);
+    popStyle();
+    image(moneyImg, width*0.16, height*0.8);
     break;
 
   case "stats":

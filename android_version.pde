@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, change item tap detection
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low
 import android.util.DisplayMetrics;
 
 int density;
@@ -130,7 +130,7 @@ void setup() {
   hungerBar = new Bar(brown, "Hunger");
   fatigueBar = new Bar(blue, "Fatigue");
   happinessBar = new Bar(yellow, "Happiness");
-  
+
   moneyImg = loadImage("Money.png");
   moneyImg.resize(60*density, 60*density);
 }
@@ -340,7 +340,6 @@ class Bar {
     textAlign(CENTER, BOTTOM);
     textSize(20*density);
     text(name, x+(w/2), y-8);
-    println(x+(w/2));
 
     updateValue();
     fill(colour);
@@ -577,12 +576,19 @@ void draw() {
     happinessBar.display(width*0.03, height*0.6);
 
     pet.displaySprite();
-    
+
     pushStyle();
     textSize(20*density);
-    text("Money:", width*0.16, height*0.7);
-    popStyle();
+    text("Money", width*0.16, height*0.7);
     image(moneyImg, width*0.16, height*0.8);
+    stroke(0);
+    strokeWeight(8);
+    noFill();
+    rectMode(CORNER);
+    rect(width*0.16 - (moneyImg.width/2), height*0.8 - (moneyImg.height/2), moneyImg.width, moneyImg.height);
+    textAlign(LEFT, CENTER);
+    text("X" + money, width*0.16+(moneyImg.width/2), height*0.8);
+    popStyle();
     break;
 
   case "stats":
@@ -726,6 +732,10 @@ void mouseReleased() {
     cookie.onBuy();
     petFood.onBuy();
     snacks.onBuy();
+
+    cookie.onSell();
+    petFood.onSell();
+    snacks.onSell();
     break;
 
   case "shop":

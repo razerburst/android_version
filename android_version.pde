@@ -118,13 +118,13 @@ void setup() {
   popStyle();
 
   dice = loadImage("Dice.png");
-  dice.resize(70*density, 70*density);
+  dice.resize(59*density, 54*density);
   diceX = width*0.75;
   diceY = height*0.76;
 
   cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 67, 61, 3, 7, 10, 6);
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.50, 70, 70, 6, 3, 30, 12);
-  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.84, 70, 70, 4, 5, 20, 9);
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.50, 70, 59, 6, 3, 30, 12);
+  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.84, 52, 58, 4, 5, 20, 9);
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -132,7 +132,7 @@ void setup() {
   happinessBar = new Bar(yellow, "Happiness");
 
   moneyImg = loadImage("Money.png");
-  moneyImg.resize(60*density, 60*density);
+  moneyImg.resize(60*density, 26*density);
 }
 
 boolean rectMouseCollide(float x, float y, float w, float h, int mode) {

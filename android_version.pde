@@ -57,7 +57,6 @@ Item snacks;
 int startTime;
 int barTimer;
 int startDayTimer;
-int displayBubbleTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -217,7 +216,6 @@ class Pet {
   float sleepRate;
   Animation sprite;
   boolean asleep = false;
-  boolean notTired = false;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
@@ -285,8 +283,10 @@ class Pet {
   }
 
   void autoWake() {
-    if (asleep && fatigue <= 0) {
-      asleep = false;
+    if (asleep) {
+      if (fatigue <= 0) {
+        asleep = false;
+      }
     }
   }
 }
@@ -440,7 +440,6 @@ class Item {
   void onUse() {
     if (circleMouseCollide(x, y, img.width) && amount > 0) {
       pet.happiness += happiness;
-      ;
       pet.weight += weight;
       pet.hunger -= hunger;
       amount -= 1;
@@ -588,14 +587,6 @@ void draw() {
     break;
 
   case "playingGame":
-    if (pet.notTired) {
-      if (frameCount-displayBubbleTimer <= 120) {
-        text("I'm not tired!", pet.sprite.x, pet.sprite.y);
-      } else {
-        pet.notTired = false;
-      }
-    }
-
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -758,12 +749,8 @@ void mouseReleased() {
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
-        if (pet.fatigue < 10) {
-          pet.notTired = true;
-          displayBubbleTimer = frameCount;
-        } else {
-          pet.asleep = true;
-        }
+        pet.asleep = true;
+        displayBubbleTimer = frameCount;
       }
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";

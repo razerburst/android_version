@@ -1,4 +1,4 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low
+//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 import android.util.DisplayMetrics;
 
 int density;
@@ -210,7 +210,9 @@ class Pet {
   float fatigueRate;
   float happinessRate;
   float weightRate;
+  float sleepRate;
   Animation sprite;
+  boolean asleep = false;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
@@ -229,6 +231,9 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    //14.0(because float division)/24 to find increase/decrease ratio, then *5)*60) to find how many seconds in 14 in-game hours, divide 100 by this to find how much to
+    //decrease fatigue by every second to reach 100(%) within however many seconds there are in 14 in-game hours
+    sleepRate = 100/(((14.0/24)*5)*60);
 
     //stats update every second
     if (millis() - barTimer >= 1000) {
@@ -239,7 +244,11 @@ class Pet {
         health += healthRate;
       }
       hunger += hungerRate;
-      fatigue += fatigueRate;
+      if (asleep) {
+        fatigue -= sleepRate;
+      } else {
+        fatigue += fatigueRate;
+      }
       happiness -= happinessRate;
       barTimer = millis();
     }
@@ -257,7 +266,9 @@ class Pet {
   }
 
   void displaySprite() {
-    if (happiness >= 75) {
+    if (asleep) {
+      sprite.display(8, 2);
+    } else if (happiness >= 75) {
       sprite.display(0, 2);
     } else if (happiness >= 50) {
       sprite.display(2, 2);
@@ -265,6 +276,12 @@ class Pet {
       sprite.display(4, 2);
     } else {
       sprite.display(6, 2);
+    }
+  }
+  
+  void autoWake() {
+    if (asleep && fatigue <= 0) {
+      asleep = false;
     }
   }
 }
@@ -492,12 +509,14 @@ class Animation {
 
 void draw() {
   background(255);
+  //automatic events
   if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {
     backButton.display();
     if (gameState != "loadGame") {
       time.update();
       pet.updateStats();
       pet.updateAge();
+      pet.autoWake();
       if (gameState != "feed") {
         time.display(width*0.01, height*0.01, LEFT, TOP);
       }
@@ -580,14 +599,9 @@ void draw() {
     pushStyle();
     textSize(20*density);
     text("Money", width*0.16, height*0.7);
-    image(moneyImg, width*0.16, height*0.8);
-    stroke(0);
-    strokeWeight(8);
-    noFill();
-    rectMode(CORNER);
-    rect(width*0.16 - (moneyImg.width/2), height*0.8 - (moneyImg.height/2), moneyImg.width, moneyImg.height);
+    image(moneyImg, width*0.16-(moneyImg.width/2), height*0.78);
     textAlign(LEFT, CENTER);
-    text("X" + money, width*0.16+(moneyImg.width/2), height*0.8);
+    text("X" + money, width*0.16, height*0.78);
     popStyle();
     break;
 
@@ -614,6 +628,14 @@ void draw() {
     cookie.display();
     petFood.display();
     snacks.display();
+
+    pushStyle();
+    textSize(20*density);
+    text("Money", centerX, height*0.7);
+    image(moneyImg, centerX-(moneyImg.width/2), height*0.78);
+    textAlign(LEFT, CENTER);
+    text("X" + money, centerX, height*0.78);
+    popStyle();
     break;
 
   case "shop":
@@ -715,6 +737,7 @@ void mouseReleased() {
 
   case "playingGame":
     if (sleepButton.mouseCollide()) {
+      pet.asleep = true;
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";
     } else if (feedButton.mouseCollide()) {

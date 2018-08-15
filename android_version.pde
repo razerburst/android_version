@@ -1,5 +1,6 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
-//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)?
+//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
+//make buy and sell buttons larger, add instructions, general function for timers?
 import android.util.DisplayMetrics;
 
 int density;
@@ -55,13 +56,13 @@ Item snacks;
 
 int startTime;
 int barTimer;
+int startDayTimer;
+int displayBubbleTimer;
 
 Bar healthBar;
 Bar hungerBar;
 Bar fatigueBar;
 Bar happinessBar;
-
-int startDayTimer;
 
 int money = 1000;
 PImage moneyImg;
@@ -104,6 +105,7 @@ void setup() {
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
   traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
   traits[2][1] = new TextButton("Composed", width*0.38, height*0.84, 24, orange);
+  //quotes are vary slightly if friendly or hostile
   traits[3][0] = new TextButton("Friendly", width*0.18, height*0.92, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
@@ -136,6 +138,7 @@ void setup() {
   moneyImg.resize(60*density, 26*density);
 }
 
+//general use functions
 boolean rectMouseCollide(float x, float y, float w, float h, int mode) {
   if (mode == CENTER) {
     return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(h/2) && mouseY <= y+(h/2);
@@ -214,6 +217,7 @@ class Pet {
   float sleepRate;
   Animation sprite;
   boolean asleep = false;
+  boolean notTired = false;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
@@ -470,7 +474,6 @@ class Animation {
   int imgW;
   int imgH;
   int currentFrame = 0;
-  int frameSpeed = 1000;
   PImage spritesheet;
   PImage[] frames;
 
@@ -585,11 +588,20 @@ void draw() {
     break;
 
   case "playingGame":
+    if (pet.notTired) {
+      if (frameCount-displayBubbleTimer <= 120) {
+        text("I'm not tired!", pet.sprite.x, pet.sprite.y);
+      } else {
+        pet.notTired = false;
+      }
+    }
+
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
       sleepButton.string = "Sleep";
     }
+
     sleepButton.display();
     statsButton.display();
     feedButton.display();
@@ -619,7 +631,7 @@ void draw() {
     text("Gender: " + pet.gender, width*0.1, height*0.3);
     text("Nature: " + join(pet.nature, ", "), width*0.1, height*0.4);
     text("Weight: " + pet.weight/1000 + "KG", width*0.1, height*0.5);
-    text("Age: " + pet.age, width*0.1, height*0.6);
+    text("Age: " + pet.age + " day(s) old", width*0.1, height*0.6);
     popStyle();
     break;
 
@@ -746,7 +758,12 @@ void mouseReleased() {
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
-        pet.asleep = true;
+        if (pet.fatigue < 10) {
+          pet.notTired = true;
+          displayBubbleTimer = frameCount;
+        } else {
+          pet.asleep = true;
+        }
       }
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";

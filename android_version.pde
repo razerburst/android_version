@@ -1,6 +1,7 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 //cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
-//make buy and sell buttons larger, add instructions, general function for timers?
+//make buy and sell buttons larger, add instructions
+//position of "im not tired" text
 import android.util.DisplayMetrics;
 
 int density;
@@ -57,6 +58,7 @@ Item snacks;
 int startTime;
 int barTimer;
 int startDayTimer;
+int notTiredTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -591,6 +593,11 @@ void draw() {
       sleepButton.string = "Wake";
     } else {
       sleepButton.string = "Sleep";
+      if (pet.fatigue < 10) {
+        if (frameCount - notTiredTimer < 60) {
+          text("I'm not tired!", pet.sprite.x, pet.sprite.y);
+        }
+      }
     }
 
     sleepButton.display();
@@ -749,8 +756,12 @@ void mouseReleased() {
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
-        pet.asleep = true;
-        displayBubbleTimer = frameCount;
+        if (pet.fatigue >= 10) {
+          pet.asleep = true;
+        } else {
+          pet.asleep = false;
+          notTiredTimer = frameCount;
+        }
       }
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";

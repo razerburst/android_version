@@ -1,4 +1,5 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
+//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)?
 import android.util.DisplayMetrics;
 
 int density;
@@ -199,7 +200,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 100;
+  float fatigue = 0;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -278,7 +279,7 @@ class Pet {
       sprite.display(6, 2);
     }
   }
-  
+
   void autoWake() {
     if (asleep && fatigue <= 0) {
       asleep = false;
@@ -584,6 +585,11 @@ void draw() {
     break;
 
   case "playingGame":
+    if (pet.asleep) {
+      sleepButton.string = "Wake";
+    } else {
+      sleepButton.string = "Sleep";
+    }
     sleepButton.display();
     statsButton.display();
     feedButton.display();
@@ -737,7 +743,11 @@ void mouseReleased() {
 
   case "playingGame":
     if (sleepButton.mouseCollide()) {
-      pet.asleep = true;
+      if (sleepButton.string == "Wake") {
+        pet.asleep = false;
+      } else if (sleepButton.string == "Sleep") {
+        pet.asleep = true;
+      }
     } else if (statsButton.mouseCollide()) {
       gameState = "stats";
     } else if (feedButton.mouseCollide()) {

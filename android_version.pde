@@ -1,7 +1,6 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 //cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
 //make buy and sell buttons larger, add instructions
-//position of "im not tired" text
 import android.util.DisplayMetrics;
 
 int density;
@@ -21,7 +20,7 @@ color yellow = color(247, 228, 23);
 
 Pet pet;
 Time time;
-String gameState = "mainMenu";
+String gameState = "playingGame";
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -166,6 +165,7 @@ class TextButton {
   float asc;
   float desc;
   float w;
+  boolean pressed = false;
 
   TextButton(String _string, float _x, float _y, int _size, color _hoverColour) {
     string = _string;
@@ -593,10 +593,25 @@ void draw() {
       sleepButton.string = "Wake";
     } else {
       sleepButton.string = "Sleep";
-      if (pet.fatigue < 10) {
-        if (frameCount - notTiredTimer < 60) {
-          text("I'm not tired!", pet.sprite.x, pet.sprite.y);
-        }
+    }
+
+    if (sleepButton.pressed && pet.fatigue < 10 && frameCount - notTiredTimer < 60) {
+      if (frameCount - notTiredTimer < 60) {
+        pushStyle();
+        pushMatrix();
+        translate(pet.sprite.x + (pet.sprite.imgW/2), pet.sprite.y);
+        fill(lightBlue);
+        triangle(0, 0, 100, -100, 100, -50);
+        textAlign(LEFT, CENTER);
+        textSize(20*density);
+        float textW = textWidth("I'm not tired!");
+        ellipse(100 + (textW/2), -75, textW+50, 200);
+        fill(0);
+        text("I'm not tired!", 100, -75);
+        popMatrix();
+        popStyle();
+      } else {
+        sleepButton.pressed = false;
       }
     }
 
@@ -761,6 +776,7 @@ void mouseReleased() {
         } else {
           pet.asleep = false;
           notTiredTimer = frameCount;
+          sleepButton.pressed = true;
         }
       }
     } else if (statsButton.mouseCollide()) {

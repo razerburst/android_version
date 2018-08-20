@@ -439,14 +439,19 @@ class Item {
     buyButton.display();
     sellButton.display();
   }
+  
+  boolean mouseCollide() {
+    return circleMouseCollide(x, y, img.width);
+  }
 
-  void onUse() {
-    if (circleMouseCollide(x, y, img.width) && amount > 0) {
-      pet.happiness += happiness;
-      pet.weight += weight;
-      pet.hunger -= hunger;
-      amount -= 1;
-    }
+  void useItem() {
+    //separate collision detection from result of buying
+    //if (circleMouseCollide(x, y, img.width) && amount > 0) {
+    pet.happiness += happiness;
+    pet.weight += weight;
+    pet.hunger -= hunger;
+    amount -= 1;
+    //}
   }
 
   void onBuy() {
@@ -650,7 +655,8 @@ void draw() {
 
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
-
+    
+    //half bar length (because original x and y of bar is top, left)
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);
     fatigueBar.display(centerX-250, height*0.45);
@@ -789,9 +795,19 @@ void mouseReleased() {
     break;
 
   case "feed":
-    cookie.onUse();
-    petFood.onUse();
-    snacks.onUse();
+    if (pet.hunger > 0) {
+      if (cookie.mouseCollide() && cookie.amount > 0) {
+        cookie.useItem();
+      } else if (petFood.mouseCollide() && petFood.amount > 0) {
+        petFood.useItem();
+      } else if (snacks.mouseCollide() && snacks.amount > 0) {
+        snacks.useItem();
+      }
+    }
+    
+    //cookie.onUse();
+    //petFood.onUse();
+    //snacks.onUse();
 
     cookie.onBuy();
     petFood.onBuy();

@@ -1,6 +1,6 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 //cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
-//make buy and sell buttons larger, add instructions
+//make buy and sell buttons larger, add instructions, make speech bubble shape
 import android.util.DisplayMetrics;
 
 int density;
@@ -126,8 +126,8 @@ void setup() {
   diceY = height*0.76;
 
   cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 67, 61, 3, 7, 10, 6);
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.50, 70, 59, 6, 3, 30, 12);
-  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.84, 52, 58, 4, 5, 20, 9);
+  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.49, 70, 59, 6, 3, 30, 12);
+  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.82, 52, 58, 4, 5, 20, 9);
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -157,8 +157,6 @@ class TextButton {
   String string;
   float x;
   float y;
-  int h;
-  int v;
   int size;
   color hoverColour;
   color defaultColour;
@@ -190,10 +188,16 @@ class TextButton {
     }
     text(string, x, y);
     popStyle();
+    
+    pushStyle();
+    fill(lightBlue, 100);
+    rectMode(CORNERS);
+    rect(x-(w/2), y-(asc/2), x+(w/2), y+(asc/2)+desc);
+    popStyle();
   }
 
   boolean mouseCollide() {
-    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+((asc/2)+desc);
+    return mouseX >= x-(w/2) && mouseX <= x+(w/2) && mouseY >= y-(asc/2) && mouseY <= y+(asc/2)+desc;
   }
 }
 
@@ -392,8 +396,11 @@ class Item {
   String description;
   PImage img;
   int amount = 0;
-  int buttonW = 100;
-  int buttonH = 50;
+  int buttonW = 140;
+  int buttonH = 65;
+  
+  TextButton buyButton;
+  TextButton sellButton;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
@@ -409,6 +416,11 @@ class Item {
     description = "Happiness: +" + happiness + "\nWeight: +" + weight + "\nHunger: -" + hunger;
     img = loadImage(filename);
     img.resize(w, h);
+    
+    int buttonW = 140;
+    int buttonH = 65;
+    buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12, 24, purple);
+    sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12, 24, purple);
   }
 
   void display() {
@@ -425,18 +437,30 @@ class Item {
     popStyle();
     image(img, x, y);
 
+    //pushStyle();
+    //rectMode(CORNER);
+    //stroke(0);
+    //strokeWeight(8);
+    //fill(lightBlue);
+    //textSize(24*density);
+    //rect(x-(buttonW)-14, y+(h/2)+12, buttonW, buttonH+textDescent());
+    //rect(x+14, y+(h/2)+12, buttonW, buttonH+textDescent());
+    //fill(0);
+    //text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12);
+    //text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12);
+    //popStyle();
+    
     pushStyle();
     rectMode(CORNER);
     stroke(0);
     strokeWeight(8);
     fill(lightBlue);
-    textSize(16*density);
-    rect(x-(buttonW)-14, y+(h/2), buttonW, buttonH+textDescent());
-    rect(x+14, y+(h/2), buttonW, buttonH+textDescent());
-    fill(0);
-    text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2));
-    text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2));
+    rect(buyButton.x-(buttonW/2), buyButton.y-(buttonH/2), buttonW, buttonH+buyButton.desc);
+    rect(sellButton.x-(buttonW/2), sellButton.y-(buttonH/2), buttonW, buttonH+sellButton.desc);
     popStyle();
+    
+    buyButton.display();
+    sellButton.display();
   }
 
   void onUse() {
@@ -449,15 +473,15 @@ class Item {
   }
 
   void onBuy() {
-    //textDescent() at 16*density is 10.0
-    if (rectMouseCollide(x-(buttonW)-14, y+(h/2), buttonW, buttonH+10, CORNER) && money >= price) {
+    //textDescent() at 24*density is 15
+    if (buyButton.mouseCollide() && money >= price) {
       money -= price;
       amount += 1;
     }
   }
 
   void onSell() {
-    if (rectMouseCollide(x+14, y+(h/2), buttonW, buttonH+10, CORNER) && amount > 0) {
+    if (sellButton.mouseCollide() && amount > 0) {
       amount -= 1;
       money += price;
     }

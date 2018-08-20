@@ -333,7 +333,7 @@ class Bar {
   float h = 65;
   color colour;
   String name;
-  float value;
+  int value;
 
   Bar(color _colour, String _name) {
     colour = _colour;
@@ -342,13 +342,13 @@ class Bar {
 
   void updateValue() {
     if (name == "Health") {
-      value = pet.health;
+      value = round(pet.health);
     } else if (name == "Hunger") {
-      value = pet.hunger;
+      value = round(pet.hunger);
     } else if (name == "Fatigue") {
-      value = pet.fatigue;
+      value = round(pet.fatigue);
     } else if (name == "Happiness") {
-      value = pet.happiness;
+      value = round(pet.happiness);
     }
   }
 
@@ -426,7 +426,7 @@ class Item {
     text(" " + "X" + amount, x+(w/2), y);
     popStyle();
     image(img, x, y);
-    
+
     pushStyle();
     rectMode(CORNER);
     stroke(0);
@@ -435,23 +435,16 @@ class Item {
     rect(buyButton.x-(buttonW/2), buyButton.y-(buttonH/2), buttonW, buttonH+buyButton.desc);
     rect(sellButton.x-(buttonW/2), sellButton.y-(buttonH/2), buttonW, buttonH+sellButton.desc);
     popStyle();
-    
+
     buyButton.display();
     sellButton.display();
   }
-  
-  boolean mouseCollide() {
-    return circleMouseCollide(x, y, img.width);
-  }
 
   void useItem() {
-    //separate collision detection from result of buying
-    //if (circleMouseCollide(x, y, img.width) && amount > 0) {
     pet.happiness += happiness;
     pet.weight += weight;
     pet.hunger -= hunger;
     amount -= 1;
-    //}
   }
 
   void onBuy() {
@@ -466,6 +459,10 @@ class Item {
       amount -= 1;
       money += price;
     }
+  }
+
+  boolean mouseCollide() {
+    return circleMouseCollide(x, y, img.width);
   }
 }
 
@@ -600,7 +597,7 @@ void draw() {
       sleepButton.string = "Sleep";
     }
 
-    if (sleepButton.pressed && pet.fatigue < 10 && frameCount - notTiredTimer < 60) {
+    if (sleepButton.pressed && round(pet.fatigue) < 10 && frameCount - notTiredTimer < 60) {
       if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();
@@ -655,7 +652,7 @@ void draw() {
 
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
-    
+
     //half bar length (because original x and y of bar is top, left)
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);
@@ -689,7 +686,7 @@ void draw() {
 void keyPressed() {
   if (gameState == "newGame") {
     if (keyCode == BACKSPACE) {
-      if (textBoxString.length() >0) {
+      if (textBoxString.length() > 0) {
         textBoxString = textBoxString.substring(0, textBoxString.length()-1);
       }
     } else if (keyCode == SHIFT) {
@@ -795,7 +792,7 @@ void mouseReleased() {
     break;
 
   case "feed":
-    if (pet.hunger > 0) {
+    if (round(pet.hunger) > 0) {
       if (cookie.mouseCollide() && cookie.amount > 0) {
         cookie.useItem();
       } else if (petFood.mouseCollide() && petFood.amount > 0) {
@@ -804,10 +801,6 @@ void mouseReleased() {
         snacks.useItem();
       }
     }
-    
-    //cookie.onUse();
-    //petFood.onUse();
-    //snacks.onUse();
 
     cookie.onBuy();
     petFood.onBuy();

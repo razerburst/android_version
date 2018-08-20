@@ -1,6 +1,7 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 //cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
 //make buy and sell buttons larger, add instructions, make speech bubble shape
+//fix bar value rounding and sleep < 10
 import android.util.DisplayMetrics;
 
 int density;
@@ -202,7 +203,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 0;
+  float fatigue = 95;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -333,7 +334,7 @@ class Bar {
   float h = 65;
   color colour;
   String name;
-  int value;
+  float value;
 
   Bar(color _colour, String _name) {
     colour = _colour;
@@ -342,13 +343,13 @@ class Bar {
 
   void updateValue() {
     if (name == "Health") {
-      value = round(pet.health);
+      value = pet.health;
     } else if (name == "Hunger") {
-      value = round(pet.hunger);
+      value = pet.hunger;
     } else if (name == "Fatigue") {
-      value = round(pet.fatigue);
+      value = pet.fatigue;
     } else if (name == "Happiness") {
-      value = round(pet.happiness);
+      value = pet.happiness;
     }
   }
 
@@ -371,7 +372,7 @@ class Bar {
     textAlign(CENTER, CENTER);
     textSize(20*density);
     fill(0);
-    text(round(value) + "%", x+(w/2), y+(h/2));
+    text(floor(value) + "%", x+(w/2), y+(h/2));
     popStyle();
   }
 }
@@ -597,7 +598,7 @@ void draw() {
       sleepButton.string = "Sleep";
     }
 
-    if (sleepButton.pressed && round(pet.fatigue) < 10 && frameCount - notTiredTimer < 60) {
+    if (sleepButton.pressed && pet.fatigue < 10 && frameCount - notTiredTimer < 60) {
       if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();

@@ -188,12 +188,6 @@ class TextButton {
     }
     text(string, x, y);
     popStyle();
-    
-    pushStyle();
-    fill(lightBlue, 100);
-    rectMode(CORNERS);
-    rect(x-(w/2), y-(asc/2), x+(w/2), y+(asc/2)+desc);
-    popStyle();
   }
 
   boolean mouseCollide() {
@@ -398,7 +392,6 @@ class Item {
   int amount = 0;
   int buttonW = 140;
   int buttonH = 65;
-  
   TextButton buyButton;
   TextButton sellButton;
 
@@ -416,9 +409,6 @@ class Item {
     description = "Happiness: +" + happiness + "\nWeight: +" + weight + "\nHunger: -" + hunger;
     img = loadImage(filename);
     img.resize(w, h);
-    
-    int buttonW = 140;
-    int buttonH = 65;
     buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12, 24, purple);
     sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12, 24, purple);
   }
@@ -436,19 +426,6 @@ class Item {
     text(" " + "X" + amount, x+(w/2), y);
     popStyle();
     image(img, x, y);
-
-    //pushStyle();
-    //rectMode(CORNER);
-    //stroke(0);
-    //strokeWeight(8);
-    //fill(lightBlue);
-    //textSize(24*density);
-    //rect(x-(buttonW)-14, y+(h/2)+12, buttonW, buttonH+textDescent());
-    //rect(x+14, y+(h/2)+12, buttonW, buttonH+textDescent());
-    //fill(0);
-    //text("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12);
-    //text("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12);
-    //popStyle();
     
     pushStyle();
     rectMode(CORNER);
@@ -473,7 +450,6 @@ class Item {
   }
 
   void onBuy() {
-    //textDescent() at 24*density is 15
     if (buyButton.mouseCollide() && money >= price) {
       money -= price;
       amount += 1;

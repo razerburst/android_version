@@ -395,7 +395,6 @@ class Item {
   int buttonH = 65;
   TextButton buyButton;
   TextButton sellButton;
-  boolean pressed = false;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
@@ -442,11 +441,13 @@ class Item {
     sellButton.display();
   }
 
-  void useItem() {
-    pet.happiness += happiness;
-    pet.weight += weight;
-    pet.hunger -= hunger;
-    amount -= 1;
+  void onUse() {
+    if (mouseCollide() && amount > 0) {
+      pet.happiness += happiness;
+      pet.weight += weight;
+      pet.hunger -= hunger;
+      amount -= 1;
+    }
   }
 
   void onBuy() {
@@ -813,30 +814,9 @@ void mouseReleased() {
     break;
 
   case "feed":
-    //if (cookie.mouseCollide() && cookie.amount > 0) {
-    //  cookie.useItem();
-    //} else if (petFood.mouseCollide() && petFood.amount > 0) {
-    //  petFood.useItem();
-    //} else if (snacks.mouseCollide() && snacks.amount > 0) {
-    //  snacks.useItem();
-    //}
-
-    if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
-      cookie.pressed = true;
-      petFood.pressed = true;
-      snacks.pressed = true;
-      if (floor(pet.hunger) < 1) {
-        notHungryTimer = frameCount;
-      } else {
-        if (cookie.mouseCollide() && cookie.amount > 0) {
-          cookie.useItem();
-        } else if (petFood.mouseCollide() && petFood.amount > 0) {
-          petFood.useItem();
-        } else if (snacks.mouseCollide() && snacks.amount > 0) {
-          snacks.useItem();
-        }
-      }
-    }
+    cookie.useItem();
+    petFood.useItem();
+    snacks.useItem();
 
     cookie.onBuy();
     petFood.onBuy();

@@ -68,6 +68,8 @@ Bar happinessBar;
 int money = 1000;
 PImage moneyImg;
 
+boolean itemUsed = false;
+
 void setup() {
   fullScreen();
   orientation(LANDSCAPE);
@@ -443,10 +445,15 @@ class Item {
 
   void onUse() {
     if (mouseCollide() && amount > 0) {
-      pet.happiness += happiness;
-      pet.weight += weight;
-      pet.hunger -= hunger;
-      amount -= 1;
+      if (floor(pet.hunger) < 1) {
+        notHungryTimer = frameCount;
+        itemUsed = true;
+      } else {
+        pet.happiness += happiness;
+        pet.weight += weight;
+        pet.hunger -= hunger;
+        amount -= 1;
+      }
     }
   }
 
@@ -605,7 +612,7 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    if (sleepButton.pressed && pet.fatigue < 10) {
+    if (sleepButton.pressed) {
       if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();
@@ -657,7 +664,7 @@ void draw() {
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
 
-    //half bar length (because original x and y of bar is top, left)
+    //half bar length (because original x and y of bar is top, left not center)
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);
     fatigueBar.display(centerX-250, height*0.45);
@@ -667,24 +674,6 @@ void draw() {
     petFood.display();
     snacks.display();
 
-    if (cookie.pressed || petFood.pressed || snacks.pressed && floor(pet.hunger) < 1) {
-      if (frameCount - notHungryTimer < 60) {
-        pushStyle();
-        textSize(20*density);
-        textAlign(TOP, LEFT);
-        String s = "Pet is not hungry!";
-        fill(lightBlue, 100);
-        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
-        fill(0);
-        text(s, mouseX, mouseY);
-        popStyle();
-      } else {
-        cookie.pressed = false;
-        petFood.pressed = false;
-        snacks.pressed = false;
-      }
-    }
-
     pushStyle();
     textSize(20*density);
     text("Money", centerX, height*0.7);
@@ -692,6 +681,22 @@ void draw() {
     textAlign(LEFT, CENTER);
     text("X" + money, centerX, height*0.78);
     popStyle();
+    
+    if (itemUsed) {
+      if (frameCount - notHungryTimer < 60) {
+        pushStyle();
+        textSize(20*density);
+        textAlign(LEFT, TOP);
+        String s = "Pet is not hungry!";
+        fill(lightBlue, 100);
+        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+        fill(0);
+        text(s, mouseX, mouseY);
+        popStyle();
+      } else {
+        itemUsed = false;
+      }
+    }
     break;
 
   case "shop":
@@ -814,9 +819,9 @@ void mouseReleased() {
     break;
 
   case "feed":
-    cookie.useItem();
-    petFood.useItem();
-    snacks.useItem();
+    cookie.onUse();
+    petFood.onUse();
+    snacks.onUse();
 
     cookie.onBuy();
     petFood.onBuy();

@@ -1,7 +1,6 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
 //cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
-//make buy and sell buttons larger, add instructions, make speech bubble shape
-//fix bar value rounding and sleep < 10
+//add instructions
 import android.util.DisplayMetrics;
 
 int density;
@@ -59,6 +58,7 @@ int startTime;
 int barTimer;
 int startDayTimer;
 int notTiredTimer;
+int notHungryTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -395,6 +395,7 @@ class Item {
   int buttonH = 65;
   TextButton buyButton;
   TextButton sellButton;
+  boolean pressed = false;
 
   Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
@@ -598,7 +599,12 @@ void draw() {
       sleepButton.string = "Sleep";
     }
 
-    if (sleepButton.pressed && pet.fatigue < 10 && frameCount - notTiredTimer < 60) {
+    sleepButton.display();
+    statsButton.display();
+    feedButton.display();
+    shopButton.display();
+
+    if (sleepButton.pressed && pet.fatigue < 10) {
       if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();
@@ -607,21 +613,17 @@ void draw() {
         triangle(0, 0, 100, -100, 100, -50);
         textAlign(LEFT, CENTER);
         textSize(20*density);
-        float textW = textWidth("I'm not tired!");
+        String s = "I'm not tired!";
+        float textW = textWidth(s);
         ellipse(100 + (textW/2), -75, textW+50, 200);
         fill(0);
-        text("I'm not tired!", 100, -75);
+        text(s, 100, -75);
         popMatrix();
         popStyle();
       } else {
         sleepButton.pressed = false;
       }
     }
-
-    sleepButton.display();
-    statsButton.display();
-    feedButton.display();
-    shopButton.display();
 
     healthBar.display(width*0.03, height*0.15);
     hungerBar.display(width*0.03, height*0.3);
@@ -663,6 +665,24 @@ void draw() {
     cookie.display();
     petFood.display();
     snacks.display();
+
+    if (cookie.pressed || petFood.pressed || snacks.pressed && floor(pet.hunger) < 1) {
+      if (frameCount - notHungryTimer < 60) {
+        pushStyle();
+        textSize(20*density);
+        textAlign(TOP, LEFT);
+        String s = "Pet is not hungry!";
+        fill(lightBlue, 100);
+        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+        fill(0);
+        text(s, mouseX, mouseY);
+        popStyle();
+      } else {
+        cookie.pressed = false;
+        petFood.pressed = false;
+        snacks.pressed = false;
+      }
+    }
 
     pushStyle();
     textSize(20*density);
@@ -772,6 +792,7 @@ void mouseReleased() {
 
   case "playingGame":
     if (sleepButton.mouseCollide()) {
+      sleepButton.pressed = true;
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
@@ -780,7 +801,6 @@ void mouseReleased() {
         } else {
           pet.asleep = false;
           notTiredTimer = frameCount;
-          sleepButton.pressed = true;
         }
       }
     } else if (statsButton.mouseCollide()) {
@@ -793,13 +813,28 @@ void mouseReleased() {
     break;
 
   case "feed":
-    if (round(pet.hunger) > 0) {
-      if (cookie.mouseCollide() && cookie.amount > 0) {
-        cookie.useItem();
-      } else if (petFood.mouseCollide() && petFood.amount > 0) {
-        petFood.useItem();
-      } else if (snacks.mouseCollide() && snacks.amount > 0) {
-        snacks.useItem();
+    //if (cookie.mouseCollide() && cookie.amount > 0) {
+    //  cookie.useItem();
+    //} else if (petFood.mouseCollide() && petFood.amount > 0) {
+    //  petFood.useItem();
+    //} else if (snacks.mouseCollide() && snacks.amount > 0) {
+    //  snacks.useItem();
+    //}
+
+    if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
+      cookie.pressed = true;
+      petFood.pressed = true;
+      snacks.pressed = true;
+      if (floor(pet.hunger) < 1) {
+        notHungryTimer = frameCount;
+      } else {
+        if (cookie.mouseCollide() && cookie.amount > 0) {
+          cookie.useItem();
+        } else if (petFood.mouseCollide() && petFood.amount > 0) {
+          petFood.useItem();
+        } else if (snacks.mouseCollide() && snacks.amount > 0) {
+          snacks.useItem();
+        }
       }
     }
 

@@ -237,9 +237,8 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    //14.0(because float division)/24 to find increase/decrease ratio, then *5)*60) to find how many seconds in 14 in-game hours, divide 100 by this to find how much to
-    //decrease fatigue by every second to reach 100(%) within however many seconds there are in 14 in-game hours
-    sleepRate = 100/(((14.0/24)*5)*60);
+    sleepRate = 100/(2.5*60);
+    //half a day
 
     //stats update every second
     if (millis() - barTimer >= 1000) {

@@ -55,6 +55,7 @@ Item petFood;
 Item snacks;
 
 int startTime;
+int barTimer;
 int startDayTimer;
 int notTiredTimer;
 int notHungryTimer;
@@ -209,7 +210,7 @@ class Pet {
   float weight = 4000;
   //weight is in grams, displayed in KG
   float baseRate = 100.0/(5*60*60);
-  //bar reaches 100% after 300 seconds (5 minutes)
+  //bar reaches 100% after 18000 frames (5 minutes)
   float healthRate;
   float hungerRate;
   float fatigueRate;
@@ -232,29 +233,37 @@ class Pet {
       weightRate = (weight-4000)/500;
       //every kg increases hunger rate by 200%, so more hunger in less time
     }
-    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
-    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
-    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    sleepRate = 100/(2.5*60*60);
-    //half a day
+    //healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
+    //hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    //fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    //happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    healthRate = baseRate;
+    hungerRate = baseRate;
+    fatigueRate = baseRate;
+    happinessRate = baseRate;
+    sleepRate = baseRate*2;
+    //half a day (reaches 0% from 100% in half the time)
     if (time.hours%24 > 0 && time.hours%24 < 6) {
-      sleepRate = 100/(1.25*60*60);
+      sleepRate = baseRate*4;
+      //quarter of a day (reaches 0% from 100% in a quarter of the time)
     }
 
     //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
-    if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
-      health -= healthRate;
-    } else {
-      health += healthRate;
+    if (millis() - barTimer > 1000.0/60) {
+      if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
+        health -= healthRate;
+      } else {
+        health += healthRate;
+      }
+      hunger += hungerRate;
+      if (asleep) {
+        fatigue -= sleepRate;
+      } else {
+        fatigue += fatigueRate;
+      }
+      happiness -= happinessRate;
+      barTimer = millis();
     }
-    hunger += hungerRate;
-    if (asleep) {
-      fatigue -= sleepRate;
-    } else {
-      fatigue += fatigueRate;
-    }
-    happiness -= happinessRate;
 
     health = constrain(health, 0, 100);
     hunger = constrain(hunger, 0, 100);

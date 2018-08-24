@@ -55,7 +55,6 @@ Item petFood;
 Item snacks;
 
 int startTime;
-int barTimer;
 int startDayTimer;
 int notTiredTimer;
 int notHungryTimer;
@@ -209,7 +208,7 @@ class Pet {
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
-  float baseRate = 100.0/(5*60);
+  float baseRate = 100.0/(5*60*60);
   //bar reaches 100% after 300 seconds (5 minutes)
   float healthRate;
   float hungerRate;
@@ -237,26 +236,26 @@ class Pet {
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    sleepRate = 100/(2.5*60);
+    sleepRate = 100/(2.5*60*60);
     //half a day
-
-    //stats update every second
-    if (millis() - barTimer >= 1000) {
-      //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
-      if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
-        health -= healthRate;
-      } else {
-        health += healthRate;
-      }
-      hunger += hungerRate;
-      if (asleep) {
-        fatigue -= sleepRate;
-      } else {
-        fatigue += fatigueRate;
-      }
-      happiness -= happinessRate;
-      barTimer = millis();
+    if (time.hours%24 > 0 && time.hours%24 < 6) {
+      sleepRate = 100/(1.25*60*60);
     }
+
+    //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
+    if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
+      health -= healthRate;
+    } else {
+      health += healthRate;
+    }
+    hunger += hungerRate;
+    if (asleep) {
+      fatigue -= sleepRate;
+    } else {
+      fatigue += fatigueRate;
+    }
+    happiness -= happinessRate;
+
     health = constrain(health, 0, 100);
     hunger = constrain(hunger, 0, 100);
     fatigue = constrain(fatigue, 0, 100);
@@ -264,6 +263,7 @@ class Pet {
   }
 
   void updateAge() {
+    //floor
     if (millis()-startDayTimer >= (5*60*1000)) {
       pet.age += 1;
       startDayTimer = millis();
@@ -295,15 +295,11 @@ class Pet {
 
 class Time {
   int millis;
-  int multiplier;
+  int multiplier = (24*60)/5;
+  //1 minute in real life = 288 minutes in game
   float seconds;
   float minutes;
   float hours;
-
-  Time() {
-    multiplier = (24*60)/5;
-    //1 minute in real life = 288 minutes in game
-  }
 
   void update() {
     millis = (millis()-startTime)*multiplier;
@@ -680,7 +676,7 @@ void draw() {
     textAlign(LEFT, CENTER);
     text("X" + money, centerX, height*0.78);
     popStyle();
-    
+
     if (itemUsed) {
       if (frameCount - notHungryTimer < 60) {
         pushStyle();

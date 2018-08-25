@@ -1,7 +1,8 @@
-//todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
-//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
+//todo: save states screen (load menu), age has effect, turns green when health is low
+//replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
 //fix choppy bar animation
+//fix timer priority, fix hunger
 import android.util.DisplayMetrics;
 
 int density;
@@ -60,6 +61,7 @@ int barTimer;
 int startDayTimer;
 int notTiredTimer;
 int notHungryTimer;
+int petAsleepTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -248,21 +250,19 @@ class Pet {
 
   void updateStats() {
     //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
-    if (millis() - barTimer >= 1000) {
-      barTimer = millis();
-      if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
-        health -= healthRate;
-      } else {
-        health += healthRate;
-      }
-      hunger += hungerRate;
-      if (asleep) {
-        fatigue -= sleepRate;
-      } else {
-        fatigue += fatigueRate;
-      }
-      happiness -= happinessRate;
+    barTimer = millis();
+    if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
+      health -= healthRate;
+    } else {
+      health += healthRate;
     }
+    hunger += hungerRate;
+    if (asleep) {
+      fatigue -= sleepRate;
+    } else {
+      fatigue += fatigueRate;
+    }
+    happiness -= happinessRate;
 
     health = constrain(health, 0, 100);
     hunger = constrain(hunger, 0, 100);
@@ -441,7 +441,10 @@ class Item {
 
   void onUse() {
     if (mouseCollide() && amount > 0) {
-      if (floor(pet.hunger) < 1) {
+      if (pet.asleep) {
+        petAsleepTimer = frameCount;
+        itemUsed = true;
+      } else if (floor(pet.hunger) < 1) {
         notHungryTimer = frameCount;
         itemUsed = true;
       } else {
@@ -449,6 +452,9 @@ class Item {
         pet.weight += weight;
         pet.hunger -= hunger;
         amount -= 1;
+
+        pet.happiness = constrain(pet.happiness, 0, 100);
+        pet.hunger = constrain(pet.hunger, 0, 100);
       }
     }
   }
@@ -528,7 +534,9 @@ void draw() {
     if (gameState != "loadGame") {
       time.update();
       pet.calculateRates();
-      pet.updateStats();
+      if (millis() - barTimer >= 1000) {
+        pet.updateStats();
+      }
       pet.updateAge();
       pet.autoWake();
       if (gameState != "feed") {
@@ -631,7 +639,7 @@ void draw() {
     }
 
     healthBar.updateValue(pet.health);
-    hungerbar.updateValue(pet.hunger);
+    hungerBar.updateValue(pet.hunger);
     fatigueBar.updateValue(pet.fatigue);
     happinessBar.updateValue(pet.happiness);
 
@@ -667,10 +675,10 @@ void draw() {
     time.display(centerX, height*0.01, CENTER, TOP);
 
     healthBar.updateValue(pet.health);
-    hungerbar.updateValue(pet.hunger);
+    hungerBar.updateValue(pet.hunger);
     fatigueBar.updateValue(pet.fatigue);
     happinessBar.updateValue(pet.happiness);
-    
+
     //half bar length (because original x and y of bar is top, left not center)
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);
@@ -690,19 +698,24 @@ void draw() {
     popStyle();
 
     if (itemUsed) {
+      pushStyle();
+      textSize(20*density);
+      textAlign(LEFT, TOP);
+      fill(lightBlue, 100);
       if (frameCount - notHungryTimer < 60) {
-        pushStyle();
-        textSize(20*density);
-        textAlign(LEFT, TOP);
         String s = "Pet is not hungry!";
-        fill(lightBlue, 100);
         rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
         fill(0);
         text(s, mouseX, mouseY);
-        popStyle();
+      } else if (frameCount - petAsleepTimer < 60) {
+        String s = "Pet is asleep!";
+        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+        fill(0);
+        text(s, mouseX, mouseY);
       } else {
         itemUsed = false;
       }
+      popStyle();
     }
     break;
 

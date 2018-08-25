@@ -1,6 +1,7 @@
 //todo: save states screen (load menu), sleep faster at night, age has effect, turns green when health is low, timer outside of update stats func (every second, updateStats())
-//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds)? "not hungry", "not tired", sleep in half the time at night, give sprite a tongue
+//cannot eat while sleeping? replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
+//fix choppy bar animation
 import android.util.DisplayMetrics;
 
 int density;
@@ -209,8 +210,8 @@ class Pet {
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
-  float baseRate = 100.0/(5*60*60);
-  //bar reaches 100% after 18000 frames (5 minutes)
+  float baseRate = 100.0/(5*60);
+  //bar reaches 100% after 300 seconds (5 minutes)
   float healthRate;
   float hungerRate;
   float fatigueRate;
@@ -224,7 +225,7 @@ class Pet {
     sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
   }
 
-  void updateStats() {
+  void calculateRates() {
     //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
     if (pet.nature[1] == "Lethargic") {
       weightRate = (weight-4000)/1000;
@@ -233,23 +234,22 @@ class Pet {
       weightRate = (weight-4000)/500;
       //every kg increases hunger rate by 200%, so more hunger in less time
     }
-    //healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    //hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
-    //fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
-    //happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    healthRate = baseRate;
-    hungerRate = baseRate;
-    fatigueRate = baseRate;
-    happinessRate = baseRate;
+    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
     sleepRate = baseRate*2;
     //half a day (reaches 0% from 100% in half the time)
     if (time.hours%24 > 0 && time.hours%24 < 6) {
       sleepRate = baseRate*4;
       //quarter of a day (reaches 0% from 100% in a quarter of the time)
     }
+  }
 
+  void updateStats() {
     //if any of them are true, lose health, otherwise (if all of them are not true), regenerate health
-    if (millis() - barTimer > 1000.0/60) {
+    if (millis() - barTimer >= 1000) {
+      barTimer = millis();
       if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
         health -= healthRate;
       } else {
@@ -262,7 +262,6 @@ class Pet {
         fatigue += fatigueRate;
       }
       happiness -= happinessRate;
-      barTimer = millis();
     }
 
     health = constrain(health, 0, 100);
@@ -347,15 +346,10 @@ class Bar {
     name = _name;
   }
 
-  void updateValue() {
-    if (name == "Health") {
-      value = pet.health;
-    } else if (name == "Hunger") {
-      value = pet.hunger;
-    } else if (name == "Fatigue") {
-      value = pet.fatigue;
-    } else if (name == "Happiness") {
-      value = pet.happiness;
+  void updateValue(float stat) {
+    value = lerp(value, stat, 0.1);
+    if (value >= 99.99) {
+      value = 100.0;
     }
   }
 
@@ -370,15 +364,13 @@ class Bar {
     textSize(20*density);
     text(name, x+(w/2), y-8);
 
-    updateValue();
     fill(colour);
     noStroke();
     rect(x, y, value*5, h);
-
     textAlign(CENTER, CENTER);
     textSize(20*density);
     fill(0);
-    text(floor(value) + "%", x+(w/2), y+(h/2));
+    text(int(value) + "%", x+(w/2), y+(h/2));
     popStyle();
   }
 }
@@ -535,6 +527,7 @@ void draw() {
     backButton.display();
     if (gameState != "loadGame") {
       time.update();
+      pet.calculateRates();
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
@@ -637,6 +630,11 @@ void draw() {
       }
     }
 
+    healthBar.updateValue(pet.health);
+    hungerbar.updateValue(pet.hunger);
+    fatigueBar.updateValue(pet.fatigue);
+    happinessBar.updateValue(pet.happiness);
+
     healthBar.display(width*0.03, height*0.15);
     hungerBar.display(width*0.03, height*0.3);
     fatigueBar.display(width*0.03, height*0.45);
@@ -668,6 +666,11 @@ void draw() {
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
 
+    healthBar.updateValue(pet.health);
+    hungerbar.updateValue(pet.hunger);
+    fatigueBar.updateValue(pet.fatigue);
+    happinessBar.updateValue(pet.happiness);
+    
     //half bar length (because original x and y of bar is top, left not center)
     healthBar.display(centerX-250, height*0.15);
     hungerBar.display(centerX-250, height*0.3);

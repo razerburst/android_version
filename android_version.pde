@@ -208,7 +208,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 0;
+  float fatigue = 100;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -256,7 +256,7 @@ class Pet {
     } else {
       health += healthRate;
     }
-    hunger += hungerRate;
+    //hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {

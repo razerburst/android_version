@@ -127,13 +127,12 @@ void setup() {
   popStyle();
 
   dice = loadImage("Dice.png");
-  dice.resize(59*density, 54*density);
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 67, 61, 3, 7, 10, 6);
-  petFood = new Item("Pet Food", "Pet_Food.png", width*0.24, height*0.49, 70, 59, 6, 3, 30, 12);
-  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.82, 52, 58, 4, 5, 20, 9);
+  cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 3, 7, 10, 6);
+  petFood = new Item("Pet Food", "PetFood.png", width*0.24, height*0.49, 6, 3, 30, 12);
+  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -141,7 +140,6 @@ void setup() {
   happinessBar = new Bar(yellow, "Happiness");
 
   moneyImg = loadImage("Money.png");
-  moneyImg.resize(60*density, 26*density);
 }
 
 //general use functions
@@ -208,7 +206,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 100;
+  float fatigue = 0;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -224,7 +222,7 @@ class Pet {
   boolean asleep = false;
 
   Pet() {
-    sprite = new Animation("Pet.png", centerX, centerY, 450, 180, 2, 5);
+    sprite = new Animation("Pet.png", centerX, centerY, 1440, 576, 2, 5);
   }
 
   void calculateRates() {
@@ -256,7 +254,7 @@ class Pet {
     } else {
       health += healthRate;
     }
-    //hunger += hungerRate;
+    hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -278,7 +276,7 @@ class Pet {
     }
   }
 
-  void displaySprite() {
+  void displaySprite() {    
     if (asleep) {
       sprite.display(8, 2);
     } else if (happiness >= 75) {
@@ -394,20 +392,19 @@ class Item {
   TextButton buyButton;
   TextButton sellButton;
 
-  Item(String _name, String _filename, float _x, float _y, int _w, int _h, int _price, int _happiness, int _weight, int _hunger) {
+  Item(String _name, String _filename, float _x, float _y, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
     filename = _filename;
     x = _x;
     y = _y;
-    w = _w*density;
-    h = _h*density;
     price = _price;
     happiness = _happiness;
     weight = _weight;
     hunger = _hunger;
     description = "Happiness: +" + happiness + "\nWeight: +" + weight + "\nHunger: -" + hunger;
     img = loadImage(filename);
-    img.resize(w, h);
+    w = img.width;
+    h = img.height;
     buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12, 24, purple);
     sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12, 24, purple);
   }
@@ -496,12 +493,11 @@ class Animation {
     filename = _filename;
     x = _x;
     y = _y;
-    w = _w*density;
-    h = _h*density;
+    w = _w;
+    h = _h;
     rows = _rows;
     columns = _columns;
     spritesheet = loadImage(filename);
-    spritesheet.resize(w, h);
     frames = new PImage[rows*columns];
     imgW = w/columns;
     imgH = h/rows;

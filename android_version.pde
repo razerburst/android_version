@@ -274,10 +274,9 @@ class Pet {
 
   void updateAge() {
     //floor
-    println(floor(time.hours), floor(time.minutes)%60);
-    if (floor(time.hours) == 0 && floor(time.minutes) % 60 == 0) {
+    if (millis()-startDayTimer >= (5*60*1000)) {
       pet.age += 1;
-      //startDayTimer = millis();
+      startDayTimer = millis();
     }
   }
 

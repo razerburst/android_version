@@ -1,7 +1,6 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
-//fix choppy bar animation - add less each second
 //make sleep rate scale with fatigue rate instead of time (percentage of it)
 import android.util.DisplayMetrics;
 
@@ -273,7 +272,6 @@ class Pet {
   }
 
   void updateAge() {
-    //floor
     if (millis()-startDayTimer >= (5*60*1000)) {
       pet.age += 1;
       startDayTimer = millis();
@@ -341,21 +339,13 @@ class Bar {
   float h = 65;
   color colour;
   String name;
-  float value;
 
   Bar(color _colour, String _name) {
     colour = _colour;
     name = _name;
   }
 
-  void updateValue(float stat) {
-    value = lerp(value, stat, 0.1);
-    if (value >= 99.5) {
-      value = 100.0;
-    }
-  }
-
-  void display(float x, float y) {
+  void display(float x, float y, float value) {
     pushStyle();
     noFill();
     stroke(0);
@@ -532,9 +522,7 @@ void draw() {
     if (gameState != "loadGame") {
       time.update();
       pet.calculateRates();
-      //if (millis() - barTimer >= 1000) {
       pet.updateStats();
-      //}
       pet.updateAge();
       pet.autoWake();
       if (gameState != "feed") {
@@ -636,15 +624,10 @@ void draw() {
       }
     }
 
-    healthBar.updateValue(pet.health);
-    hungerBar.updateValue(pet.hunger);
-    fatigueBar.updateValue(pet.fatigue);
-    happinessBar.updateValue(pet.happiness);
-
-    healthBar.display(width*0.03, height*0.15);
-    hungerBar.display(width*0.03, height*0.3);
-    fatigueBar.display(width*0.03, height*0.45);
-    happinessBar.display(width*0.03, height*0.6);
+    healthBar.display(width*0.03, height*0.15, pet.health);
+    hungerBar.display(width*0.03, height*0.3, pet.hunger);
+    fatigueBar.display(width*0.03, height*0.45, pet.fatigue);
+    happinessBar.display(width*0.03, height*0.6, pet.happiness);
 
     pet.displaySprite();
 
@@ -672,16 +655,11 @@ void draw() {
   case "feed":
     time.display(centerX, height*0.01, CENTER, TOP);
 
-    healthBar.updateValue(pet.health);
-    hungerBar.updateValue(pet.hunger);
-    fatigueBar.updateValue(pet.fatigue);
-    happinessBar.updateValue(pet.happiness);
-
     //half bar length (because original x and y of bar is top, left not center)
-    healthBar.display(centerX-250, height*0.15);
-    hungerBar.display(centerX-250, height*0.3);
-    fatigueBar.display(centerX-250, height*0.45);
-    happinessBar.display(centerX-250, height*0.6);
+    healthBar.display(centerX-250, height*0.15, pet.health);
+    hungerBar.display(centerX-250, height*0.3, pet.hunger);
+    fatigueBar.display(centerX-250, height*0.45, pet.fatigue);
+    happinessBar.display(centerX-250, height*0.6, pet.happiness);
 
     cookie.display();
     petFood.display();

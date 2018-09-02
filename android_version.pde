@@ -1,7 +1,7 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
-//make sleep rate scale with fatigue rate instead of time (percentage of it)
+//fix sleepRate
 import android.util.DisplayMetrics;
 
 int density;
@@ -51,9 +51,12 @@ PImage dice;
 float diceX;
 float diceY;
 
-Item cookie;
-Item petFood;
-Item snacks;
+Consumable cookie;
+Consumable petFood;
+Consumable snacks;
+Consumable healthPack;
+Consumable bandage;
+Consumable sleepingPill;
 
 int startTime;
 int barTimer;
@@ -127,9 +130,13 @@ void setup() {
   diceX = width*0.75;
   diceY = height*0.76;
 
-  cookie = new Item("Cookie", "Cookie.png", width*0.24, height*0.16, 3, 7, 10, 6);
-  petFood = new Item("Pet Food", "PetFood.png", width*0.24, height*0.49, 6, 3, 30, 12);
-  snacks = new Item("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
+  cookie = new Consumable("Cookie", "Cookie.png", width*0.24, height*0.16, 3, 7, 10, 6);
+  petFood = new Consumable("Pet Food", "PetFood.png", width*0.24, height*0.49, 6, 3, 30, 12);
+  snacks = new Consumable("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
+  
+  healthPack = new Consumable("Health Pack", "HealthPack.png", width*0.76, height*0.16, 10, "Restores 10 health");
+  bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 5, "Stops health loss for 3 seconds");
+  sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 7, "Reduces fatigue by 50% of current fatigue");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -201,10 +208,10 @@ class Pet {
   String gender;
   int age;
   String[] nature = new String[4];
-  float health = 1000;
+  float health = 100;
   float hunger = 0;
   float fatigue = 100;
-  float happiness = 1000;
+  float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
   float baseRate;
@@ -232,20 +239,21 @@ class Pet {
       weightRate = (weight-4000)/500;
       //every kg increases hunger rate by 200%, so more hunger in less time
     }
-    
-    //healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    //hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
-    //fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
-    //happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
-    
-    healthRate = baseRate;
-    hungerRate = baseRate;
-    fatigueRate = baseRate;
-    happinessRate = baseRate;
+
+    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+
+    //healthRate = baseRate;
+    //hungerRate = baseRate;
+    //fatigueRate = baseRate;
+    //happinessRate = baseRate;
+
     if (time.hours > 0 && time.hours < 6) {
       sleepRate = fatigueRate*24;
     } else {
-      sleepRate = fatigueRate;
+      sleepRate = fatigueRate*12;
     }
   }
 
@@ -367,7 +375,7 @@ class Bar {
   }
 }
 
-class Item {
+class Consumable {
   String name;
   String filename;
   float x;
@@ -386,7 +394,7 @@ class Item {
   TextButton buyButton;
   TextButton sellButton;
 
-  Item(String _name, String _filename, float _x, float _y, int _price, int _happiness, int _weight, int _hunger) {
+  Consumable(String _name, String _filename, float _x, float _y, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
     filename = _filename;
     x = _x;
@@ -399,8 +407,22 @@ class Item {
     img = loadImage(filename);
     w = img.width;
     h = img.height;
-    buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+12, 24, purple);
-    sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+12, 24, purple);
+    buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+13, 24, purple);
+    sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+13, 24, purple);
+  }
+
+  Consumable(String _name, String _filename, float _x, float _y, int _price, String _description) {
+    name = _name;
+    filename = _filename;
+    x = _x;
+    y = _x;
+    price = _price;
+    description = _description;
+    img = loadImage(filename);
+    w = img.width;
+    h = img.height;
+    buyButton = new TextButton("Buy", x-(buttonW/2)-14, y+(h/2)+(buttonH/2)+13, 24, purple);
+    sellButton = new TextButton("Sell", x+(buttonW/2)+14, y+(h/2)+(buttonH/2)+13, 24, purple);
   }
 
   void display() {
@@ -430,7 +452,7 @@ class Item {
     sellButton.display();
   }
 
-  void onUse() {
+  void onEat() {
     if (mouseCollide() && amount > 0) {
       if (pet.asleep) {
         petAsleepTimer = frameCount;
@@ -441,10 +463,15 @@ class Item {
         pet.weight += weight;
         pet.hunger -= hunger;
         amount -= 1;
-
         pet.happiness = constrain(pet.happiness, 0, 100);
         pet.hunger = constrain(pet.hunger, 0, 100);
       }
+    }
+  }
+  
+  void onUse() {
+    if (mouseCollide() && amount > 0) {
+      print("test");
     }
   }
 
@@ -592,6 +619,9 @@ void draw() {
     break;
 
   case "playingGame":
+    healthPack.display();
+    bandage.display();
+    sleepingPill.display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -603,7 +633,7 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    if (sleepButton.pressed) {
+    if (sleepButton.pressed && pet.fatigue < 10) {
       if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();
@@ -664,6 +694,9 @@ void draw() {
     cookie.display();
     petFood.display();
     snacks.display();
+    healthPack.display();
+    bandage.display();
+    sleepingPill.display();
 
     pushStyle();
     textSize(20*density);
@@ -673,7 +706,7 @@ void draw() {
     text("X" + money, centerX, height*0.78);
     popStyle();
 
-    if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
+    if ((cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) && floor(pet.hunger) < 1) {
       pushStyle();
       textSize(20*density);
       textAlign(LEFT, TOP);
@@ -813,17 +846,26 @@ void mouseReleased() {
     break;
 
   case "feed":
-    cookie.onUse();
-    petFood.onUse();
-    snacks.onUse();
+    cookie.onEat();
+    petFood.onEat();
+    snacks.onEat();
+    healthPack.onUse();
+    bandage.onUse();
+    sleepingPill.onUse();
 
     cookie.onBuy();
     petFood.onBuy();
     snacks.onBuy();
+    healthPack.onBuy();
+    bandage.onBuy();
+    sleepingPill.onBuy();
 
     cookie.onSell();
     petFood.onSell();
     snacks.onSell();
+    healthPack.onSell();
+    bandage.onSell();
+    sleepingPill.onSell();
     break;
 
   case "shop":

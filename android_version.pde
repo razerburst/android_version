@@ -136,8 +136,8 @@ void setup() {
   snacks = new Consumable("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
 
   healthPack = new Consumable("Health Pack", "HealthPack.png", width*0.76, height*0.16, 10, "Restores 10 health");
-  bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 5, "Stops health loss for 3 seconds");
-  sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 7, "Reduces fatigue by 50% of current fatigue");
+  bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 6, "Stops health loss for 3 seconds");
+  sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 8, "Reduces fatigue by 50% of current fatigue");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");

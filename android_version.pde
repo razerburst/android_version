@@ -133,7 +133,7 @@ void setup() {
   cookie = new Consumable("Cookie", "Cookie.png", width*0.24, height*0.16, 3, 7, 10, 6);
   petFood = new Consumable("Pet Food", "PetFood.png", width*0.24, height*0.49, 6, 3, 30, 12);
   snacks = new Consumable("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
-  
+
   healthPack = new Consumable("Health Pack", "HealthPack.png", width*0.76, height*0.16, 10, "Restores 10 health");
   bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 5, "Stops health loss for 3 seconds");
   sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 7, "Reduces fatigue by 50% of current fatigue");
@@ -251,9 +251,9 @@ class Pet {
     //happinessRate = baseRate;
 
     if (time.hours > 0 && time.hours < 6) {
-      sleepRate = fatigueRate*24;
-    } else {
       sleepRate = fatigueRate*12;
+    } else {
+      sleepRate = fatigueRate*8;
     }
   }
 
@@ -415,7 +415,7 @@ class Consumable {
     name = _name;
     filename = _filename;
     x = _x;
-    y = _x;
+    y = _y;
     price = _price;
     description = _description;
     img = loadImage(filename);
@@ -426,18 +426,32 @@ class Consumable {
   }
 
   void display() {
+    image(img, x, y);
+
+    pushStyle();
+    fill(0);
+    ellipse(x, y, img.width, img.height);
+    popStyle();
+
     pushStyle();
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
     text(name + "($" + price + ")", x, y-(h/2));
-    textAlign(RIGHT, CENTER);
     textSize(18*density);
-    text(description, (x-(w/2))-10, y);
-    textAlign(LEFT, CENTER);
-    textSize(20*density);
-    text(" " + "X" + amount, x+(w/2), y);
+    if (x <= centerX) {
+      textAlign(RIGHT, CENTER);
+      text(description, (x-(w/2))-10, y);
+      textAlign(LEFT, CENTER);
+      textSize(20*density);
+      text(" " + "X" + amount, x+(w/2), y);
+    } else {
+      textAlign(LEFT, CENTER);
+      text(description, (x+(w/2))+10, y);
+      textAlign(RIGHT, CENTER);
+      textSize(20*density);
+      text(amount + "X" + " ", x-(w/2), y);
+    }
     popStyle();
-    image(img, x, y);
 
     pushStyle();
     rectMode(CORNER);
@@ -468,7 +482,7 @@ class Consumable {
       }
     }
   }
-  
+
   void onUse() {
     if (mouseCollide() && amount > 0) {
       print("test");
@@ -619,9 +633,6 @@ void draw() {
     break;
 
   case "playingGame":
-    healthPack.display();
-    bandage.display();
-    sleepingPill.display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {

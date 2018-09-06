@@ -267,6 +267,7 @@ class Pet {
       losingHealth = true;
     } else {
       health += healthRate;
+      losingHealth = false;
     }
     hunger += hungerRate;
     if (asleep) {
@@ -488,6 +489,7 @@ class Consumable {
         pet.health += 10;
       } else if (name == "Bandage") {
         if (pet.losingHealth) {
+          print("work");
           bandageTimer = frameCount;
         }
       } else if (name == "Sleeping Pill") {
@@ -573,10 +575,14 @@ void draw() {
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
-      if (frameCount - bandageTimer < 60*3) {
-        pet.health += pet.healthRate;
-      } else {
-        pet.losingHealth = false;
+      println(pet.losingHealth, frameCount - bandageTimer);
+      if (pet.losingHealth) {
+        if (frameCount - bandageTimer < 60*3) {
+          print("test");
+          pet.health += pet.healthRate;
+        } else {
+          pet.losingHealth = false;
+        }
       }
       if (gameState != "feed") {
         time.display(width*0.01, height*0.01, LEFT, TOP);

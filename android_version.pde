@@ -64,6 +64,7 @@ int startDayTimer;
 int notTiredTimer;
 int notHungryTimer;
 int petAsleepTimer;
+int bandageTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -223,6 +224,7 @@ class Pet {
   float sleepRate;
   Animation sprite;
   boolean asleep = false;
+  boolean losingHealth = false;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 1440, 576, 2, 5);
@@ -262,6 +264,7 @@ class Pet {
     barTimer = millis();
     if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
       health -= healthRate;
+      losingHealth = true;
     } else {
       health += healthRate;
     }
@@ -427,12 +430,6 @@ class Consumable {
 
   void display() {
     image(img, x, y);
-
-    pushStyle();
-    fill(0);
-    ellipse(x, y, img.width, img.height);
-    popStyle();
-
     pushStyle();
     textAlign(CENTER, BOTTOM);
     textSize(24*density);
@@ -484,8 +481,18 @@ class Consumable {
   }
 
   void onUse() {
-    if (mouseCollide() && amount > 0) {
-      print("test");
+    if (mouseCollide() && money >= price && amount > 0) {
+      money -= price;
+      amount -= 1;
+      if (name == "Health Pack") {
+        pet.health += 10;
+      } else if (name == "Bandage") {
+        if (pet.losingHealth) {
+          bandageTimer = frameCount;
+        }
+      } else if (name == "Sleeping Pill") {
+        pet.fatigue -= pet.fatigue*0.5;
+      }
     }
   }
 
@@ -566,6 +573,11 @@ void draw() {
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
+      if (frameCount - bandageTimer < 60*3) {
+        pet.health += pet.healthRate;
+      } else {
+        pet.losingHealth = false;
+      }
       if (gameState != "feed") {
         time.display(width*0.01, height*0.01, LEFT, TOP);
       }
@@ -717,7 +729,7 @@ void draw() {
     text("X" + money, centerX, height*0.78);
     popStyle();
 
-    if ((cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) && floor(pet.hunger) < 1) {
+    if ((cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) && (floor(pet.hunger) < 1 || pet.asleep)) {
       pushStyle();
       textSize(20*density);
       textAlign(LEFT, TOP);

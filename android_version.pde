@@ -1,7 +1,6 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
-//fix frames not giving expected result
 //fix item name sizes
 //fix item descriptions going off screen
 //add coin minigame
@@ -663,7 +662,7 @@ void draw() {
     shopButton.display();
 
     if (sleepButton.pressed && pet.fatigue < 10) {
-      if (frameCount - notTiredTimer < 60*3) {
+      if (frameCount - notTiredTimer < 60) {
         pushStyle();
         pushMatrix();
         translate(pet.sprite.x + (pet.sprite.imgW/2), pet.sprite.y);

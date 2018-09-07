@@ -1,11 +1,9 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
-//replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
+//replace shop with upgrades? maybe maps (backgrounds)
 //add instructions
-//fix item name sizes
 //fix item descriptions going off screen
 //add coin minigame
 //add game over screen (replay)
-
 import android.util.DisplayMetrics;
 
 int density;
@@ -121,7 +119,7 @@ void setup() {
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
   startButton = new TextButton("Start!", centerX, height*0.45, 34, green);
-  backButton = new TextButton("Back", width*0.93, height*0.05, 34, red);
+  backButton = new TextButton("Back", width*0.94, height*0.04, 34, red);
 
   pushStyle();
   textSize(28*density);
@@ -215,7 +213,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 100;
+  float fatigue = 0;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -273,7 +271,7 @@ class Pet {
       health += healthRate;
       losingHealth = false;
     }
-    hunger += hungerRate;
+    //hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -438,7 +436,7 @@ class Consumable {
     image(img, x, y);
     pushStyle();
     textAlign(CENTER, BOTTOM);
-    textSize(24*density);
+    textSize(20*density);
     text(name + "($" + price + ")", x, y-(h/2));
     textSize(18*density);
     if (x <= centerX) {
@@ -449,7 +447,7 @@ class Consumable {
       text(" " + "X" + amount, x+(w/2), y);
     } else {
       textAlign(LEFT, CENTER);
-      text(description, (x+(w/2))+10, y);
+      text(description, (x+(w/2))+10, y, width, y+textAscent());
       textAlign(RIGHT, CENTER);
       textSize(20*density);
       text(amount + "X" + " ", x-(w/2), y);
@@ -563,6 +561,7 @@ class Animation {
   void display(int start, int numFrames) {
     PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
     image(displayFrames[currentFrame%displayFrames.length], x, y);
+    //test
     if (frameCount % 60 == 0) {
       currentFrame += 1;
     }
@@ -662,7 +661,7 @@ void draw() {
     shopButton.display();
 
     if (sleepButton.pressed && pet.fatigue < 10) {
-      if (frameCount - notTiredTimer < 60) {
+      if (frameCount - notTiredTimer < frameRate) {
         pushStyle();
         pushMatrix();
         translate(pet.sprite.x + (pet.sprite.imgW/2), pet.sprite.y);
@@ -739,7 +738,7 @@ void draw() {
       textSize(20*density);
       textAlign(LEFT, TOP);
       fill(lightBlue, 100);
-      if (frameCount - notHungryTimer < 60 && notHungryTimer != -1) {
+      if (frameCount - notHungryTimer < frameRate && notHungryTimer != -1) {
         if (pet.hunger < 1) {
           String s = "Pet is not hungry!";
           rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
@@ -749,7 +748,7 @@ void draw() {
           //stop timer when hunger exceeds 1
           notHungryTimer = -1;
         }
-      } else if (frameCount - petAsleepTimer < 60 && petAsleepTimer != -1) {
+      } else if (frameCount - petAsleepTimer < frameRate && petAsleepTimer != -1) {
         if (pet.asleep) {
           String s = "Pet is asleep!";
           rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());

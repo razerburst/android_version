@@ -3,6 +3,9 @@
 //add instructions
 //fix sleepRate
 //fix timers
+//fix hunger
+//fix timers overlapping
+//fix frames not giving expected result
 //fix item name sizes
 //fix item descriptions going off screen
 //add coin minigame
@@ -275,7 +278,7 @@ class Pet {
       health += healthRate;
       losingHealth = false;
     }
-    hunger += hungerRate;
+    //hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -664,7 +667,7 @@ void draw() {
     shopButton.display();
 
     if (sleepButton.pressed && pet.fatigue < 10) {
-      if (frameCount - notTiredTimer < 60) {
+      if (frameCount - notTiredTimer < 60*3) {
         pushStyle();
         pushMatrix();
         translate(pet.sprite.x + (pet.sprite.imgW/2), pet.sprite.y);
@@ -736,27 +739,32 @@ void draw() {
     text("X" + money, centerX, height*0.78);
     popStyle();
 
-    print(notHungryTimer);
     if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
       pushStyle();
       textSize(20*density);
       textAlign(LEFT, TOP);
       fill(lightBlue, 100);
+
       if (pet.hunger < 1) {
-        if (frameCount - notHungryTimer < 60*3) {
+        if (frameCount - notHungryTimer < 60*3 && notHungryTimer != -1) {
           String s = "Pet is not hungry!";
           rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
           fill(0);
           text(s, mouseX, mouseY);
         }
       } else {
-        notHungryTimer = (60*3)+1;
+        //stop timer when hunger exceeds 1
+        notHungryTimer = -1;
       }
-      if (frameCount - petAsleepTimer < 60) {
-        String s = "Pet is asleep!";
-        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
-        fill(0);
-        text(s, mouseX, mouseY);
+      if (pet.asleep) {
+        if (frameCount - petAsleepTimer < 60) {
+          String s = "Pet is asleep!";
+          rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+          fill(0);
+          text(s, mouseX, mouseY);
+        }
+      } else {
+        petAsleepTimer = -1;
       }
       popStyle();
     }

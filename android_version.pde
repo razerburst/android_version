@@ -2,6 +2,12 @@
 //replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
 //fix sleepRate
+//fix timers
+//fix item name sizes
+//fix item descriptions going off screen
+//add coin minigame
+//add game over screen (replay)
+
 import android.util.DisplayMetrics;
 
 int density;
@@ -397,6 +403,7 @@ class Consumable {
   int buttonH = 65;
   TextButton buyButton;
   TextButton sellButton;
+  boolean pressed = false;
 
   Consumable(String _name, String _filename, float _x, float _y, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
@@ -468,7 +475,7 @@ class Consumable {
     if (mouseCollide() && amount > 0) {
       if (pet.asleep) {
         petAsleepTimer = frameCount;
-      } else if (floor(pet.hunger) < 1) {
+      } else if (pet.hunger < 1) {
         notHungryTimer = frameCount;
       } else {
         pet.happiness += happiness;
@@ -483,17 +490,17 @@ class Consumable {
 
   void onUse() {
     if (mouseCollide() && money >= price && amount > 0) {
-      money -= price;
-      amount -= 1;
       if (name == "Health Pack") {
         pet.health += 10;
+        amount -= 1;
       } else if (name == "Bandage") {
         if (pet.losingHealth) {
-          print("work");
           bandageTimer = frameCount;
+          amount -= 1;
         }
       } else if (name == "Sleeping Pill") {
         pet.fatigue -= pet.fatigue*0.5;
+        amount -= 1;
       }
     }
   }
@@ -575,14 +582,8 @@ void draw() {
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
-      println(pet.losingHealth, frameCount - bandageTimer);
-      if (pet.losingHealth) {
-        if (frameCount - bandageTimer < 60*3) {
-          print("test");
-          pet.health += pet.healthRate;
-        } else {
-          pet.losingHealth = false;
-        }
+      if (pet.losingHealth && frameCount - bandageTimer < frameRate*3) {
+        pet.health += pet.healthRate;
       }
       if (gameState != "feed") {
         time.display(width*0.01, height*0.01, LEFT, TOP);
@@ -735,17 +736,23 @@ void draw() {
     text("X" + money, centerX, height*0.78);
     popStyle();
 
-    if ((cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) && (floor(pet.hunger) < 1 || pet.asleep)) {
+    print(notHungryTimer);
+    if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
       pushStyle();
       textSize(20*density);
       textAlign(LEFT, TOP);
       fill(lightBlue, 100);
-      if (frameCount - notHungryTimer < 60) {
-        String s = "Pet is not hungry!";
-        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
-        fill(0);
-        text(s, mouseX, mouseY);
-      } else if (frameCount - petAsleepTimer < 60) {
+      if (pet.hunger < 1) {
+        if (frameCount - notHungryTimer < 60*3) {
+          String s = "Pet is not hungry!";
+          rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+          fill(0);
+          text(s, mouseX, mouseY);
+        }
+      } else {
+        notHungryTimer = (60*3)+1;
+      }
+      if (frameCount - petAsleepTimer < 60) {
         String s = "Pet is asleep!";
         rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
         fill(0);

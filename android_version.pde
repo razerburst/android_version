@@ -1,10 +1,6 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
 //add instructions
-//fix sleepRate
-//fix timers
-//fix hunger
-//fix timers overlapping
 //fix frames not giving expected result
 //fix item name sizes
 //fix item descriptions going off screen
@@ -278,7 +274,7 @@ class Pet {
       health += healthRate;
       losingHealth = false;
     }
-    //hunger += hungerRate;
+    hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -744,26 +740,25 @@ void draw() {
       textSize(20*density);
       textAlign(LEFT, TOP);
       fill(lightBlue, 100);
-
-      if (pet.hunger < 1) {
-        if (frameCount - notHungryTimer < 60*3 && notHungryTimer != -1) {
+      if (frameCount - notHungryTimer < 60 && notHungryTimer != -1) {
+        if (pet.hunger < 1) {
           String s = "Pet is not hungry!";
           rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
           fill(0);
           text(s, mouseX, mouseY);
+        } else {
+          //stop timer when hunger exceeds 1
+          notHungryTimer = -1;
         }
-      } else {
-        //stop timer when hunger exceeds 1
-        notHungryTimer = -1;
-      }
-      if (pet.asleep) {
-        if (frameCount - petAsleepTimer < 60) {
+      } else if (frameCount - petAsleepTimer < 60 && petAsleepTimer != -1) {
+        if (pet.asleep) {
           String s = "Pet is asleep!";
           rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
           fill(0);
           text(s, mouseX, mouseY);
         }
       } else {
+        //stops timer when pet wakes up
         petAsleepTimer = -1;
       }
       popStyle();

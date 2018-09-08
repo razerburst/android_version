@@ -5,7 +5,7 @@
 //add coin minigame
 //add game over screen (replay)
 import android.util.DisplayMetrics;
-hfjnh
+
 int density;
 float centerX;
 float centerY;
@@ -569,6 +569,7 @@ class Animation {
 }
 
 void draw() {
+  print("test");
   background(255);
   //automatic events
   if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {

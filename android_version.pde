@@ -574,6 +574,7 @@ class Coin {
 }
 
 void draw() {
+  print("test");
   background(255);
   //automatic events
   if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {

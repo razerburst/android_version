@@ -1,7 +1,9 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
-//replace shop with upgrades? maybe maps (backgrounds), give sprite a tongue
+//replace shop with upgrades? maybe maps (backgrounds)
 //add instructions
-//fix sleepRate
+//fix item descriptions going off screen
+//add coin minigame
+//add game over screen (replay)
 import android.util.DisplayMetrics;
 hfjnh
 int density;
@@ -64,6 +66,7 @@ int startDayTimer;
 int notTiredTimer;
 int notHungryTimer;
 int petAsleepTimer;
+int bandageTimer;
 
 Bar healthBar;
 Bar hungerBar;
@@ -116,7 +119,7 @@ void setup() {
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
   startButton = new TextButton("Start!", centerX, height*0.45, 34, green);
-  backButton = new TextButton("Back", width*0.93, height*0.05, 34, red);
+  backButton = new TextButton("Back", width*0.94, height*0.04, 34, red);
 
   pushStyle();
   textSize(28*density);
@@ -133,10 +136,10 @@ void setup() {
   cookie = new Consumable("Cookie", "Cookie.png", width*0.24, height*0.16, 3, 7, 10, 6);
   petFood = new Consumable("Pet Food", "PetFood.png", width*0.24, height*0.49, 6, 3, 30, 12);
   snacks = new Consumable("Snacks", "Snacks.png", width*0.24, height*0.82, 4, 5, 20, 9);
-  
+
   healthPack = new Consumable("Health Pack", "HealthPack.png", width*0.76, height*0.16, 10, "Restores 10 health");
-  bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 5, "Stops health loss for 3 seconds");
-  sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 7, "Reduces fatigue by 50% of current fatigue");
+  bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 6, "Stops health loss for 3 seconds");
+  sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 8, "Reduces fatigue by 50% of current fatigue");
 
   healthBar = new Bar(red, "Health");
   hungerBar = new Bar(brown, "Hunger");
@@ -210,7 +213,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 100;
+  float fatigue = 0;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -223,6 +226,7 @@ class Pet {
   float sleepRate;
   Animation sprite;
   boolean asleep = false;
+  boolean losingHealth = false;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 1440, 576, 2, 5);
@@ -251,9 +255,9 @@ class Pet {
     //happinessRate = baseRate;
 
     if (time.hours > 0 && time.hours < 6) {
-      sleepRate = fatigueRate*24;
-    } else {
       sleepRate = fatigueRate*12;
+    } else {
+      sleepRate = fatigueRate*8;
     }
   }
 
@@ -262,10 +266,12 @@ class Pet {
     barTimer = millis();
     if ((hunger >= 25) || (fatigue >= 25) || (happiness <= 75)) {
       health -= healthRate;
+      losingHealth = true;
     } else {
       health += healthRate;
+      losingHealth = false;
     }
-    hunger += hungerRate;
+    //hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -393,6 +399,7 @@ class Consumable {
   int buttonH = 65;
   TextButton buyButton;
   TextButton sellButton;
+  boolean pressed = false;
 
   Consumable(String _name, String _filename, float _x, float _y, int _price, int _happiness, int _weight, int _hunger) {
     name = _name;
@@ -415,7 +422,7 @@ class Consumable {
     name = _name;
     filename = _filename;
     x = _x;
-    y = _x;
+    y = _y;
     price = _price;
     description = _description;
     img = loadImage(filename);
@@ -426,18 +433,26 @@ class Consumable {
   }
 
   void display() {
+    image(img, x, y);
     pushStyle();
     textAlign(CENTER, BOTTOM);
-    textSize(24*density);
-    text(name + "($" + price + ")", x, y-(h/2));
-    textAlign(RIGHT, CENTER);
-    textSize(18*density);
-    text(description, (x-(w/2))-10, y);
-    textAlign(LEFT, CENTER);
     textSize(20*density);
-    text(" " + "X" + amount, x+(w/2), y);
+    text(name + "($" + price + ")", x, y-(h/2));
+    textSize(18*density);
+    if (x <= centerX) {
+      textAlign(RIGHT, CENTER);
+      text(description, (x-(w/2))-10, y);
+      textAlign(LEFT, CENTER);
+      textSize(20*density);
+      text(" " + "X" + amount, x+(w/2), y);
+    } else {
+      textAlign(LEFT, CENTER);
+      text(description, (x+(w/2))+10, y, width, y+textAscent());
+      textAlign(RIGHT, CENTER);
+      textSize(20*density);
+      text(amount + "X" + " ", x-(w/2), y);
+    }
     popStyle();
-    image(img, x, y);
 
     pushStyle();
     rectMode(CORNER);
@@ -456,7 +471,7 @@ class Consumable {
     if (mouseCollide() && amount > 0) {
       if (pet.asleep) {
         petAsleepTimer = frameCount;
-      } else if (floor(pet.hunger) < 1) {
+      } else if (pet.hunger < 1) {
         notHungryTimer = frameCount;
       } else {
         pet.happiness += happiness;
@@ -468,10 +483,21 @@ class Consumable {
       }
     }
   }
-  
+
   void onUse() {
-    if (mouseCollide() && amount > 0) {
-      print("test");
+    if (mouseCollide() && money >= price && amount > 0) {
+      if (name == "Health Pack") {
+        pet.health += 10;
+        amount -= 1;
+      } else if (name == "Bandage") {
+        if (pet.losingHealth) {
+          bandageTimer = frameCount;
+          amount -= 1;
+        }
+      } else if (name == "Sleeping Pill") {
+        pet.fatigue -= pet.fatigue*0.5;
+        amount -= 1;
+      }
     }
   }
 
@@ -535,6 +561,7 @@ class Animation {
   void display(int start, int numFrames) {
     PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
     image(displayFrames[currentFrame%displayFrames.length], x, y);
+    //test
     if (frameCount % 60 == 0) {
       currentFrame += 1;
     }
@@ -552,6 +579,9 @@ void draw() {
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
+      if (pet.losingHealth && frameCount - bandageTimer < frameRate*3) {
+        pet.health += pet.healthRate;
+      }
       if (gameState != "feed") {
         time.display(width*0.01, height*0.01, LEFT, TOP);
       }
@@ -619,9 +649,6 @@ void draw() {
     break;
 
   case "playingGame":
-    healthPack.display();
-    bandage.display();
-    sleepingPill.display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -634,7 +661,7 @@ void draw() {
     shopButton.display();
 
     if (sleepButton.pressed && pet.fatigue < 10) {
-      if (frameCount - notTiredTimer < 60) {
+      if (frameCount - notTiredTimer < frameRate) {
         pushStyle();
         pushMatrix();
         translate(pet.sprite.x + (pet.sprite.imgW/2), pet.sprite.y);
@@ -706,21 +733,31 @@ void draw() {
     text("X" + money, centerX, height*0.78);
     popStyle();
 
-    if ((cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) && floor(pet.hunger) < 1) {
+    if (cookie.mouseCollide() || petFood.mouseCollide() || snacks.mouseCollide()) {
       pushStyle();
       textSize(20*density);
       textAlign(LEFT, TOP);
       fill(lightBlue, 100);
-      if (frameCount - notHungryTimer < 60) {
-        String s = "Pet is not hungry!";
-        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
-        fill(0);
-        text(s, mouseX, mouseY);
-      } else if (frameCount - petAsleepTimer < 60) {
-        String s = "Pet is asleep!";
-        rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
-        fill(0);
-        text(s, mouseX, mouseY);
+      if (frameCount - notHungryTimer < frameRate && notHungryTimer != -1) {
+        if (pet.hunger < 1) {
+          String s = "Pet is not hungry!";
+          rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+          fill(0);
+          text(s, mouseX, mouseY);
+        } else {
+          //stop timer when hunger exceeds 1
+          notHungryTimer = -1;
+        }
+      } else if (frameCount - petAsleepTimer < frameRate && petAsleepTimer != -1) {
+        if (pet.asleep) {
+          String s = "Pet is asleep!";
+          rect(mouseX, mouseY, textWidth(s), textAscent()+textDescent());
+          fill(0);
+          text(s, mouseX, mouseY);
+        }
+      } else {
+        //stops timer when pet wakes up
+        petAsleepTimer = -1;
       }
       popStyle();
     }

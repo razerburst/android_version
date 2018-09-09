@@ -153,10 +153,10 @@ void setup() {
   bandage = new Consumable("Bandage", "Bandage.png", width*0.76, height*0.49, 6, "Stops health loss for 3 seconds");
   sleepingPill = new Consumable("Sleeping Pill", "SleepingPill.png", width*0.76, height*0.82, 8, "Reduces fatigue by 50% of current fatigue");
 
-  healthBar = new Bar(red, "Health");
-  hungerBar = new Bar(brown, "Hunger");
-  fatigueBar = new Bar(blue, "Fatigue");
-  happinessBar = new Bar(yellow, "Happiness");
+  healthBar = new Bar(width*0.03, height*0.15, red, "Health");
+  hungerBar = new Bar(width*0.03, height*0.3, brown, "Hunger");
+  fatigueBar = new Bar(width*0.03, height*0.45, blue, "Fatigue");
+  happinessBar = new Bar(width*0.03, height*0.6, yellow, "Happiness");
 
   moneyImg = loadImage("Money.png");
 
@@ -367,12 +367,16 @@ class Time {
 }
 
 class Bar {
+  float x;
+  float y;
   float w = 500;
   float h = 65;
   color colour;
   String name;
 
-  Bar(color _colour, String _name) {
+  Bar(float _x, float _y, color _colour, String _name) {
+    x = _x;
+    y = _y;
     colour = _colour;
     name = _name;
   }

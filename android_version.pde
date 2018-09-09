@@ -159,6 +159,10 @@ void setup() {
   happinessBar = new Bar(yellow, "Happiness");
 
   moneyImg = loadImage("Money.png");
+  
+  for (i = 0; i < coins.length; i++) {
+    coins[i] = new coin();
+  }
 }
 
 //general use functions

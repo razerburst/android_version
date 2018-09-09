@@ -5,11 +5,11 @@
 //add coin minigame
 //add game over screen (replay)
 import android.util.DisplayMetrics;
-//test
+
 int density;
 float centerX;
 float centerY;
-
+//test2
 color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);

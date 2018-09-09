@@ -77,7 +77,6 @@ int money = 1000;
 PImage moneyImg;
 
 void setup() {
-  print("test!");
   fullScreen();
   orientation(LANDSCAPE);
 
@@ -575,7 +574,6 @@ class Coin {
 }
 
 void draw() {
-  print("test");
   background(255);
   //automatic events
   if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {

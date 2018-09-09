@@ -23,7 +23,16 @@ color yellow = color(247, 228, 23);
 
 Pet pet;
 Time time;
-String gameState = "playingGame";
+enum gameState {
+  MAINMENU, 
+    NEWGAME, 
+    LOAD, 
+    QUIT, 
+    PLAYING, 
+    STATS, 
+    FEED,
+}
+gameState currentState = gameState.PLAYING;
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -271,7 +280,7 @@ class Pet {
       health += healthRate;
       losingHealth = false;
     }
-    //hunger += hungerRate;
+    hunger += hungerRate;
     if (asleep) {
       fatigue -= sleepRate;
     } else {
@@ -574,12 +583,11 @@ class Coin {
 }
 
 void draw() {
-  print("test");
   background(255);
   //automatic events
-  if (gameState == "playingGame" || gameState == "loadGame" || gameState == "stats" || gameState == "feed") {
+  if (currentState == gameState.PLAYING || currentState == gameState.LOAD || currentState == gameState.STATS || currentState == gameState.FEED) {
     backButton.display();
-    if (gameState != "loadGame") {
+    if (currentState != gameState.LOAD) {
       time.update();
       pet.calculateRates();
       pet.updateStats();
@@ -588,20 +596,20 @@ void draw() {
       if (pet.losingHealth && frameCount - bandageTimer < frameRate*3) {
         pet.health += pet.healthRate;
       }
-      if (gameState != "feed") {
+      if (currentState != gameState.FEED) {
         time.display(width*0.01, height*0.01, LEFT, TOP);
       }
     }
   }
 
-  switch(gameState) {
-  case "mainMenu":
+  switch(currentState) {
+  case MAINMENU:
     newGameButton.display();
     loadButton.display();
     quitButton.display();
     break;
 
-  case "newGame":
+  case NEWGAME:
     traitsPicked = 0;
     pushStyle();
     textSize(28*density);
@@ -646,7 +654,7 @@ void draw() {
             int randi = int(random(traits[i].length));
             pet.nature[i] = traits[i][randi].string;
           }
-          gameState = "playingGame";
+          currentState = gameState.PLAYING;
           startTime = millis();
           startDayTimer = millis();
         }
@@ -654,7 +662,7 @@ void draw() {
     }
     break;
 
-  case "playingGame":
+  case PLAYING:
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -703,7 +711,7 @@ void draw() {
     popStyle();
     break;
 
-  case "stats":
+  case STATS:
     pushStyle();
     textAlign(LEFT);
     textSize(24*density);
@@ -715,7 +723,7 @@ void draw() {
     popStyle();
     break;
 
-  case "feed":
+  case FEED:
     time.display(centerX, height*0.01, CENTER, TOP);
 
     //half bar length (because original x and y of bar is top, left not center)
@@ -769,19 +777,13 @@ void draw() {
     }
     break;
 
-  case "shop":
-    cookie.display();
-    petFood.display();
-    snacks.display();
-    break;
-
-  case "loadGame":
+  case LOAD:
     break;
   }
 }
 
 void keyPressed() {
-  if (gameState == "newGame") {
+  if (currentState == gameState.NEWGAME) {
     if (keyCode == BACKSPACE) {
       if (textBoxString.length() > 0) {
         textBoxString = textBoxString.substring(0, textBoxString.length()-1);
@@ -803,24 +805,24 @@ void keyPressed() {
 //detect taps
 void mouseReleased() {
   if (backButton.mouseCollide()) {
-    if (gameState == "playingGame" || gameState == "loadGame") {
-      gameState = "mainMenu";
-    } else if (gameState == "stats" || gameState == "feed") {
-      gameState = "playingGame";
+    if (currentState == gameState.PLAYING || currentState == gameState.LOAD) {
+      currentState = gameState.MAINMENU;
+    } else if (currentState == gameState.STATS || currentState == gameState.FEED) {
+      currentState = gameState.PLAYING;
     }
   }
 
-  switch(gameState) {
-  case "mainMenu":
+  switch(currentState) {
+  case MAINMENU:
     if (newGameButton.mouseCollide()) {
-      gameState = "newGame";
+      currentState = gameState.NEWGAME;
     } else if (loadButton.mouseCollide()) {
-      gameState = "loadGame";
+      currentState = gameState.LOAD;
     } else if (quitButton.mouseCollide()) {
     }
     break;
 
-  case "newGame":
+  case NEWGAME:
     if (rectMouseCollide(textBoxRectX, textBoxRectY, textBoxRectW, textBoxRectH, CENTER)) {
       openKeyboard();
     } else {
@@ -857,7 +859,7 @@ void mouseReleased() {
 
         if (traitsPicked == 4) {
           if (startButton.mouseCollide()) {
-            gameState = "playingGame";
+            currentState = gameState.PLAYING;
             startTime = millis();
             startDayTimer = millis();
           }
@@ -866,7 +868,7 @@ void mouseReleased() {
     }
     break;
 
-  case "playingGame":
+  case PLAYING:
     if (sleepButton.mouseCollide()) {
       sleepButton.pressed = true;
       if (sleepButton.string == "Wake") {
@@ -880,15 +882,14 @@ void mouseReleased() {
         }
       }
     } else if (statsButton.mouseCollide()) {
-      gameState = "stats";
+      currentState = gameState.STATS;
     } else if (feedButton.mouseCollide()) {
-      gameState = "feed";
+      currentState = gameState.FEED;
     } else if (shopButton.mouseCollide()) {
-      gameState = "shop";
     }
     break;
 
-  case "feed":
+  case FEED:
     cookie.onEat();
     petFood.onEat();
     snacks.onEat();
@@ -909,9 +910,6 @@ void mouseReleased() {
     healthPack.onSell();
     bandage.onSell();
     sleepingPill.onSell();
-    break;
-
-  case "shop":
     break;
   }
 }

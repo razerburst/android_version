@@ -1,10 +1,10 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
-//replace shop with upgrades? maybe maps (backgrounds)
+//replace shop with upgrades? maybe maps (backgrounds) and rename feed to shop
 //add instructions
-//fix item descriptions going off screen
 //add coin minigame
 //add game over screen (replay)
 //fix snacks image width
+//day/night background change
 import android.util.DisplayMetrics;
 
 int density;
@@ -85,6 +85,8 @@ Bar happinessBar;
 
 int money = 1000;
 PImage moneyImg;
+
+Coin[] coins = new Coin[5];
 
 void setup() {
   fullScreen();
@@ -582,6 +584,26 @@ class Animation {
 }
 
 class Coin {
+  PImage img;
+  float x = centerX;
+  float y = centerY;
+  
+  Coin() {
+    img = loadImage("Coin.png");
+  }
+  
+  void calculatePosition() {
+    
+  }
+  
+  void display() {
+    //test
+    image(img, x, y);
+  }
+  
+  boolean mouseCollide() {
+    return circleMouseCollide(x, y, img.width);
+  }
 }
 
 void draw() {
@@ -665,6 +687,7 @@ void draw() {
     break;
 
   case PLAYING:
+    coins[0].display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {

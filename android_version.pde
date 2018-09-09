@@ -160,8 +160,8 @@ void setup() {
 
   moneyImg = loadImage("Money.png");
   
-  for (i = 0; i < coins.length; i++) {
-    coins[i] = new coin();
+  for (int i = 0; i < coins.length; i++) {
+    coins[i] = new Coin();
   }
 }
 
@@ -691,7 +691,6 @@ void draw() {
     break;
 
   case PLAYING:
-    coins[0].display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -738,6 +737,7 @@ void draw() {
     textAlign(LEFT, CENTER);
     text("X" + money, width*0.16, height*0.78);
     popStyle();
+    coins[0].display();
     break;
 
   case STATS:

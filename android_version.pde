@@ -447,9 +447,7 @@ class Consumable {
       text(" " + "X" + amount, x+(w/2), y);
     } else {
       textAlign(LEFT, CENTER);
-      rectMode(CORNERS);
-      rect((x+(w/2))+10, y-(h/2), width, h);
-      text(description, (x+(w/2))+10, y, width, y+300);
+      text(description, (x+(w/2))+10, y, width, y+textAscent());
       textAlign(RIGHT, CENTER);
       textSize(20*density);
       text(amount + "X" + " ", x-(w/2), y);
@@ -568,9 +566,6 @@ class Animation {
       currentFrame += 1;
     }
   }
-}
-
-class Coin {
 }
 
 void draw() {

@@ -4,6 +4,7 @@
 //fix item descriptions going off screen
 //add coin minigame
 //add game over screen (replay)
+//fix snacks image width
 import android.util.DisplayMetrics;
 
 int density;
@@ -265,8 +266,10 @@ class Pet {
 
     if (time.hours > 0 && time.hours < 6) {
       sleepRate = fatigueRate*12;
+      //takes two hours to sleep 100%
     } else {
       sleepRate = fatigueRate*8;
+      //takes three hours to sleep 100%
     }
   }
 
@@ -445,11 +448,11 @@ class Consumable {
     image(img, x, y);
     pushStyle();
     textAlign(CENTER, BOTTOM);
-    textSize(20*density);
-    text(name + "($" + price + ")", x, y-(h/2));
     textSize(18*density);
+    text(name + "($" + price + ")", x, y-(h/2));
     if (x <= centerX) {
       textAlign(RIGHT, CENTER);
+      textSize(18*density);
       text(description, (x-(w/2))-10, y);
       textAlign(LEFT, CENTER);
       textSize(20*density);
@@ -457,8 +460,8 @@ class Consumable {
     } else {
       textAlign(LEFT, CENTER);
       rectMode(CORNERS);
-      rect((x+(w/2))+10, y-(h/2), width, h);
-      text(description, (x+(w/2))+10, y, width, y+300);
+      textSize(16*density);
+      text(description, (x+(w/2))+10, y-(h/2), width, y+(textAscent()*3));
       textAlign(RIGHT, CENTER);
       textSize(20*density);
       text(amount + "X" + " ", x-(w/2), y);
@@ -572,7 +575,6 @@ class Animation {
   void display(int start, int numFrames) {
     PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
     image(displayFrames[currentFrame%displayFrames.length], x, y);
-    //test
     if (frameCount % 60 == 0) {
       currentFrame += 1;
     }

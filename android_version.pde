@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
 int density;
 float centerX;
 float centerY;
-//test2
+
 color green = color(0, 255, 0);
 color red = color(255, 0, 0);
 color black = color(0);
@@ -77,6 +77,7 @@ int money = 1000;
 PImage moneyImg;
 
 void setup() {
+  print("test!");
   fullScreen();
   orientation(LANDSCAPE);
 

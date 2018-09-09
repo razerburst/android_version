@@ -160,8 +160,8 @@ void setup() {
 
   moneyImg = loadImage("Money.png");
   
-  for (i = 0; i < coins.length; i++) {
-    coins[i] = new coin();
+  for (int i = 0; i < coins.length; i++) {
+    coins[i] = new Coin();
   }
 }
 
@@ -589,19 +589,19 @@ class Animation {
 
 class Coin {
   PImage img;
-  float x = centerX;
-  float y = centerY;
+  float x;
+  float y;
   
   Coin() {
     img = loadImage("Coin.png");
   }
   
   void calculatePosition() {
-    
+    x = random(healthBar.x+healthBar.w+4+(img.width/2), width);
+    y = random(backButton.y+backButton.desc+(img.height/2), shopButton.y-shopButton.asc);
   }
   
   void display() {
-    //test
     image(img, x, y);
   }
   
@@ -691,7 +691,6 @@ void draw() {
     break;
 
   case PLAYING:
-    coins[0].display();
     if (pet.asleep) {
       sleepButton.string = "Wake";
     } else {
@@ -738,6 +737,11 @@ void draw() {
     textAlign(LEFT, CENTER);
     text("X" + money, width*0.16, height*0.78);
     popStyle();
+    
+    for (int i = 0; i < coins.length; i++) {
+      coins[i].calculatePosition();
+      coins[i].display();
+    }
     break;
 
   case STATS:

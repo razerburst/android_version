@@ -605,7 +605,7 @@ class Coin {
   }
 
   void calculatePosition() {
-    x = random(healthBar.x+healthBar.w+4+(img.width/2), width);
+    x = random(healthBar.x+healthBar.w+4+(img.width/2), width-(img.width/2));
     y = random(backButton.y+backButton.desc+(img.height/2), shopButton.y-shopButton.asc);
   }
 

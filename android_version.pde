@@ -595,10 +595,11 @@ class Coin {
   PImage img;
   float x;
   float y;
-  float displayTime;
-  
-  Coin(float _displayTime) {
-    displayTime = _displayTime;
+  float displayInterval;
+  int displayTimer;
+
+  Coin(float _displayInterval) {
+    displayInterval = _displayInterval;
     img = loadImage("Coin.png");
   }
 
@@ -608,7 +609,11 @@ class Coin {
   }
 
   void display() {
-    if (float(frameCount) <= 60*displayTime) {
+    if (frameCount % 60*displayInterval == 0) {
+      displayTimer = frameCount;
+    }
+
+    if (frameCount - displayTimer <= 60) {
       image(img, x, y);
     }
   }

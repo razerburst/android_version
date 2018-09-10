@@ -596,7 +596,7 @@ class Coin {
   float x;
   float y;
   float displayInterval;
-  int displayTimer;
+  int displayTimer = 0;
 
   Coin(float _displayInterval) {
     displayInterval = _displayInterval;
@@ -611,7 +611,11 @@ class Coin {
 
   void display() {
     if (frameCount % 60*displayInterval == 0) {
-      image(img, x, y);
+      if (frameCount - displayTimer < 60) {
+        image(img, x, y);
+      } else {
+        displayTimer = 0;
+      }
       calculatePosition();
     }
   }

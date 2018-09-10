@@ -601,6 +601,7 @@ class Coin {
   Coin(float _displayInterval) {
     displayInterval = _displayInterval;
     img = loadImage("Coin.png");
+    calculatePosition();
   }
 
   void calculatePosition() {
@@ -611,6 +612,7 @@ class Coin {
   void display() {
     if (frameCount % 60*displayInterval == 0) {
       image(img, x, y);
+      calculatePosition();
     }
   }
 
@@ -748,7 +750,6 @@ void draw() {
     popStyle();
 
     for (int i = 0; i < coins.length; i++) {
-      coins[i].calculatePosition();
       coins[i].display();
     }
     break;

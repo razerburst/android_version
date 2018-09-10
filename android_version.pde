@@ -613,7 +613,7 @@ class Coin {
       displayTimer = frameCount;
     }
 
-    if (frameCount - displayTimer <= 60) {
+    if (frameCount - displayTimer <= 60*3) {
       image(img, x, y);
     }
   }

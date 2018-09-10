@@ -611,10 +611,6 @@ class Coin {
 
   void display() {
     if (frameCount % 60*displayInterval == 0) {
-      displayTimer = frameCount;
-    }
-
-    if (frameCount - displayTimer <= 60*3) {
       image(img, x, y);
       calculatePosition();
     }

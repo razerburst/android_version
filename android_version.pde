@@ -161,7 +161,7 @@ void setup() {
   moneyImg = loadImage("Money.png");
 
   for (int i = 0; i < coins.length; i++) {
-    coins[i] = new Coin();
+    coins[i] = new Coin(1+(i/10));
   }
 }
 
@@ -595,8 +595,10 @@ class Coin {
   PImage img;
   float x;
   float y;
-
-  Coin() {
+  float displayTime;
+  
+  Coin(float _displayTime) {
+    displayTime = _displayTime;
     img = loadImage("Coin.png");
   }
 
@@ -606,7 +608,9 @@ class Coin {
   }
 
   void display() {
-    image(img, x, y);
+    if (float(frameCount) <= 60*displayTime) {
+      image(img, x, y);
+    }
   }
 
   boolean mouseCollide() {

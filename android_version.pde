@@ -610,6 +610,7 @@ class Coin {
   }
 
   void display() {
+    //make separate
     if (frameCount % 60*displayInterval == 0) {
       if (frameCount - displayTimer < 60) {
         image(img, x, y);

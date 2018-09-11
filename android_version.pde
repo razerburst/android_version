@@ -617,11 +617,10 @@ class Coin {
       showCoin = true;
       hideCoinTimer = frameCount;
       calculatePosition();
-      println(hideCoinTimer, showCoin, x, y);
     }
     print(showCoin);
     if (showCoin) {
-      if (frameCount - showCoinTimer < 60) {
+      if (frameCount - showCoinTimer <= 60) {
         image(img, x, y);
       } else {
         showCoin = false;
@@ -762,7 +761,7 @@ void draw() {
     textAlign(LEFT, CENTER);
     text("X" + money, width*0.16, height*0.78);
     popStyle();
-    
+
     coins[0].display();
     //for (int i = 0; i < coins.length; i++) {
     //  coins[i].display();

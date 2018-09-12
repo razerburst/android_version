@@ -771,7 +771,6 @@ void draw() {
     text("X" + money, width*0.16, height*0.78);
     popStyle();
 
-    //coins[0].display();
     for (int i = 0; i < coins.length; i++) {
       coins[i].display();
     }

@@ -600,6 +600,7 @@ class Coin {
   int showCoinTimer = 0;
   boolean hideCoin = true;
   boolean showCoin = false;
+  boolean initialDelay = false;
 
   Coin(float _displayInterval) {
     displayInterval = _displayInterval;
@@ -615,16 +616,20 @@ class Coin {
   void display() {
     //make display ONLY display
     if (hideCoin) {
-      if (frameCount - hideCoinTimer >= 60*displayInterval) {
+      if (frameCount - hideCoinTimer > 60*displayInterval) {
         showCoin = true;
         hideCoin = false;
         showCoinTimer = frameCount;
       }
     }
     if (showCoin) {
-      if (frameCount - showCoinTimer <= 60) {
+      if (frameCount - showCoinTimer < 60) {
         image(img, x, y);
       } else {
+        if (!initialDelay) {
+          displayInterval = 1;
+          initialDelay = true;
+        }
         showCoin = false;
         hideCoin = true;
         hideCoinTimer = frameCount;
@@ -766,10 +771,10 @@ void draw() {
     text("X" + money, width*0.16, height*0.78);
     popStyle();
 
-    coins[0].display();
-    //for (int i = 0; i < coins.length; i++) {
-    //  coins[i].display();
-    //}
+    //coins[0].display();
+    for (int i = 0; i < coins.length; i++) {
+      coins[i].display();
+    }
     break;
 
   case STATS:

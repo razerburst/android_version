@@ -598,6 +598,7 @@ class Coin {
   float displayInterval;
   int hideCoinTimer = 0;
   int showCoinTimer = 0;
+  boolean hideCoin = true;
   boolean showCoin = false;
 
   Coin(float _displayInterval) {
@@ -613,18 +614,21 @@ class Coin {
 
   void display() {
     //make display ONLY display
-    if (frameCount - hideCoinTimer > 60*displayInterval) {
-      showCoin = true;
-      hideCoinTimer = frameCount;
-      calculatePosition();
+    if (hideCoin) {
+      if (frameCount - hideCoinTimer >= 60*displayInterval) {
+        showCoin = true;
+        hideCoin = false;
+        showCoinTimer = frameCount;
+      }
     }
-    print(showCoin);
     if (showCoin) {
       if (frameCount - showCoinTimer <= 60) {
         image(img, x, y);
       } else {
         showCoin = false;
-        showCoinTimer = frameCount;
+        hideCoin = true;
+        hideCoinTimer = frameCount;
+        calculatePosition();
       }
     }
   }

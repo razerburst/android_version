@@ -83,7 +83,7 @@ Bar hungerBar;
 Bar fatigueBar;
 Bar happinessBar;
 
-int money = 1000;
+int money = 0;
 PImage moneyImg;
 
 Coin[] coins = new Coin[5];
@@ -596,10 +596,10 @@ class Coin {
   float x;
   float y;
   float displayInterval;
-  int hideCoinTimer = 0;
-  int showCoinTimer = 0;
-  boolean hideCoin = true;
-  boolean showCoin = false;
+  int hideTimer = 0;
+  int showTimer = 0;
+  boolean hide = true;
+  boolean show = false;
   boolean initialDelay = false;
 
   Coin(float _displayInterval) {
@@ -614,26 +614,22 @@ class Coin {
   }
 
   void display() {
-    if (hideCoin) {
-      if (frameCount - hideCoinTimer > 60*displayInterval) {
-        showCoin = true;
-        hideCoin = false;
-        showCoinTimer = frameCount;
-      }
-    }
-    if (showCoin) {
-      if (frameCount - showCoinTimer < 60) {
+    if (show) {
+      if (frameCount - showTimer < 60) {
         image(img, x, y);
       } else {
         if (!initialDelay) {
           displayInterval = 1;
           initialDelay = true;
         }
-        showCoin = false;
-        hideCoin = true;
-        hideCoinTimer = frameCount;
+        show = false;
+        hideTimer = frameCount;
         calculatePosition();
       }
+    } else if (frameCount - hideTimer > 60*displayInterval) {
+      hide = false;
+      show = true;
+      showTimer = frameCount;
     }
   }
 
@@ -770,8 +766,19 @@ void draw() {
     text("X" + money, width*0.16, height*0.78);
     popStyle();
 
-    for (int i = 0; i < coins.length; i++) {
-      coins[i].display();
+    for (int i = 0; i < 2; i++) {
+      Coin coin = coins[i];
+      coin.display();
+      if (coin.show && frameCount - coin.showTimer < 60) {
+        text(i, coin.x, coin.y);
+      }
+      if (coin.mouseCollide()) {
+        coin.show = false;
+        coin.hide = true;
+        coin.hideTimer = frameCount;
+        money += 1;
+        coin.calculatePosition();
+      }
     }
     break;
 

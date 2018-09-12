@@ -614,7 +614,6 @@ class Coin {
   }
 
   void display() {
-    //make display ONLY display
     if (hideCoin) {
       if (frameCount - hideCoinTimer > 60*displayInterval) {
         showCoin = true;

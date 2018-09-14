@@ -161,7 +161,7 @@ void setup() {
   moneyImg = loadImage("Money.png");
 
   for (int i = 0; i < coins.length; i++) {
-    coins[i] = new Coin(1+(i/10));
+    coins[i] = new Coin(1+(i/10.0));
   }
 }
 
@@ -596,7 +596,9 @@ class Coin {
   float x;
   float y;
   float displayInterval;
-  int displayTimer = 0;
+  int hideCoinTimer = 0;
+  int showCoinTimer = 0;
+  boolean showCoin = false;
 
   Coin(float _displayInterval) {
     displayInterval = _displayInterval;
@@ -610,14 +612,20 @@ class Coin {
   }
 
   void display() {
-    //make separate
-    if (frameCount % 60*displayInterval == 0) {
-      if (frameCount - displayTimer < 60) {
+    //make display ONLY display
+    if (frameCount - hideCoinTimer > 60*displayInterval) {
+      showCoin = true;
+      hideCoinTimer = frameCount;
+      calculatePosition();
+    }
+    if (showCoin) {
+      print(frameCount - showCoinTimer);
+      if (frameCount - showCoinTimer <= 60) {
         image(img, x, y);
       } else {
-        displayTimer = 0;
+        showCoin = false;
+        showCoinTimer = frameCount;
       }
-      calculatePosition();
     }
   }
 
@@ -754,9 +762,10 @@ void draw() {
     text("X" + money, width*0.16, height*0.78);
     popStyle();
 
-    for (int i = 0; i < coins.length; i++) {
-      coins[i].display();
-    }
+    coins[0].display();
+    //for (int i = 0; i < coins.length; i++) {
+    //  coins[i].display();
+    //}
     break;
 
   case STATS:

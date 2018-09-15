@@ -5,6 +5,7 @@
 //add game over screen (replay)
 //fix snacks image width
 //day/night background change
+//do not force player to pick all traits
 import android.util.DisplayMetrics;
 
 int density;
@@ -120,13 +121,16 @@ void setup() {
   //something to do with sleep
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
-  //if energetic, hungrier faster, if lethargic, hungrier slower
-  //if energetic, lose more weight when active, if lethargic, lose less weight when active
+  //if energetic, hunger goes up faster, fatigue goes down slower (needs more rest), more happy when active, more weight lost when active
+  //if lethargic, hunger goes up slower, fatigue goes down faster (needs less rest), not as happy when active, less weight lost when active
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
-  traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
-  traits[2][1] = new TextButton("Composed", width*0.38, height*0.84, 24, orange);
-  //quotes are vary slightly if friendly or hostile
+  //random chance to not respond to actions
+  //random chance to forget what you're doing
+  //both do same thing but different response from pet
+  traits[2][0] = new TextButton("Chaotic", width*0.18, height*0.84, 24, orange);
+  traits[2][1] = new TextButton("Clueless", width*0.38, height*0.84, 24, orange);
+  //pet says something when tapped
   traits[3][0] = new TextButton("Friendly", width*0.18, height*0.92, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
@@ -270,13 +274,23 @@ class Pet {
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
 
-    if (time.hours > 0 && time.hours < 6) {
-      sleepRate = fatigueRate*12;
-      //takes two hours to sleep 100%
-    } else {
-      sleepRate = fatigueRate*8;
-      //takes three hours to sleep 100%
+    if (trait == night owl) {
+      if (time.hours > 0 && time.hours < 6) {
+        sleepRate = fatigueRate*12;
+        //takes two hours to sleep 100%
+      } else {
+        sleepRate = fatigueRate*8;
+        //takes three hours to sleep 100%
+      }
+    } else if (trait == early bird) {
+      if (time.hours > 6 && time.hours < 12) {
+        sleepRate = fatigueRate*12;
+      } else {
+        sleepRate = fatigueRate*8;
+      }
     }
+    
+    
   }
 
   void updateStats() {

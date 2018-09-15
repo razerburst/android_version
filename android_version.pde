@@ -183,16 +183,6 @@ boolean circleMouseCollide(float x, float y, float d) {
   return (dist(x, y, mouseX, mouseY) <= d/2);
 }
 
-//linear search, because most arrays used will be small
-boolean isInArray(String[] array, String str) {
-  for (int i = 0; i < array.length; i++) {
-    if (array[i] == str) {
-      return true;
-    }
-  }
-  return false;
-}
-
 class TextButton {
   String string;
   float x;
@@ -283,7 +273,7 @@ class Pet {
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
 
-    if (isInArray(nature, "Night Owl")) {
+    if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
         sleepRate = fatigueRate*12;
         //takes two hours to sleep 100%
@@ -291,7 +281,7 @@ class Pet {
         sleepRate = fatigueRate*8;
         //takes three hours to sleep 100%
       }
-    } else if (isInArray(nature, "earlyBird")) {
+    } else if (nature[0] == "Early Bird") {
       if (time.hours > 6 && time.hours < 12) {
         sleepRate = fatigueRate*12;
       } else {

@@ -800,6 +800,7 @@ void draw() {
         if (money < 0) {
           money = 0;
         }
+        coin.randomiseSprite();
         coin.calculatePosition();
       }
     }

@@ -51,7 +51,6 @@ TextButton feedButton;
 TextButton shopButton;
 
 boolean entered;
-boolean genderPicked;
 int traitsPicked;
 TextButton maleButton;
 
@@ -184,6 +183,16 @@ boolean circleMouseCollide(float x, float y, float d) {
   return (dist(x, y, mouseX, mouseY) <= d/2);
 }
 
+//linear search, because most arrays used will be small
+boolean isInArray(String[] array, String str) {
+  for (int i = 0; i < array.length; i++) {
+    if (array[i] == str) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class TextButton {
   String string;
   float x;
@@ -274,7 +283,7 @@ class Pet {
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
 
-    if (trait == night owl) {
+    if (isInArray(nature, "Night Owl")) {
       if (time.hours > 0 && time.hours < 6) {
         sleepRate = fatigueRate*12;
         //takes two hours to sleep 100%
@@ -282,15 +291,14 @@ class Pet {
         sleepRate = fatigueRate*8;
         //takes three hours to sleep 100%
       }
-    } else if (trait == early bird) {
+    } else if (isInArray(nature, "earlyBird")) {
       if (time.hours > 6 && time.hours < 12) {
         sleepRate = fatigueRate*12;
       } else {
         sleepRate = fatigueRate*8;
       }
     }
-    
-    
+    print(sleepRate);
   }
 
   void updateStats() {
@@ -712,7 +720,7 @@ void draw() {
       maleButton.display();
       femaleButton.display();
 
-      if (genderPicked) {
+      if (maleButton.pressed || femaleButton.pressed) {
         pushStyle();
         fill(blue);
         textSize(24*density);
@@ -943,15 +951,15 @@ void mouseReleased() {
         maleButton.defaultColour = red;
         femaleButton.defaultColour = black;
         pet.gender = "Male";
-        genderPicked = true;
+        maleButton.pressed = true;
       } else if (femaleButton.mouseCollide()) {
         femaleButton.defaultColour = red;
         maleButton.defaultColour = black;
         pet.gender = "Female";
-        genderPicked = true;
+        femaleButton.pressed = true;
       }
 
-      if (genderPicked) {
+      if (maleButton.pressed || femaleButton.pressed) {
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             if (traits[i][j].mouseCollide()) {

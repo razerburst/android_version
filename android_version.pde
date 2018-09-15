@@ -232,7 +232,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 0;
+  float fatigue = 100;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -254,7 +254,7 @@ class Pet {
   void calculateRates() {
     //bar reaches 100% after 18000 frames (5 minutes)
     baseRate = 100.0/(5*60*frameRate);
-    //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
+    //Rates increase by 1% for every 1% of other stats missing/gained, up four times as fast rate
     if (pet.nature[1] == "Lethargic") {
       weightRate = (weight-4000)/1000;
       //every kg increases hunger rate by 100%
@@ -263,32 +263,35 @@ class Pet {
       //every kg increases hunger rate by 200%, so more hunger in less time
     }
 
-    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
-    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
-    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    //healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
+    //hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    //fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    //happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 
-    //healthRate = baseRate;
-    //hungerRate = baseRate;
-    //fatigueRate = baseRate;
-    //happinessRate = baseRate;
+    healthRate = baseRate;
+    hungerRate = baseRate;
+    fatigueRate = baseRate;
+    happinessRate = baseRate;
 
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
+        print("night owl 1");
         sleepRate = fatigueRate*12;
         //takes two hours to sleep 100%
       } else {
+        print("night owl 2");
         sleepRate = fatigueRate*8;
         //takes three hours to sleep 100%
       }
     } else if (nature[0] == "Early Bird") {
       if (time.hours > 6 && time.hours < 12) {
+        print("early bird 1");
         sleepRate = fatigueRate*12;
       } else {
+        print("early bird 2");
         sleepRate = fatigueRate*8;
       }
     }
-    print(sleepRate);
   }
 
   void updateStats() {
@@ -521,7 +524,7 @@ class Consumable {
   }
 
   void onUse() {
-    if (mouseCollide() && money >= price && amount > 0) {
+    if (mouseCollide() && amount > 0) {
       if (name == "Health Pack") {
         pet.health += 10;
         amount -= 1;
@@ -866,7 +869,7 @@ void draw() {
           fill(0);
           text(s, mouseX, mouseY);
         } else {
-          //stop timer when hunger exceeds 1
+          //stop displaying when hunger exceeds 1
           notHungryTimer = -1;
         }
       } else if (frameCount - petAsleepTimer < frameRate && petAsleepTimer != -1) {
@@ -877,7 +880,7 @@ void draw() {
           text(s, mouseX, mouseY);
         }
       } else {
-        //stops timer when pet wakes up
+        //stops displaying when pet wakes up
         petAsleepTimer = -1;
       }
       popStyle();

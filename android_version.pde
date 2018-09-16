@@ -233,7 +233,7 @@ class Pet {
   String[] nature = new String[4];
   float health = 100;
   float hunger = 0;
-  float fatigue = 100;
+  float fatigue = 0;
   float happiness = 100;
   float weight = 4000;
   //weight is in grams, displayed in KG
@@ -276,20 +276,16 @@ class Pet {
 
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
-        print("night owl 1");
         sleepRate = baseRate*12;
         //takes two hours to sleep 100%
       } else {
-        print("night owl 2");
         sleepRate = baseRate*8;
         //takes three hours to sleep 100%
       }
     } else if (nature[0] == "Early Bird") {
       if (time.hours > 6 && time.hours < 12) {
-        print("early bird 1");
         sleepRate = baseRate*12;
       } else {
-        print("early bird 2");
         sleepRate = baseRate*8;
       }
     }

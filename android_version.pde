@@ -6,7 +6,7 @@
 //fix snacks image width
 //day/night background change
 //do not force player to pick all traits
-//rusty coin less noticeable and takes away more money
+//money depends on age?
 import android.util.DisplayMetrics;
 
 int density;
@@ -802,9 +802,8 @@ void draw() {
         coin.show = false;
         coin.hide = true;
         coin.hideTimer = frameCount;
-        //money depends on age?
         if (coin.filename == "RustyCoin.png") {
-          money -= coin.value;
+          money -= coin.value*2;
         } else if (coin.filename == "GoldBar.png") {
           money += coin.value*2;
         } else {

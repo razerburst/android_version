@@ -1,12 +1,12 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds) and rename feed to shop
 //add instructions
-//add coin minigame
 //add game over screen (replay)
-//fix snacks image width
 //day/night background change
 //do not force player to pick all traits
 //money depends on age?
+//fix tapping on coins
+//make coin sprites bigger
 import android.util.DisplayMetrics;
 
 int density;
@@ -118,7 +118,8 @@ void setup() {
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
 
-  //something to do with sleep
+  //sleep faster in the morning, sleep slower during rest of the day/night
+  //sleep faster at night, sleep slower during rest of day
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
   //if energetic, hunger goes up faster, fatigue goes down slower (needs more rest), more happy when active, more weight lost when active
@@ -247,6 +248,7 @@ class Pet {
   Animation sprite;
   boolean asleep = false;
   boolean losingHealth = false;
+  int fatigueThreshold = 5;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 1440, 576, 2, 5);
@@ -254,16 +256,9 @@ class Pet {
 
   void calculateRates() {
     //bar reaches 100% after 18000 frames (5 minutes)
-    baseRate = 100.0/(5*60*frameRate);
-    //Rates increase by 1% for every 1% of other stats missing/gained, up four times as fast rate
-    if (pet.nature[1] == "Lethargic") {
-      weightRate = (weight-4000)/1000;
-      //every kg increases hunger rate by 100%
-    } else if (pet.nature[1] == "Energetic") {
-      weightRate = (weight-4000)/500;
-      //every kg increases hunger rate by 200%, so more hunger in less time
-    }
-
+    baseRate = 100.0/(5*60*frameRate); //Rates increase by 1% for every 1% of other stats missing/gained, up four times as fast rate
+    
+    weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
@@ -353,7 +348,7 @@ class Time {
   float minutes;
   float hours;
   boolean done = true;
-  
+
   void update() {
     millis = (millis()-startTime)*multiplier;
     seconds = millis/1000.0;
@@ -759,7 +754,7 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    if (sleepButton.pressed && pet.fatigue < 10) {
+    if (sleepButton.pressed && pet.fatigue < pet.fatigueThreshold) {
       if (frameCount - notTiredTimer < frameRate) {
         pushStyle();
         pushMatrix();
@@ -981,7 +976,7 @@ void mouseReleased() {
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
-        if (pet.fatigue >= 10) {
+        if (pet.fatigue >= pet.fatigueThreshold) {
           pet.asleep = true;
         } else {
           pet.asleep = false;

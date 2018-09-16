@@ -6,6 +6,7 @@
 //fix snacks image width
 //day/night background change
 //do not force player to pick all traits
+//rusty coin less noticeable and takes away more money
 import android.util.DisplayMetrics;
 
 int density;
@@ -34,7 +35,7 @@ enum gameState {
     STATS, 
     FEED,
 }
-gameState currentState = gameState.PLAYING;
+gameState currentState = gameState.NEWGAME;
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -263,33 +264,33 @@ class Pet {
       //every kg increases hunger rate by 200%, so more hunger in less time
     }
 
-    //healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    //hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
-    //fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
-    //happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
+    happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 
-    healthRate = baseRate;
-    hungerRate = baseRate;
-    fatigueRate = baseRate;
-    happinessRate = baseRate;
+    //healthRate = baseRate;
+    //hungerRate = baseRate;
+    //fatigueRate = baseRate;
+    //happinessRate = baseRate;
 
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
         print("night owl 1");
-        sleepRate = fatigueRate*12;
+        sleepRate = baseRate*12;
         //takes two hours to sleep 100%
       } else {
         print("night owl 2");
-        sleepRate = fatigueRate*8;
+        sleepRate = baseRate*8;
         //takes three hours to sleep 100%
       }
     } else if (nature[0] == "Early Bird") {
       if (time.hours > 6 && time.hours < 12) {
         print("early bird 1");
-        sleepRate = fatigueRate*12;
+        sleepRate = baseRate*12;
       } else {
         print("early bird 2");
-        sleepRate = fatigueRate*8;
+        sleepRate = baseRate*8;
       }
     }
   }
@@ -355,7 +356,8 @@ class Time {
   float seconds;
   float minutes;
   float hours;
-
+  boolean done = true;
+  
   void update() {
     millis = (millis()-startTime)*multiplier;
     seconds = millis/1000.0;

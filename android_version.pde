@@ -255,8 +255,8 @@ class Pet {
   }
 
   void calculateRates() {
-    //bar reaches 100% after 18000 frames (5 minutes)
-    baseRate = 100.0/(5*60*frameRate); //Rates increase by 1% for every 1% of other stats missing/gained, up four times as fast rate
+    //bar reaches 100% after 18000 frames (24 hours/ 5 minutes)
+    baseRate = 100.0/(5*60*frameRate); //Rates increase by 1% for every 1% of other stats missing/gained, up to 4 times the original rate
     
     weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
@@ -268,7 +268,13 @@ class Pet {
     //hungerRate = baseRate;
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
-
+    
+    if (nature[1] == "Energetic") {
+      hungerRate += baseRate; //
+    } else if (nature[1] == "Lethargic") {
+      hungerRate -= baseRate; //
+    }
+    
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
         sleepRate = baseRate*12;

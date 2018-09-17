@@ -123,8 +123,8 @@ void setup() {
   //sleep faster at night, sleep slower during rest of day
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
-  //if energetic, hunger goes up faster, fatigue goes down slower (needs more rest), more happy when active, more weight lost when active
-  //if lethargic, hunger goes up slower, fatigue goes down faster (needs less rest), not as happy when active, less weight lost when active
+  //if energetic, hunger goes up faster, fatigue goes up faster (needs less rest), more happy when active, more weight lost when active
+  //if lethargic, hunger goes up slower, fatigue goes up slower (needs more rest), not as happy when active, less weight lost when active
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
   //random chance to not respond to actions
@@ -261,7 +261,7 @@ class Pet {
     
     weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate)); //takes 4.8 hours to reach 100%
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 
@@ -271,10 +271,11 @@ class Pet {
     //happinessRate = baseRate;
     
     if (nature[1] == "Energetic") {
-      hungerRate = baseRate * ((1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate)*(4.8/3.8); //1 hour less, from 4.8 hours (24/5) to 3.8 hours
-      fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)))
+      hungerRate *= 4.8/3.8; //1 hour less, from 4.8 hours (24/5) to 3.8 hours, takes less time to get to 100%, so 4.8/3.8 (126%) of original rate
+      fatigueRate *= 6/7; //1 hour more, from 6 hours (24/4) to 7 hours, takes longer to get to 100% so 6/7 (85%) of original rate
     } else if (nature[1] == "Lethargic") {
-      hungerRate -= baseRate * ((1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate))*(1/(5.8/4.8))); //1 hour more, from 4.8 hours (24/5) to 5.8 hours
+      hungerRate *= 4.8/5.8; //1 hour more, from 4.8 hours (24/5) to 5.8 hours
+      fatigueRate *= 6/5; //1 more less, from 6 hours (24/4) to 5 hours
     }
     
     if (nature[0] == "Night Owl") {

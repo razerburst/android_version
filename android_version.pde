@@ -7,6 +7,7 @@
 //money depends on age?
 //fix tapping on coins
 //make coin sprites bigger
+//figure out how traits work
 import android.util.DisplayMetrics;
 
 int density;
@@ -260,19 +261,20 @@ class Pet {
     
     weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
-    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
+    hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate)); //takes 4.8 hours to reach 100%
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
 
-    //healthRate = baseRate;
+    //healthRate = +baseRate;
     //hungerRate = baseRate;
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
     
     if (nature[1] == "Energetic") {
-      hungerRate += baseRate; //
+      hungerRate = baseRate * ((1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate)*(4.8/3.8); //1 hour less, from 4.8 hours (24/5) to 3.8 hours
+      fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)))
     } else if (nature[1] == "Lethargic") {
-      hungerRate -= baseRate; //
+      hungerRate -= baseRate * ((1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate))*(1/(5.8/4.8))); //1 hour more, from 4.8 hours (24/5) to 5.8 hours
     }
     
     if (nature[0] == "Night Owl") {

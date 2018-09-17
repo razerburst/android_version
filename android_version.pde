@@ -83,7 +83,7 @@ Bar hungerBar;
 Bar fatigueBar;
 Bar happinessBar;
 
-int money = 1000;
+int money = 0;
 PImage moneyImg;
 
 Coin[] coins = new Coin[5];
@@ -593,16 +593,21 @@ class Animation {
 
 class Coin {
   PImage img;
+  String filename;
   float x;
   float y;
   float displayInterval;
-  int hideCoinTimer = 0;
-  int showCoinTimer = 0;
-  boolean showCoin = false;
+  int hideTimer = 0;
+  int showTimer = 0;
+  boolean hide = true;
+  boolean show = false;
+  boolean initialDelay = false;
+  int value = 1;
 
   Coin(float _displayInterval) {
     displayInterval = _displayInterval;
-    img = loadImage("Coin.png");
+    filename = "Coin.png";
+    img = loadImage(filename);
     calculatePosition();
   }
 
@@ -611,21 +616,35 @@ class Coin {
     y = random(backButton.y+backButton.desc+(img.height/2), shopButton.y-shopButton.asc);
   }
 
-  void display() {
-    //make display ONLY display
-    if (frameCount - hideCoinTimer > 60*displayInterval) {
-      showCoin = true;
-      hideCoinTimer = frameCount;
-      calculatePosition();
+  void randomiseSprite() {
+    //each time the sprite is reset (hidden), there is a 1 in 4 chance it'll be a rusty coin and a 1 in 10 chance it'll be a gold bar
+    if (random(0, 100) <= 2.5) { //1/8 split between each coin (5 coins so 0.02, *100 for percentage = 2%)
+      filename = "GoldBar.png";
+    } else if (random(0, 100) <= 5) { //1/4 split between each coin
+      filename = "RustyCoin.png";
+    } else {
+      filename = "Coin.png";
     }
-    if (showCoin) {
-      print(frameCount - showCoinTimer);
-      if (frameCount - showCoinTimer <= 60) {
+
+  void display() {
+    if (show) {
+      if (frameCount - showTimer < 60) {
+        img = loadImage(filename);
         image(img, x, y);
       } else {
-        showCoin = false;
-        showCoinTimer = frameCount;
+        if (!initialDelay) {
+          displayInterval = 1;
+          initialDelay = true;
+        }
+        show = false;
+        hideTimer = frameCount;
+        randomiseSprite();
+        calculatePosition();
       }
+    } else if (frameCount - hideTimer > 60*displayInterval) {
+      hide = false;
+      show = true;
+      showTimer = frameCount;
     }
   }
 
@@ -762,10 +781,27 @@ void draw() {
     text("X" + money, width*0.16, height*0.78);
     popStyle();
 
-    coins[0].display();
-    //for (int i = 0; i < coins.length; i++) {
-    //  coins[i].display();
-    //}
+    for (int i = 0; i < coins.length; i++) {
+      Coin coin = coins[i];
+      coin.display();
+      if (coin.mouseCollide()) {
+        coin.show = false;
+        coin.hide = true;
+        coin.hideTimer = frameCount;
+        //money depends on age?
+        if (coin.filename == "RustyCoin.png") {
+          money -= coin.value;
+        } else if (coin.filename == "GoldBar.png") {
+          money += coin.value*2;
+        } else {
+          money += coin.value;
+        }
+        if (money < 0) {
+          money = 0;
+        }
+        coin.calculatePosition();
+      }
+    }
     break;
 
   case STATS:

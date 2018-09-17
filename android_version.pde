@@ -123,8 +123,8 @@ void setup() {
   //sleep faster at night, sleep slower during rest of day
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
-  //if energetic, hunger goes up faster, fatigue goes up faster (needs less rest), more happy when active, more weight lost when active
-  //if lethargic, hunger goes up slower, fatigue goes up slower (needs more rest), not as happy when active, less weight lost when active
+  //if energetic, hunger goes up faster, fatigue goes up faster (needs more rest), more happy when active, more weight lost when active
+  //if lethargic, hunger goes up slower, fatigue goes up slower (needs less rest), not as happy when active, less weight lost when active
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
   //random chance to not respond to actions
@@ -233,11 +233,11 @@ class Pet {
   String gender;
   int age;
   String[] nature = new String[4];
-  float health = 100;
+  float health = 0;
   float hunger = 0;
-  float fatigue = 0;
-  float happiness = 100;
-  float weight = 4000;
+  float fatigue = 100;
+  float happiness = 0;
+  float weight = 5000;
   //weight is in grams, displayed in KG
   float baseRate;
   float healthRate;
@@ -271,11 +271,11 @@ class Pet {
     //happinessRate = baseRate;
     
     if (nature[1] == "Energetic") {
-      hungerRate *= 4.8/3.8; //1 hour less, from 4.8 hours (24/5) to 3.8 hours, takes less time to get to 100%, so 4.8/3.8 (126%) of original rate
-      fatigueRate *= 6/7; //1 hour more, from 6 hours (24/4) to 7 hours, takes longer to get to 100% so 6/7 (85%) of original rate
+      hungerRate *= 4.8/3.8; //hunger goes up faster, so 126% of original rate, takes 1 hour less to reach 100%
+      //fatigueRate *= 6/5; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
     } else if (nature[1] == "Lethargic") {
-      hungerRate *= 4.8/5.8; //1 hour more, from 4.8 hours (24/5) to 5.8 hours
-      fatigueRate *= 6/5; //1 more less, from 6 hours (24/4) to 5 hours
+      hungerRate *= 4.8/5.8; //hunger goes up slower, so 83% of original rate, takes 1 hour more to reach 100%
+      //fatigueRate *= 6/7; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
     }
     
     if (nature[0] == "Night Owl") {

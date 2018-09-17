@@ -233,11 +233,11 @@ class Pet {
   String gender;
   int age;
   String[] nature = new String[4];
-  float health = 0;
+  float health = 100;
   float hunger = 0;
-  float fatigue = 100;
-  float happiness = 0;
-  float weight = 5000;
+  float fatigue = 0;
+  float happiness = 100;
+  float weight = 4000;
   //weight is in grams, displayed in KG
   float baseRate;
   float healthRate;
@@ -272,19 +272,17 @@ class Pet {
     
     if (nature[1] == "Energetic") {
       hungerRate *= 4.8/3.8; //hunger goes up faster, so 126% of original rate, takes 1 hour less to reach 100%
-      //fatigueRate *= 6/5; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
+      fatigueRate *= 6/5.0; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
     } else if (nature[1] == "Lethargic") {
       hungerRate *= 4.8/5.8; //hunger goes up slower, so 83% of original rate, takes 1 hour more to reach 100%
-      //fatigueRate *= 6/7; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
+      fatigueRate *= 6/7.0; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
     }
     
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
-        sleepRate = baseRate*12;
-        //takes two hours to sleep 100%
+        sleepRate = baseRate*12; //takes two hours to sleep 100%
       } else {
-        sleepRate = baseRate*8;
-        //takes three hours to sleep 100%
+        sleepRate = baseRate*8; //takes three hours to sleep 100%
       }
     } else if (nature[0] == "Early Bird") {
       if (time.hours > 6 && time.hours < 12) {

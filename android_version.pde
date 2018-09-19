@@ -7,7 +7,7 @@
 //money depends on age?
 //fix tapping on coins
 //make coin sprites bigger
-//figure out how traits work
+//change sleeping pills to something else
 import android.util.DisplayMetrics;
 
 int density;
@@ -258,26 +258,21 @@ class Pet {
   void calculateRates() {
     //bar reaches 100% after 18000 frames (24 hours/ 5 minutes)
     baseRate = 100.0/(5*60*frameRate); //Rates increase by 1% for every 1% of other stats missing/gained, up to 4 times the original rate
-    
+
     weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    sleepRate = baseRate * 9.6; //takes two and a half hours to sleep to 100%
 
     //healthRate = +baseRate;
     //hungerRate = baseRate;
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
-    
-    if (nature[1] == "Energetic") {
-      hungerRate *= 4.8/3.8; //hunger goes up faster, so 126% of original rate, takes 1 hour less to reach 100%
-      fatigueRate *= 6/5.0; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
-    } else if (nature[1] == "Lethargic") {
-      hungerRate *= 4.8/5.8; //hunger goes up slower, so 83% of original rate, takes 1 hour more to reach 100%
-      fatigueRate *= 6/7.0; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
-    }
-    
+  }
+
+  void traits() {
     if (nature[0] == "Night Owl") {
       if (time.hours > 0 && time.hours < 6) {
         sleepRate = baseRate*12; //takes two hours to sleep 100%
@@ -290,6 +285,51 @@ class Pet {
       } else {
         sleepRate = baseRate*8;
       }
+    }
+    if (nature[1] == "Energetic") {
+      hungerRate *= 4.8/3.8; //hunger goes up faster, so 126% of original rate, takes 1 hour less to reach 100%
+      fatigueRate *= 6/5.0; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
+    } else if (nature[1] == "Lethargic") {
+      hungerRate *= 4.8/5.8; //hunger goes up slower, so 83% of original rate, takes 1 hour more to reach 100%
+      fatigueRate *= 6/7.0; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
+    }
+    if (nature[2] == "Chaotic") {
+      //gain a quarter more or a quarter less of all stats randomly
+      if (frameCount % (60*60) == 0) {
+        print("test");
+        int rng = round(random(2));
+        print(rng);
+        if (rng == 0) {
+          health += health*0.25;
+        } else if (rng == 1) {
+          health -= health*0.25;
+        }
+
+        if (rng == 0) {
+          hunger += hunger*0.25;
+        } else if (rng == 1) {
+          hunger -= hunger*0.25;
+        }
+
+        if (rng == 0) {
+          fatigue += fatigue*0.25;
+        } else if (rng == 1) {
+          fatigue -= fatigue*0.25;
+        }
+
+        if (rng == 0) {
+          happiness += happiness*0.25;
+        } else if (rng == 1) {
+          happiness -= happiness*0.25;
+        }
+      }
+    } else if (nature[2] == "Clueless") {
+      
+    }
+    if (nature[3] == "Friendly") {
+      
+    } else if (nature[3] == "Hostile") {
+      
     }
   }
 
@@ -677,6 +717,7 @@ void draw() {
     if (currentState != gameState.LOAD) {
       time.update();
       pet.calculateRates();
+      pet.traits();
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();

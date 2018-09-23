@@ -8,6 +8,7 @@
 //fix tapping on coins
 //make coin sprites bigger
 //change sleeping pills to something else
+//make tabs
 import android.util.DisplayMetrics;
 
 int density;
@@ -131,7 +132,7 @@ void setup() {
   //random chance to forget what you're doing
   //both do same thing but different response from pet
   traits[2][0] = new TextButton("Chaotic", width*0.18, height*0.84, 24, orange);
-  traits[2][1] = new TextButton("Clueless", width*0.38, height*0.84, 24, orange);
+  traits[2][1] = new TextButton("Relaxed", width*0.38, height*0.84, 24, orange);
   //pet says something when tapped
   traits[3][0] = new TextButton("Friendly", width*0.18, height*0.92, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
@@ -294,11 +295,9 @@ class Pet {
       fatigueRate *= 6/7.0; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
     }
     if (nature[2] == "Chaotic") {
-      //gain a quarter more or a quarter less of all stats randomly
+      //gain a quarter more or a quarter less of all stats randomly every minute
       if (frameCount % (60*60) == 0) {
-        print("test");
         int rng = round(random(2));
-        print(rng);
         if (rng == 0) {
           health += health*0.25;
         } else if (rng == 1) {
@@ -323,8 +322,12 @@ class Pet {
           happiness -= happiness*0.25;
         }
       }
-    } else if (nature[2] == "Clueless") {
-      
+    } else if (nature[2] == "Relaxed") {
+      if (frameCount % (60*60) == 0) {
+        if (round(random(1)) == 0) {
+          asleep = true;
+        }
+      }
     }
     if (nature[3] == "Friendly") {
       
@@ -684,7 +687,7 @@ class Coin {
 
   void display() {
     if (show) {
-      if (frameCount - showTimer < 60) {
+      if (frameCount - showTimer < 60*2) {
         img = loadImage(filename);
         image(img, x, y);
       } else {
@@ -697,7 +700,7 @@ class Coin {
         randomiseSprite();
         calculatePosition();
       }
-    } else if (frameCount - hideTimer > 60*displayInterval) {
+    } else if (frameCount - hideTimer > 60*2*displayInterval) {
       hide = false;
       show = true;
       showTimer = frameCount;

@@ -9,6 +9,8 @@
 //make coin sprites bigger
 //change sleeping pills to something else
 //make tabs
+//add stack of coins
+//change feed to shop and shop to upgrades
 import android.util.DisplayMetrics;
 
 int density;
@@ -687,7 +689,7 @@ class Coin {
 
   void display() {
     if (show) {
-      if (frameCount - showTimer < 60*2) {
+      if (frameCount - showTimer < 60) {
         img = loadImage(filename);
         image(img, x, y);
       } else {

@@ -556,7 +556,8 @@ class Animation {
   int imgH;
   int currentFrame = 0;
   PImage spritesheet;
-  PImage[] frames;
+  //PImage[] frames;
+  int[][] frames;
 
   Animation(String _filename, float _x, float _y, int _w, int _h, int _rows, int _columns) {
     filename = _filename;
@@ -567,24 +568,28 @@ class Animation {
     rows = _rows;
     columns = _columns;
     spritesheet = loadImage(filename);
-    frames = new PImage[rows*columns];
+    frames = new int[rows][columns];
     imgW = w/columns;
     imgH = h/rows;
-    int index = 0;
+    //int index = 0;
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
         int imgX = imgW*j;
         int imgY = imgH*i;
-        PImage img = spritesheet.get(imgX, imgY, imgW, imgH);
-        frames[index] = img;
-        index += 1;
+        //PImage img = spritesheet.get(imgX, imgY, imgW, imgH);
+        int[] coords = new int[]{imgX, imgY};
+        frames[j]= coords;
+        //frames[index] = img;
+        //index += 1;
       }
     }
   }
 
   void display(int start, int numFrames) {
-    PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
-    image(displayFrames[currentFrame%displayFrames.length], x, y);
+    //PImage[] displayFrames = (PImage[]) subset(frames, start, numFrames);
+    int[][] displayFrames = (int[][])subset(frames, start, numFrames);
+    PImage frame = spritesheet.get(displayFrames[currentFrame%numFrames][0], displayFrames[currentFrame%numFrames][1], imgW, imgH);
+    image(frame, x, y);
     if (frameCount % 60 == 0) {
       currentFrame += 1;
     }
@@ -625,6 +630,7 @@ class Coin {
     } else {
       filename = "Coin.png";
     }
+  }
 
   void display() {
     if (show) {

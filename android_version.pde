@@ -11,6 +11,7 @@
 //make tabs
 //add stack of coins
 //change feed to shop and shop to upgrades
+//how it grows
 import android.util.DisplayMetrics;
 
 int density;
@@ -37,7 +38,8 @@ enum gameState {
     QUIT, 
     PLAYING, 
     STATS, 
-    FEED,
+    SHOP, 
+    UPGRADES
 }
 gameState currentState = gameState.NEWGAME;
 String textBoxHeader = "Enter a name for your new pet:";
@@ -52,8 +54,8 @@ TextButton loadButton;
 TextButton quitButton;
 TextButton sleepButton;
 TextButton statsButton;
-TextButton feedButton;
 TextButton shopButton;
+TextButton upgradesButton;
 
 boolean entered;
 int traitsPicked;
@@ -116,8 +118,8 @@ void setup() {
 
   sleepButton = new TextButton("Sleep", width*0.086, height*0.9, 32, purple);
   statsButton = new TextButton("Stats", width*0.36, height*0.9, 32, purple);
-  feedButton = new TextButton("Feed", width*0.654, height*0.9, 32, purple);
-  shopButton = new TextButton("Shop", width*0.92, height*0.9, 32, purple);
+  shopButton = new TextButton("Shop", width*0.654, height*0.9, 32, purple);
+  upgradesButton = new TextButton("Upgrades", width*0.92, height*0.9, 32, purple);
 
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
@@ -332,9 +334,7 @@ class Pet {
       }
     }
     if (nature[3] == "Friendly") {
-      
     } else if (nature[3] == "Hostile") {
-      
     }
   }
 
@@ -673,7 +673,7 @@ class Coin {
 
   void calculatePosition() {
     x = random(healthBar.x+healthBar.w+4+(img.width/2), width-(img.width/2));
-    y = random(backButton.y+backButton.desc+(img.height/2), shopButton.y-shopButton.asc);
+    y = random(backButton.y+backButton.desc+(img.height/2), upgradesButton.y-upgradesButton.asc);
   }
 
   void randomiseSprite() {
@@ -717,7 +717,7 @@ class Coin {
 void draw() {
   background(255);
   //automatic events
-  if (currentState == gameState.PLAYING || currentState == gameState.LOAD || currentState == gameState.STATS || currentState == gameState.FEED) {
+  if (currentState == gameState.PLAYING || currentState == gameState.LOAD || currentState == gameState.STATS || currentState == gameState.SHOP) {
     backButton.display();
     if (currentState != gameState.LOAD) {
       time.update();
@@ -729,7 +729,7 @@ void draw() {
       if (pet.losingHealth && frameCount - bandageTimer < frameRate*3) {
         pet.health += pet.healthRate;
       }
-      if (currentState != gameState.FEED) {
+      if (currentState != gameState.SHOP) {
         time.display(width*0.01, height*0.01, LEFT, TOP);
       }
     }
@@ -804,8 +804,8 @@ void draw() {
 
     sleepButton.display();
     statsButton.display();
-    feedButton.display();
     shopButton.display();
+    upgradesButton.display();
 
     if (sleepButton.pressed && pet.fatigue < pet.fatigueThreshold) {
       if (frameCount - notTiredTimer < frameRate) {
@@ -878,7 +878,7 @@ void draw() {
     popStyle();
     break;
 
-  case FEED:
+  case SHOP:
     time.display(centerX, height*0.01, CENTER, TOP);
 
     //half bar length (because original x and y of bar is top, left not center)
@@ -934,6 +934,8 @@ void draw() {
 
   case LOAD:
     break;
+  case UPGRADES:
+    break;
   }
 }
 
@@ -962,7 +964,7 @@ void mouseReleased() {
   if (backButton.mouseCollide()) {
     if (currentState == gameState.PLAYING || currentState == gameState.LOAD) {
       currentState = gameState.MAINMENU;
-    } else if (currentState == gameState.STATS || currentState == gameState.FEED) {
+    } else if (currentState == gameState.STATS || currentState == gameState.SHOP) {
       currentState = gameState.PLAYING;
     }
   }
@@ -1038,13 +1040,14 @@ void mouseReleased() {
       }
     } else if (statsButton.mouseCollide()) {
       currentState = gameState.STATS;
-    } else if (feedButton.mouseCollide()) {
-      currentState = gameState.FEED;
     } else if (shopButton.mouseCollide()) {
+      currentState = gameState.SHOP;
+    } else if (upgradesButton.mouseCollide()) {
+      currentState = gameState.UPGRADES;
     }
     break;
 
-  case FEED:
+  case SHOP:
     cookie.onEat();
     petFood.onEat();
     snacks.onEat();

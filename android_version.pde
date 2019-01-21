@@ -1,10 +1,16 @@
 //todo: save states screen (load menu), age has effect, turns green when health is low
 //replace shop with upgrades? maybe maps (backgrounds) and rename feed to shop
 //add instructions
-//add coin minigame
 //add game over screen (replay)
-//fix snacks image width
 //day/night background change
+//do not force player to pick all traits
+//money depends on age?
+//fix tapping on coins
+//make coin sprites bigger
+//change sleeping pills to something else
+//make tabs
+//add stack of coins
+//change feed to shop and shop to upgrades
 import android.util.DisplayMetrics;
 
 int density;
@@ -33,7 +39,7 @@ enum gameState {
     STATS, 
     FEED,
 }
-gameState currentState = gameState.PLAYING;
+gameState currentState = gameState.NEWGAME;
 String textBoxHeader = "Enter a name for your new pet:";
 String textBoxString = "";
 float textBoxRectW;
@@ -50,7 +56,6 @@ TextButton feedButton;
 TextButton shopButton;
 
 boolean entered;
-boolean genderPicked;
 int traitsPicked;
 TextButton maleButton;
 
@@ -117,16 +122,20 @@ void setup() {
   maleButton = new TextButton("Male", width*0.4, height*0.33, 28, red);
   femaleButton = new TextButton("Female", width*0.6, height*0.33, 28, red);
 
-  //something to do with sleep
+  //sleep faster in the morning, sleep slower during rest of the day/night
+  //sleep faster at night, sleep slower during rest of day
   traits[0][0] = new TextButton("Early Bird", width*0.18, height*0.68, 24, lightBlue);
   traits[0][1] = new TextButton("Night Owl", width*0.38, height*0.68, 24, lightBlue);
-  //if energetic, hungrier faster, if lethargic, hungrier slower
-  //if energetic, lose more weight when active, if lethargic, lose less weight when active
+  //if energetic, hunger goes up faster, fatigue goes up faster (needs more rest), more happy when active, more weight lost when active
+  //if lethargic, hunger goes up slower, fatigue goes up slower (needs less rest), not as happy when active, less weight lost when active
   traits[1][0] = new TextButton("Energetic", width*0.18, height*0.76, 24, green);
   traits[1][1] = new TextButton("Lethargic", width*0.38, height*0.76, 24, green);
-  traits[2][0] = new TextButton("Impatient", width*0.18, height*0.84, 24, orange);
-  traits[2][1] = new TextButton("Composed", width*0.38, height*0.84, 24, orange);
-  //quotes are vary slightly if friendly or hostile
+  //random chance to not respond to actions
+  //random chance to forget what you're doing
+  //both do same thing but different response from pet
+  traits[2][0] = new TextButton("Chaotic", width*0.18, height*0.84, 24, orange);
+  traits[2][1] = new TextButton("Relaxed", width*0.38, height*0.84, 24, orange);
+  //pet says something when tapped
   traits[3][0] = new TextButton("Friendly", width*0.18, height*0.92, 24, magenta);
   traits[3][1] = new TextButton("Hostile", width*0.38, height*0.92, 24, magenta);
 
@@ -243,39 +252,89 @@ class Pet {
   Animation sprite;
   boolean asleep = false;
   boolean losingHealth = false;
+  int fatigueThreshold = 5;
 
   Pet() {
     sprite = new Animation("Pet.png", centerX, centerY, 1440, 576, 2, 5);
   }
 
   void calculateRates() {
-    //bar reaches 100% after 18000 frames (5 minutes)
-    baseRate = 100.0/(5*60*frameRate);
-    //Rates increase by 1% for every 1% of other stats missing/gained, up three times greater rate for each stat
-    if (pet.nature[1] == "Lethargic") {
-      weightRate = (weight-4000)/1000;
-      //every kg increases hunger rate by 100%
-    } else if (pet.nature[1] == "Energetic") {
-      weightRate = (weight-4000)/500;
-      //every kg increases hunger rate by 200%, so more hunger in less time
-    }
+    //bar reaches 100% after 18000 frames (24 hours/ 5 minutes)
+    baseRate = 100.0/(5*60*frameRate); //Rates increase by 1% for every 1% of other stats missing/gained, up to 4 times the original rate
 
+    weightRate = (weight-4000)/1000; //every kg increases hungerRate by 100%
     healthRate = baseRate * (1+((hunger/75)+(fatigue/75)+((100-happiness)/75)));
     hungerRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+((100-happiness)/100)+weightRate));
     fatigueRate = baseRate * (1+(((100-health)/100)+(hunger/100)+((100-happiness)/100)));
     happinessRate = baseRate * (1+(((100-health)/100)+(fatigue/100)+(hunger/100)));
+    sleepRate = baseRate * 9.6; //takes two and a half hours to sleep to 100%
 
-    //healthRate = baseRate;
+    //healthRate = +baseRate;
     //hungerRate = baseRate;
     //fatigueRate = baseRate;
     //happinessRate = baseRate;
+  }
 
-    if (time.hours > 0 && time.hours < 6) {
-      sleepRate = fatigueRate*12;
-      //takes two hours to sleep 100%
-    } else {
-      sleepRate = fatigueRate*8;
-      //takes three hours to sleep 100%
+  void traits() {
+    if (nature[0] == "Night Owl") {
+      if (time.hours > 0 && time.hours < 6) {
+        sleepRate = baseRate*12; //takes two hours to sleep 100%
+      } else {
+        sleepRate = baseRate*8; //takes three hours to sleep 100%
+      }
+    } else if (nature[0] == "Early Bird") {
+      if (time.hours > 6 && time.hours < 12) {
+        sleepRate = baseRate*12;
+      } else {
+        sleepRate = baseRate*8;
+      }
+    }
+    if (nature[1] == "Energetic") {
+      hungerRate *= 4.8/3.8; //hunger goes up faster, so 126% of original rate, takes 1 hour less to reach 100%
+      fatigueRate *= 6/5.0; //fatigue goes up faster, so 120% of original rate, takes 1 hour less to reach 100%
+    } else if (nature[1] == "Lethargic") {
+      hungerRate *= 4.8/5.8; //hunger goes up slower, so 83% of original rate, takes 1 hour more to reach 100%
+      fatigueRate *= 6/7.0; //fatigue goes up slower, so 86% of original rate, takes 1 hour more to reach 100%
+    }
+    if (nature[2] == "Chaotic") {
+      //gain a quarter more or a quarter less of all stats randomly every minute
+      if (frameCount % (60*60) == 0) {
+        int rng = round(random(2));
+        if (rng == 0) {
+          health += health*0.25;
+        } else if (rng == 1) {
+          health -= health*0.25;
+        }
+
+        if (rng == 0) {
+          hunger += hunger*0.25;
+        } else if (rng == 1) {
+          hunger -= hunger*0.25;
+        }
+
+        if (rng == 0) {
+          fatigue += fatigue*0.25;
+        } else if (rng == 1) {
+          fatigue -= fatigue*0.25;
+        }
+
+        if (rng == 0) {
+          happiness += happiness*0.25;
+        } else if (rng == 1) {
+          happiness -= happiness*0.25;
+        }
+      }
+    } else if (nature[2] == "Relaxed") {
+      if (frameCount % (60*60) == 0) {
+        if (round(random(1)) == 0) {
+          asleep = true;
+        }
+      }
+    }
+    if (nature[3] == "Friendly") {
+      
+    } else if (nature[3] == "Hostile") {
+      
     }
   }
 
@@ -340,6 +399,7 @@ class Time {
   float seconds;
   float minutes;
   float hours;
+  boolean done = true;
 
   void update() {
     millis = (millis()-startTime)*multiplier;
@@ -509,7 +569,7 @@ class Consumable {
   }
 
   void onUse() {
-    if (mouseCollide() && money >= price && amount > 0) {
+    if (mouseCollide() && amount > 0) {
       if (name == "Health Pack") {
         pet.health += 10;
         amount -= 1;
@@ -647,7 +707,7 @@ class Coin {
         randomiseSprite();
         calculatePosition();
       }
-    } else if (frameCount - hideTimer > 60*displayInterval) {
+    } else if (frameCount - hideTimer > 60*2*displayInterval) {
       hide = false;
       show = true;
       showTimer = frameCount;
@@ -667,6 +727,7 @@ void draw() {
     if (currentState != gameState.LOAD) {
       time.update();
       pet.calculateRates();
+      pet.traits();
       pet.updateStats();
       pet.updateAge();
       pet.autoWake();
@@ -703,7 +764,7 @@ void draw() {
       maleButton.display();
       femaleButton.display();
 
-      if (genderPicked) {
+      if (maleButton.pressed || femaleButton.pressed) {
         pushStyle();
         fill(blue);
         textSize(24*density);
@@ -751,7 +812,7 @@ void draw() {
     feedButton.display();
     shopButton.display();
 
-    if (sleepButton.pressed && pet.fatigue < 10) {
+    if (sleepButton.pressed && pet.fatigue < pet.fatigueThreshold) {
       if (frameCount - notTiredTimer < frameRate) {
         pushStyle();
         pushMatrix();
@@ -794,9 +855,8 @@ void draw() {
         coin.show = false;
         coin.hide = true;
         coin.hideTimer = frameCount;
-        //money depends on age?
         if (coin.filename == "RustyCoin.png") {
-          money -= coin.value;
+          money -= coin.value*2;
         } else if (coin.filename == "GoldBar.png") {
           money += coin.value*2;
         } else {
@@ -805,6 +865,7 @@ void draw() {
         if (money < 0) {
           money = 0;
         }
+        coin.randomiseSprite();
         coin.calculatePosition();
       }
     }
@@ -858,7 +919,7 @@ void draw() {
           fill(0);
           text(s, mouseX, mouseY);
         } else {
-          //stop timer when hunger exceeds 1
+          //stop displaying when hunger exceeds 1
           notHungryTimer = -1;
         }
       } else if (frameCount - petAsleepTimer < frameRate && petAsleepTimer != -1) {
@@ -869,7 +930,7 @@ void draw() {
           text(s, mouseX, mouseY);
         }
       } else {
-        //stops timer when pet wakes up
+        //stops displaying when pet wakes up
         petAsleepTimer = -1;
       }
       popStyle();
@@ -933,15 +994,15 @@ void mouseReleased() {
         maleButton.defaultColour = red;
         femaleButton.defaultColour = black;
         pet.gender = "Male";
-        genderPicked = true;
+        maleButton.pressed = true;
       } else if (femaleButton.mouseCollide()) {
         femaleButton.defaultColour = red;
         maleButton.defaultColour = black;
         pet.gender = "Female";
-        genderPicked = true;
+        femaleButton.pressed = true;
       }
 
-      if (genderPicked) {
+      if (maleButton.pressed || femaleButton.pressed) {
         for (int i = 0; i < traits.length; i = i+1) {
           for (int j = 0; j < traits[i].length; j = j+1) {
             if (traits[i][j].mouseCollide()) {
@@ -973,7 +1034,7 @@ void mouseReleased() {
       if (sleepButton.string == "Wake") {
         pet.asleep = false;
       } else if (sleepButton.string == "Sleep") {
-        if (pet.fatigue >= 10) {
+        if (pet.fatigue >= pet.fatigueThreshold) {
           pet.asleep = true;
         } else {
           pet.asleep = false;
